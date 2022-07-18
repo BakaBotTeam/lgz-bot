@@ -6,7 +6,11 @@ plugins {
     id("net.mamoe.mirai-console") version "2.11.1"
 }
 
-group = "org.example"
+dependencies {
+    api("com.github.promeg:tinypinyin:2.0.3")
+    api("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
+}
+
 version = "0.1.0"
 
 repositories {

@@ -9,7 +9,7 @@ object LGZBotCommand: CompositeCommand (
     primaryName = "lgzbot",
     description = "LGZBot插件的主命令"
 ) {
-    @SubCommand
+    @SubCommand("pong")
     @Description("看看机器人是否在线吧")
     suspend fun CommandSender.ping() {
         sendMessage("Pong!")
