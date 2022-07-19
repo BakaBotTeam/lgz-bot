@@ -103,8 +103,11 @@ object MessageFilter {
         if (memberVl[id] == null) {
             memberVl[id] = .0
         }
+        var tempValue = memberVl[id]!!
         memberVl[id] = memberVl[id]!! + vl
-        logger.info("$id 的VL增加了 $vl, 现在是 ${memberVl[id]}")
+        if (memberVl[id]!! >= 0.0 || tempValue > 0.0) {
+            logger.info("$id 的VL增加了 $vl, 现在是 ${memberVl[id]}")
+        }
     }
 
     fun clearVl(id: Long) {
