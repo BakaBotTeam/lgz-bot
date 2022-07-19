@@ -7,9 +7,7 @@ object Config : AutoSavePluginConfig("config") {
 
     var muteTime = 600
 
-    var spammerTimes = 3
-
-    var repeaterSimilarity = 0.75
-
     var vlPunish = 100.0
+
+    var historyMessageLimit = 8
 }

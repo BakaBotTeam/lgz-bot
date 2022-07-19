@@ -8,10 +8,9 @@ import ltd.guimc.lgzbot.plugin.utils.TextUtils.findSimilarity
 import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.contact.isOwner
 import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.content
+import java.lang.Thread.sleep
 import java.time.Instant
 
 object MessageFilter {
@@ -19,25 +18,33 @@ object MessageFilter {
     var spammerFucker2 = mutableMapOf<Long, Long>()
     var repeaterFucker = mutableMapOf<Long, String>()
     var memberVl = mutableMapOf<Long, Double>()
+    var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
 
     suspend fun filter(e: GroupMessageEvent) {
-        if (e.message.content.length <= 35) return
         if (e.sender.isOwner() || !e.group.botAsMember.isOperator() ||
             e.sender.permission == e.group.botPermission) return
 
-        if (RegexUtils.matchRegex(Data.regex, e.message.content)) {
+        if (RegexUtils.matchRegex(Data.regex, e.message.content) && e.message.content.length >= 35) {
             e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
-            e.message.recall()
             try {
+                e.message.recall()
                 e.sender.mute(Config.muteTime)
             } catch (f: Exception) {
-                logger.warning("无法禁言 ${e.sender.id}, 可能是权限不足")
+                // logger.warning("无法禁言 ${e.sender.id}, 可能是权限不足")
             }
         }
 
         if (memberVl[e.sender.id] == null) {
-            memberVl[e.sender.id] = .0
+            clearVl(e.sender.id)
         }
+
+        if (historyMessage[e.sender.id] == null) {
+            historyMessage[e.sender.id] = mutableListOf()
+        } else if (historyMessage[e.sender.id]!!.size >= Config.historyMessageLimit) {
+            historyMessage[e.sender.id]!!.removeAt(0)
+        }
+
+        historyMessage[e.sender.id]!!.add(e.message)
 
         // Anti Spammers
         val timestamp = Instant.now()
@@ -45,15 +52,15 @@ object MessageFilter {
         if (spammerFucker[e.sender.id] == null) {
             spammerFucker[e.sender.id] = 1
             spammerFucker2[e.sender.id] = timestamp.epochSecond
-        } else if (spammerFucker2[e.sender.id]!! - timestamp.epochSecond >= 1) {
+        } else if (timestamp.epochSecond - spammerFucker2[e.sender.id]!! >= 1) {
             spammerFucker[e.sender.id] = 1
             spammerFucker2[e.sender.id] = timestamp.epochSecond
         } else {
             spammerFucker[e.sender.id] = spammerFucker[e.sender.id]!! + 1
         }
 
-        if (spammerFucker[e.sender.id]!! >= Config.spammerTimes) {
-            memberVl[e.sender.id] = memberVl[e.sender.id]!! + 30
+        if (spammerFucker[e.sender.id]!! >= 3) {
+            addVl(e.sender.id, 30.0)
         }
 
         // 重复内容过滤
@@ -61,10 +68,10 @@ object MessageFilter {
             repeaterFucker[e.sender.id] = e.message.content
         } else {
             val slimer = findSimilarity(repeaterFucker[e.sender.id]!!, e.message.content)
-            if (slimer >= Config.repeaterSimilarity) {
-                memberVl[e.sender.id] = memberVl[e.sender.id]!! + slimer * 25
+            if (slimer >= 0.75) {
+                addVl(e.sender.id, slimer * 25)
             } else {
-                memberVl[e.sender.id] = memberVl[e.sender.id]!! - 20
+                addVl(e.sender.id, -20.0)
             }
             repeaterFucker[e.sender.id] = e.message.content
         }
@@ -73,6 +80,16 @@ object MessageFilter {
         if (memberVl[e.sender.id]!! >= Config.vlPunish) {
             e.group.sendMessage(At(e.sender) + PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
             e.sender.mute(Config.muteTime)
+            e.message.recall()
+            historyMessage[e.sender.id]!!.forEach {
+                try {
+                    it.recall()
+                    sleep(50)
+                } catch (f: Exception) {
+                    // logger.warning("无法撤回 ${e.sender.id} 的消息")
+                }
+            }
+            historyMessage[e.sender.id]!!.clear()
             memberVl[e.sender.id] = .0
         }
 
@@ -80,5 +97,18 @@ object MessageFilter {
         if (memberVl[e.sender.id]!! < 0) {
             memberVl[e.sender.id] = .0
         }
+    }
+
+    fun addVl(id: Long, vl: Double) {
+        if (memberVl[id] == null) {
+            memberVl[id] = .0
+        }
+        memberVl[id] = memberVl[id]!! + vl
+        logger.info("$id 的VL增加了 $vl, 现在是 ${memberVl[id]}")
+    }
+
+    fun clearVl(id: Long) {
+        memberVl[id] = .0
+        logger.info("$id 的VL清零了")
     }
 }
