@@ -9,7 +9,6 @@ plugins {
 dependencies {
     api("com.github.promeg:tinypinyin:2.0.3")
     api("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
-    api("io.github.greycode:ocrlite:3.0.3-RELEASE")
 }
 
 version = "0.1.0"
