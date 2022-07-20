@@ -24,7 +24,7 @@ object TextUtils {
         }
         return T[m][n]
     }
-
+    // 寻找两字符串相似度，返回双精度浮点数
     fun findSimilarity(x: String?, y: String?): Double {
         require(!(x == null || y == null)) { "Strings should not be null" }
 

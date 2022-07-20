@@ -4,6 +4,7 @@ import ltd.guimc.lgzbot.plugin.PluginMain.logger
 import ltd.guimc.lgzbot.plugin.utils.AsciiUtil.sbc2dbcCase
 
 object RegexUtils {
+    // 获取正则表达式列表
     fun getDefaultRegex(): Array<Regex> {
         // Read from resources regex.txt
         val regexFile = RegexUtils::class.java.getResourceAsStream("/regex.txt")
