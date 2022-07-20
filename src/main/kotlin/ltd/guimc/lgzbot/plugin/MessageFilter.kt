@@ -21,17 +21,14 @@ object MessageFilter {
     var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
 
     suspend fun filter(e: GroupMessageEvent) {
+        // 检查权限
         if (e.sender.isOwner() || !e.group.botAsMember.isOperator() ||
             e.sender.permission == e.group.botPermission) return
 
         if (RegexUtils.matchRegex(Data.regex, e.message.content) && e.message.content.length >= 35) {
             e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
-            try {
-                e.message.recall()
-                e.sender.mute(Config.muteTime)
-            } catch (f: Exception) {
-                // logger.warning("无法禁言 ${e.sender.id}, 可能是权限不足")
-            }
+            e.message.recall()
+            e.sender.mute(Config.muteTime)
         }
 
         if (memberVl[e.sender.id] == null) {
@@ -81,15 +78,11 @@ object MessageFilter {
             e.group.sendMessage(At(e.sender) + PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
             e.sender.mute(Config.muteTime)
             e.message.recall()
-            historyMessage[e.sender.id]!!.forEach {
-                try {
-                    it.recall()
-                    sleep(50)
-                } catch (f: Exception) {
-                    // logger.warning("无法撤回 ${e.sender.id} 的消息")
-                }
+            historyMessage[e.sender.id]?.forEach {
+                it.recall()
+                sleep(50)
             }
-            historyMessage[e.sender.id]!!.clear()
+            historyMessage[e.sender.id]?.clear()
             memberVl[e.sender.id] = .0
         }
 
