@@ -20,6 +20,8 @@ object MessageFilter {
     var memberVl = mutableMapOf<Long, Double>()
     var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
 
+    var messagesHandled = 0
+
     suspend fun filter(e: GroupMessageEvent) {
         // 检查权限
         if (e.sender.isOwner() || !e.group.botAsMember.isOperator() ||
@@ -29,6 +31,7 @@ object MessageFilter {
             e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
             e.message.recall()
             e.sender.mute(Config.muteTime)
+            messagesHandled++
         }
 
         if (memberVl[e.sender.id] == null) {
@@ -84,6 +87,7 @@ object MessageFilter {
             }
             historyMessage[e.sender.id]?.clear()
             memberVl[e.sender.id] = .0
+            messagesHandled++
         }
 
         // VL小于0时, 将其置为0
