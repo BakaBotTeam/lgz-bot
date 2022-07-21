@@ -25,13 +25,13 @@ object LGZBotCommand: CompositeCommand (
     @SubCommand("atspam")
     @Description("F**k You!")
     suspend fun CommandSender.atspam(target: Member, times: Int, sleepTime: Double) {
-        if (sleepTime == .0) {
-            sendMessage("你不能这么干！")
-            return
+        var sleepTime1 = sleepTime
+        if (sleepTime <= .0) {
+            sleepTime1 = 1.0
         }
         sendMessage("Ok! Processing...")
         repeat(times) {
-            delay(round(sleepTime * 1000L).toLong())
+            delay(round(sleepTime1 * 1000L).toLong())
             var lastMesg = sendMessage(At(target) + PlainText(RandomUtils.randomText(6)))
             // delay(100L)
             lastMesg?.recall()
