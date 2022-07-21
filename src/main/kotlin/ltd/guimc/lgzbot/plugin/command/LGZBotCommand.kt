@@ -9,6 +9,7 @@ import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.PlainText
 import java.util.*
+import kotlin.math.round
 
 object LGZBotCommand: CompositeCommand (
     owner = PluginMain,
@@ -23,10 +24,14 @@ object LGZBotCommand: CompositeCommand (
 
     @SubCommand("atspam")
     @Description("F**k You!")
-    suspend fun CommandSender.atspam(target: Member, times: Int, sleepTime: Int) {
+    suspend fun CommandSender.atspam(target: Member, times: Int, sleepTime: Double) {
+        if (sleepTime == .0) {
+            sendMessage("你不能这么干！")
+            return
+        }
         sendMessage("Ok! Processing...")
         repeat(times) {
-            delay(sleepTime * 1000L)
+            delay(round(sleepTime * 1000L).toLong())
             var lastMesg = sendMessage(At(target) + PlainText(RandomUtils.randomText(6)))
             // delay(100L)
             lastMesg?.recall()
