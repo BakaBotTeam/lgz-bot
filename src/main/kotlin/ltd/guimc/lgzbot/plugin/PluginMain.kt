@@ -1,6 +1,8 @@
 package ltd.guimc.lgzbot.plugin
 
 import ltd.guimc.lgzbot.plugin.command.LGZBotCommand
+import ltd.guimc.lgzbot.plugin.files.Config
+import ltd.guimc.lgzbot.plugin.files.Data
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
@@ -22,7 +24,14 @@ object PluginMain : KotlinPlugin(
         logger.info("$name v$version Loading")
         registerCommands()
         GlobalEventChannel.subscribeAlways<GroupMessageEvent> { event -> MessageFilter.filter(event) }
+        Config.reload()
+        Data.reload()
         logger.info("$name v$version Loaded")
+    }
+
+    override fun onDisable() {
+        Config.save()
+        Data.save()
     }
 
     private fun registerCommands() = CommandManager.run {
