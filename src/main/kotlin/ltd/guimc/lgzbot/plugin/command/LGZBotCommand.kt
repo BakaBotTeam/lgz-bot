@@ -27,7 +27,9 @@ object LGZBotCommand: CompositeCommand (
         sendMessage("Ok! Processing...")
         repeat(times) {
             delay(sleepTime * 1000L)
-            sendMessage(At(target) + PlainText(RandomUtils.randomText(6)))
+            var lastMesg = sendMessage(At(target) + PlainText(RandomUtils.randomText(6)))
+            delay(100L)
+            lastMesg?.recall()
         }
     }
 }
