@@ -5,6 +5,8 @@ import ltd.guimc.lgzbot.plugin.PluginMain
 import ltd.guimc.lgzbot.plugin.utils.RandomUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
+import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
+import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.PlainText
@@ -26,6 +28,10 @@ object LGZBotCommand: CompositeCommand (
     @Description("F**k You!")
     suspend fun CommandSender.atspam(target: Member, times: Int, sleepTime: Double) {
         var sleepTime1 = sleepTime
+        if (target.permission.level > 0) {
+            sendMessage("你不能这么做")
+            return
+        }
         if (sleepTime <= .0) {
             sleepTime1 = 1.0
         }
