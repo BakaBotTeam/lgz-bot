@@ -1,6 +1,8 @@
 package ltd.guimc.lgzbot.plugin
 
+import ltd.guimc.lgzbot.plugin.command.HypixelCommand
 import ltd.guimc.lgzbot.plugin.command.LGZBotCommand
+import ltd.guimc.lgzbot.plugin.command.MusicCommand
 import ltd.guimc.lgzbot.plugin.files.Config
 import ltd.guimc.lgzbot.plugin.files.Data
 import net.mamoe.mirai.console.command.CommandManager
@@ -36,5 +38,7 @@ object PluginMain : KotlinPlugin(
 
     private fun registerCommands() = CommandManager.run {
         registerCommand(LGZBotCommand)
+        registerCommand(MusicCommand)
+        registerCommand(HypixelCommand)
     }
 }

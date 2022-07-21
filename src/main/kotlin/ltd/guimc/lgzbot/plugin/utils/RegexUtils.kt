@@ -32,4 +32,9 @@ object RegexUtils {
         }
         return false
     }
+
+    // 匹配正则表达式 返回匹配结果
+    fun matchRegex(regex: String, message: String): String? {
+        return Regex(regex).find(message)?.groups?.get(0)?.value
+    }
 }
