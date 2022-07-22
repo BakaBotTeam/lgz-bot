@@ -31,6 +31,7 @@ object MessageFilter {
             e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
             e.message.recall()
             e.sender.mute(Config.muteTime)
+            e.cancel()
             messagesHandled++
         }
 

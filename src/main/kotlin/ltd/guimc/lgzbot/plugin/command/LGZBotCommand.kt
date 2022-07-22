@@ -2,11 +2,14 @@ package ltd.guimc.lgzbot.plugin.command
 
 import kotlinx.coroutines.delay
 import ltd.guimc.lgzbot.plugin.PluginMain
+import ltd.guimc.lgzbot.plugin.files.Config
 import ltd.guimc.lgzbot.plugin.utils.RandomUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
+import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
+import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.PlainText

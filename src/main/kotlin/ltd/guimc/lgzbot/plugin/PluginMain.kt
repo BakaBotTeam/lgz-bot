@@ -5,6 +5,7 @@ import ltd.guimc.lgzbot.plugin.command.*
 import ltd.guimc.lgzbot.plugin.files.Config
 import ltd.guimc.lgzbot.plugin.files.Data
 import net.mamoe.mirai.console.command.CommandManager
+import net.mamoe.mirai.console.events.ConsoleEvent
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService
@@ -14,6 +15,7 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
+import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.data.At
@@ -59,7 +61,8 @@ object PluginMain : KotlinPlugin(
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
-        subscribeAlways<GroupMessageEvent> { event -> MessageFilter.filter(event) }
+        subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
+
         subscribeAlways<MemberMuteEvent> {
             if (!it.group.permitteeId.hasPermission(notMuteMessagePush)) {
                 it.group.sendMessage(
