@@ -10,6 +10,4 @@ object Config : AutoSavePluginConfig("config") {
     var vlPunish = 100.0
 
     var historyMessageLimit = 8
-
-    var hypixelApikey: String? = null
 }
