@@ -4,12 +4,13 @@ plugins {
     kotlin("plugin.serialization") version kotlinVersion
 
     id("net.mamoe.mirai-console") version "2.12.0"
+    id("com.github.johnrengelman.shadow") version "1.2.3"
 }
 
 dependencies {
-    api("com.github.promeg:tinypinyin:2.0.3")
-    api("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
-    api("org.json:json:20220320")
+    implementation("com.github.promeg:tinypinyin:2.0.3")
+    implementation("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
+    implementation("org.json:json:20220320")
 }
 
 version = "0.1.2"

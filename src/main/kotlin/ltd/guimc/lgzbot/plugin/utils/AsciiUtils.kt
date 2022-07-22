@@ -30,9 +30,6 @@ object AsciiUtil {
      * @return DBC case
      */
     fun sbc2dbcCase(src: String): String {
-        if (src == null) {
-            throw NullPointerException("src is null")
-        }
         val c = src.toCharArray()
         for (i in c.indices) {
             c[i] = sbc2dbc(c[i])
