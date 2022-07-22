@@ -10,7 +10,6 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
-import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.GroupMessageEvent
 
@@ -44,14 +43,6 @@ object PluginMain : KotlinPlugin(
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
-        subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) {
-            if (this.group in AntiMessageFlood.floodGroupList) {
-                this.cancel()
-            } else {
-                AntiMessageFlood.floodChecker(this)
-            }
-        }
-
         subscribeAlways<GroupMessageEvent> { event -> MessageFilter.filter(event) }
     }
 }
