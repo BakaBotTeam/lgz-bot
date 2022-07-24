@@ -84,15 +84,18 @@ object PluginMain : KotlinPlugin(
                 )
             }
         }
-        subscribeAlways<GroupTalkativeChangeEvent> {
-            if (!it.group.permitteeId.hasPermission(notTalkativeMessagePush)) {
-                it.group.sendMessage(
-                    PlainText("!!! ") +
-                    At(it.now) +
-                    PlainText(" 成为了新的龙王 !!!")
-                )
-            }
-        }
+
+        // Its not working
+
+        // subscribeAlways<GroupTalkativeChangeEvent> {
+        //     if (!it.group.permitteeId.hasPermission(notTalkativeMessagePush)) {
+        //         it.group.sendMessage(
+        //             PlainText("!!! ") +
+        //             At(it.now) +
+        //             PlainText(" 成为了新的龙王 !!!")
+        //         )
+        //     }
+        // }
         subscribeAlways<BotInvitedJoinGroupRequestEvent> { it.accept() }
         subscribeAlways<NewFriendRequestEvent> { it.accept() }
     }
