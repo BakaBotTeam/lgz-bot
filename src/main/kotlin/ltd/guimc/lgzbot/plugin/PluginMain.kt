@@ -58,6 +58,7 @@ object PluginMain : KotlinPlugin(
     private fun registerCommands() = CommandManager.run {
         registerCommand(LGZBotCommand)
         registerCommand(MusicCommand)
+        registerCommand(ACGCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
