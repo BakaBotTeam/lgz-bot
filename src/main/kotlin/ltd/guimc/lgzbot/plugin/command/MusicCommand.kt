@@ -64,7 +64,7 @@ object MusicCommand: CompositeCommand(
     suspend fun CommandSender.lgzbot_music_zh(name: String) {
         try {
             if (isConsole()) {
-                logger.warning("请在群里使用")
+                logger.warning("请在聊天环境下使用")
                 return
             }
             val url = "http://cloud-music.pl-fe.cn/search?keywords=${URLEncoder.encode(name.replace("+", " "), "utf-8")}"
@@ -116,7 +116,7 @@ object MusicCommand: CompositeCommand(
     suspend fun CommandSender.lgzbot_music_s(name: String) {
         try {
             if (isConsole()) {
-                logger.warning("请在群里使用")
+                logger.warning("请在聊天环境下使用")
                 return
             }
             logger.info(Base64Utils.decode(name).toString(Charsets.UTF_8))
