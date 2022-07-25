@@ -67,14 +67,7 @@ object MusicCommand: CompositeCommand(
                 logger.warning("请在群里使用")
                 return
             }
-            val url = "http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s=${
-                URLEncoder.encode(
-                    name.replace(
-                        "+",
-                        " "
-                    ), "utf-8"
-                )
-            }&type=1&offset=0&total=true&limit=20"
+            val url = "http://cloud-music.pl-fe.cn/search?keywords=${URLEncoder.encode(name.replace("+", " "), "utf-8")}"
             // Get json
             val json = getJson(url)
             // Get song id
