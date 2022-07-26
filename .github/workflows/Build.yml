@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Java setup
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 11
+          check-latest: true
+      - uses: burrunan/gradle-cache-action@v1
+        name: BuildPlugin
+        with:
+          job-id: jdk8
+          arguments: buildPlugin --no-build-cache
+          gradle-version: wrapper
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: lgz-bot
+          path: build/mirai/lgz-bot-0.1.2.mirai2.jar

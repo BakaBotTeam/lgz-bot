@@ -82,10 +82,12 @@ object MessageFilter {
             e.group.sendMessage(At(e.sender) + PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
             e.sender.mute(Config.muteTime)
             e.message.recall()
-            historyMessage[e.sender.id]?.forEach {
-                it.recall()
-                sleep(50)
-            }
+            try {
+                historyMessage[e.sender.id]?.forEach {
+                    it.recall()
+                    sleep(50)
+                }
+            } catch (e: Exception) {}
             historyMessage[e.sender.id]?.clear()
             memberVl[e.sender.id] = .0
             messagesHandled++
