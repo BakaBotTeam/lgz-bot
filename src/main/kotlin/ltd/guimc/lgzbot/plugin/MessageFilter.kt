@@ -5,6 +5,7 @@ import ltd.guimc.lgzbot.plugin.files.Config
 import ltd.guimc.lgzbot.plugin.files.Data
 import ltd.guimc.lgzbot.plugin.utils.RegexUtils
 import ltd.guimc.lgzbot.plugin.utils.TextUtils.findSimilarity
+import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.contact.isOwner
 import net.mamoe.mirai.event.events.GroupMessageEvent
@@ -21,6 +22,7 @@ object MessageFilter {
     var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
 
     var messagesHandled = 0
+    var riskList = ArrayList<Member>()
 
     suspend fun filter(e: GroupMessageEvent) {
         // 检查权限
@@ -37,6 +39,7 @@ object MessageFilter {
 
         if (memberVl[e.sender.id] == null) {
             clearVl(e.sender.id)
+            riskList.remove(e.sender)
         }
 
         if (historyMessage[e.sender.id] == null) {
@@ -82,6 +85,7 @@ object MessageFilter {
             e.group.sendMessage(At(e.sender) + PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
             e.sender.mute(Config.muteTime)
             e.message.recall()
+            riskList.add(e.sender)
             try {
                 historyMessage[e.sender.id]?.forEach {
                     it.recall()

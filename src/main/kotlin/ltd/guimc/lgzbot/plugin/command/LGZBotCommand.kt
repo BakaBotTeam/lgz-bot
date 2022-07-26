@@ -27,23 +27,23 @@ object LGZBotCommand: CompositeCommand (
         sendMessage("Pong!")
     }
 
-    // @SubCommand("atspam")
-    // @Description("F**k You!")
-    // suspend fun CommandSender.atspam(target: Member, times: Int, sleepTime: Double) {
-    //     var sleepTime1 = sleepTime
-    //     if (target.permission.level > 0) {
-    //         sendMessage("你不能这么做")
-    //         return
-    //     }
-    //     if (sleepTime <= .0) {
-    //         sleepTime1 = 1.0
-    //     }
-    //     sendMessage("Ok! Processing...")
-    //     repeat(times) {
-    //         delay(round(sleepTime1 * 1000L).toLong())
-    //         var lastMesg = sendMessage(At(target) + PlainText(RandomUtils.randomText(6)))
-    //         // delay(100L)
-    //         lastMesg?.recall()
-    //     }
-    // }
+//     @SubCommand("atspam")
+//     @Description("F**k You!")
+//     suspend fun CommandSender.atspam(target: Member, times: Int, sleepTime: Double) {
+//         var sleepTime1 = sleepTime
+//         if (target.permission.level > 0) {
+//             sendMessage("你不能这么做")
+//             return
+//         }
+//         if (sleepTime <= .0) {
+//             sleepTime1 = 1.0
+//         }
+//         sendMessage("Ok! Processing...")
+//         repeat(times) {
+//             delay(round(sleepTime1 * 1000L).toLong())
+//             var lastMesg = sendMessage(At(target) + PlainText(RandomUtils.randomText(6)))
+//             // delay(100L)
+//             lastMesg?.recall()
+//         }
+//     }
 }
