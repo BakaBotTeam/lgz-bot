@@ -25,14 +25,19 @@ object MessageFilter {
     var riskList = ArrayList<Member>()
 
     suspend fun filter(e: GroupMessageEvent) {
-        // 检查权限
-        if (e.sender.isOwner() || !e.group.botAsMember.isOperator() ||
-            e.sender.permission == e.group.botPermission) return
+//        // 检查权限
+//        if (e.sender.isOwner() || !e.group.botAsMember.isOperator() ||
+//            e.sender.permission == e.group.botPermission) return
 
         if (RegexUtils.matchRegex(Data.regex, e.message.content) && e.message.content.length >= 35) {
-            e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
-            e.message.recall()
-            e.sender.mute(Config.muteTime)
+            try {
+                e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
+                e.message.recall()
+                e.sender.mute(Config.muteTime)
+            }
+            catch (exception: Exception) {
+            }
+            riskList.add(e.sender)
             e.cancel()
             messagesHandled++
         }
