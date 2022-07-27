@@ -9,9 +9,10 @@ object RegexUtils {
         // Read from resources regex.txt
         val regexFile = RegexUtils::class.java.getResourceAsStream("/regex.txt")
         val regexList = mutableListOf<Regex>()
-        regexFile?.bufferedReader()?.use {
-            it.lines().forEach {
-                regexList.add(Regex(PinyinUtils.convertToPinyin(it)))
+        regexFile?.bufferedReader()?.use { reader ->
+            reader.lines().forEach {
+                // regexList.add(Regex(PinyinUtils.convertToPinyin(it)))
+                regexList.add(Regex(it))
             }
         }
 
@@ -21,7 +22,8 @@ object RegexUtils {
     // 匹配正则表达式列表 返回是否匹配
     fun matchRegex(regexList: Array<Regex>, message: String): Boolean {
         for (regex in regexList) {
-            val unPeekText = PinyinUtils.convertToPinyin(sbc2dbcCase(message)).lowercase()
+            // val unPeekText = PinyinUtils.convertToPinyin(sbc2dbcCase(message)).lowercase()
+            val unPeekText = sbc2dbcCase(message).lowercase()
                 .replace(" ", "")
                 .replace(",", "")
                 .replace(".", "")
