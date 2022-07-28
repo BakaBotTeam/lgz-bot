@@ -3,9 +3,8 @@ package ltd.guimc.lgzbot.plugin
 
 import ltd.guimc.lgzbot.plugin.command.*
 import ltd.guimc.lgzbot.plugin.files.Config
-import ltd.guimc.lgzbot.plugin.files.Data
+import ltd.guimc.lgzbot.plugin.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.CommandManager
-import net.mamoe.mirai.console.events.ConsoleEvent
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService
@@ -33,26 +32,29 @@ object PluginMain : KotlinPlugin(
 ) {
     lateinit var notMuteMessagePush: Permission
     lateinit var notTalkativeMessagePush: Permission
+    lateinit var isSuperUser: Permission
+    lateinit var adRegex: Array<Regex>
 
 
     override fun onEnable() {
         logger.info("$name v$version Loading")
+        adRegex = getDefaultRegex()
         registerPerms()
         registerCommands()
         registerEvents()
         Config.reload()
-        Data.reload()
         logger.info("$name v$version Loaded")
     }
 
     override fun onDisable() {
         Config.save()
-        Data.save()
     }
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
         notMuteMessagePush = register(PermissionId("lgzbot.event.notpush", "mute"), "不推送禁言权限 (仅适用于群聊)")
         notTalkativeMessagePush = register(PermissionId("lgzbot.event.notpush", "talkative"), "不推送新龙王权限 (仅适用于群聊)")
+        isSuperUser = register(PermissionId("lgz.plugin", "admin"), "是否为超级用户")
+
     }
 
     private fun registerCommands() = CommandManager.run {

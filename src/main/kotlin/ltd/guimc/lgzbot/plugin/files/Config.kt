@@ -1,11 +1,12 @@
 package ltd.guimc.lgzbot.plugin.files
 
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.value
 
 object Config : AutoSavePluginConfig("config") {
-    var muteTime = 600
+    var muteTime by value(600)
 
-    var vlPunish = 100.0
+    var vlPunish by value(100.0)
 
-    var historyMessageLimit = 8
+    var historyMessageLimit by value(8)
 }

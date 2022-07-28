@@ -1,10 +1,15 @@
 package ltd.guimc.lgzbot.plugin
 
+import ltd.guimc.lgzbot.plugin.PluginMain.adRegex
+import ltd.guimc.lgzbot.plugin.PluginMain.isSuperUser
 import ltd.guimc.lgzbot.plugin.PluginMain.logger
 import ltd.guimc.lgzbot.plugin.files.Config
-import ltd.guimc.lgzbot.plugin.files.Data
+import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getForwardMessage
+import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.plugin.utils.RegexUtils
 import ltd.guimc.lgzbot.plugin.utils.TextUtils.findSimilarity
+import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
+import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.contact.isOwner
@@ -25,15 +30,18 @@ object MessageFilter {
     var riskList = ArrayList<Member>()
 
     suspend fun filter(e: GroupMessageEvent) {
-//        // 检查权限
-//        if (e.sender.isOwner() || !e.group.botAsMember.isOperator() ||
-//            e.sender.permission == e.group.botPermission) return
+        // 检查权限
+        if (e.sender.isOwner() || !e.group.botAsMember.isOperator() ||
+            e.sender.permission == e.group.botPermission) return
 
-        if (RegexUtils.matchRegex(Data.regex, e.message.content) && e.message.content.length >= 35) {
+        val textMessage = e.message.getPlainText()
+        if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= 35) {
             try {
                 e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
                 e.message.recall()
-                e.sender.mute(Config.muteTime)
+                if (!e.sender.permitteeId.hasPermission(isSuperUser)) {
+                    e.sender.mute(Config.muteTime)
+                }
             }
             catch (exception: Exception) {
             }
@@ -83,6 +91,23 @@ object MessageFilter {
                 addVl(e.sender.id, -20.0)
             }
             repeaterFucker[e.sender.id] = e.message.content
+        }
+
+        // 过滤合并转发消息广告
+        var forwardText = e.message.getForwardMessage().getPlainText()
+        if (RegexUtils.matchRegex(adRegex, forwardText) && forwardText.length >= 35) {
+            try {
+                e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
+                e.message.recall()
+                if (!e.sender.permitteeId.hasPermission(isSuperUser)) {
+                    e.sender.mute(Config.muteTime)
+                }
+            }
+            catch (exception: Exception) {
+            }
+            riskList.add(e.sender)
+            e.cancel()
+            messagesHandled++
         }
 
         // VL处罚
