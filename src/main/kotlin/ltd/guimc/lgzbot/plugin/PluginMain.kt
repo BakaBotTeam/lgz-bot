@@ -70,37 +70,30 @@ object PluginMain : KotlinPlugin(
 
         subscribeAlways<MemberMuteEvent> {
             if (!it.group.permitteeId.hasPermission(notMuteMessagePush)) {
-                it.group.sendMessage(
-                    PlainText("[禁言推送] ") +
-                    At(it.operatorOrBot) +
-                    PlainText(" 禁言了 ") +
-                    At(it.member) +
-                    PlainText(" ,时长: ${round(it.durationSeconds / 60.0)} 分钟.")
-                )
+                if (it.operator != null) {
+                    it.group.sendMessage(
+                        PlainText("[禁言推送] ") +
+                            At(it.operatorOrBot) +
+                            PlainText(" 禁言了 ") +
+                            At(it.member) +
+                            PlainText(" ,时长: ${round(it.durationSeconds / 60.0)} 分钟.")
+                    )
+                }
             }
         }
         subscribeAlways<MemberUnmuteEvent> {
             if (!it.group.permitteeId.hasPermission(notMuteMessagePush)) {
-                it.group.sendMessage(
-                    PlainText("[禁言推送] ") +
-                    At(it.operatorOrBot) +
-                    PlainText(" 解禁了 ") +
-                    At(it.member)
-                )
+                if (it.operator != null) {
+                    it.group.sendMessage(
+                        PlainText("[禁言推送] ") +
+                            At(it.operatorOrBot) +
+                            PlainText(" 解禁了 ") +
+                            At(it.member)
+                    )
+                }
             }
         }
 
-        // Its not working
-
-        // subscribeAlways<GroupTalkativeChangeEvent> {
-        //     if (!it.group.permitteeId.hasPermission(notTalkativeMessagePush)) {
-        //         it.group.sendMessage(
-        //             PlainText("!!! ") +
-        //             At(it.now) +
-        //             PlainText(" 成为了新的龙王 !!!")
-        //         )
-        //     }
-        // }
         subscribeAlways<BotInvitedJoinGroupRequestEvent> { it.accept() }
         subscribeAlways<NewFriendRequestEvent> { it.accept() }
     }
