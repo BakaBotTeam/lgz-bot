@@ -8,6 +8,7 @@ import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getForwardMessage
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.plugin.utils.RegexUtils
 import ltd.guimc.lgzbot.plugin.utils.TextUtils.findSimilarity
+import ltd.guimc.lgzbot.plugin.utils.TextUtils.removeNonVisible
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.Member
@@ -35,6 +36,7 @@ object MessageFilter {
             e.sender.permission == e.group.botPermission) return
 
         val textMessage = e.message.getPlainText()
+                                .removeNonVisible()
         if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= 35) {
             try {
                 e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
@@ -93,7 +95,9 @@ object MessageFilter {
         }
 
         // 过滤合并转发消息广告
-        val forwardText = e.message.getForwardMessage().getPlainText()
+        val forwardText = e.message.getForwardMessage()
+                                .getPlainText()
+                                .removeNonVisible()
         if (RegexUtils.matchRegex(adRegex, forwardText) && forwardText.length >= 35) {
             try {
                 e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
