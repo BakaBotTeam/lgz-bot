@@ -20,13 +20,13 @@ import java.lang.Thread.sleep
 import java.time.Instant
 
 object MessageFilter {
-    var spammerFucker = mutableMapOf<Long, Int>()
-    var spammerFucker2 = mutableMapOf<Long, Long>()
-    var repeaterFucker = mutableMapOf<Long, String>()
-    var memberVl = mutableMapOf<Long, Double>()
-    var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
+    private var spammerFucker = mutableMapOf<Long, Int>()
+    private var spammerFucker2 = mutableMapOf<Long, Long>()
+    private var repeaterFucker = mutableMapOf<Long, String>()
+    private var memberVl = mutableMapOf<Long, Double>()
+    private var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
 
-    var messagesHandled = 0
+    private var messagesHandled = 0
     var riskList = ArrayList<Member>()
 
     suspend fun filter(e: GroupMessageEvent) {
@@ -43,8 +43,7 @@ object MessageFilter {
                     e.sender.mute(Config.muteTime)
                 }
             }
-            catch (exception: Exception) {
-            }
+            catch (_: Exception) {}
             riskList.add(e.sender)
             e.cancel()
             messagesHandled++
@@ -58,10 +57,10 @@ object MessageFilter {
         if (historyMessage[e.sender.id] == null) {
             historyMessage[e.sender.id] = mutableListOf()
         } else if (historyMessage[e.sender.id]!!.size >= Config.historyMessageLimit) {
-            historyMessage[e.sender.id]!!.removeAt(0)
+            historyMessage[e.sender.id]?.removeAt(0)
         }
 
-        historyMessage[e.sender.id]!!.add(e.message)
+        historyMessage[e.sender.id]?.add(e.message)
 
         // Anti Spammers
         val timestamp = Instant.now()
@@ -94,7 +93,7 @@ object MessageFilter {
         }
 
         // 过滤合并转发消息广告
-        var forwardText = e.message.getForwardMessage().getPlainText()
+        val forwardText = e.message.getForwardMessage().getPlainText()
         if (RegexUtils.matchRegex(adRegex, forwardText) && forwardText.length >= 35) {
             try {
                 e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
@@ -103,8 +102,7 @@ object MessageFilter {
                     e.sender.mute(Config.muteTime)
                 }
             }
-            catch (exception: Exception) {
-            }
+            catch (_: Exception) {}
             riskList.add(e.sender)
             e.cancel()
             messagesHandled++
@@ -112,7 +110,7 @@ object MessageFilter {
 
         // VL处罚
         if (memberVl[e.sender.id]!! >= Config.vlPunish) {
-            e.group.sendMessage(At(e.sender) + PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
+            e.group.sendMessage(At(e.sender) + PlainText("你的VL已经超过了${Config.vlPunish}了? 你的嘴现在被我黏上了~~"))
             e.sender.mute(Config.muteTime)
             e.message.recall()
             riskList.add(e.sender)
@@ -121,7 +119,7 @@ object MessageFilter {
                     it.recall()
                     sleep(50)
                 }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
             historyMessage[e.sender.id]?.clear()
             memberVl[e.sender.id] = .0
             messagesHandled++
@@ -133,18 +131,18 @@ object MessageFilter {
         }
     }
 
-    fun addVl(id: Long, vl: Double) {
+    private fun addVl(id: Long, vl: Double) {
         if (memberVl[id] == null) {
             memberVl[id] = .0
         }
-        var tempValue = memberVl[id]!!
+        val tempValue = memberVl[id]!!
         memberVl[id] = memberVl[id]!! + vl
         if (memberVl[id]!! >= 0.0 || tempValue > 0.0) {
             logger.info("$id 的VL增加了 $vl, 现在是 ${memberVl[id]}")
         }
     }
 
-    fun clearVl(id: Long) {
+    private fun clearVl(id: Long) {
         memberVl[id] = .0
         logger.info("$id 的VL清零了")
     }

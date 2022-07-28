@@ -1,5 +1,7 @@
 package ltd.guimc.lgzbot.plugin.command
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ltd.guimc.lgzbot.plugin.PluginMain
 import ltd.guimc.lgzbot.plugin.PluginMain.logger
 import ltd.guimc.lgzbot.plugin.utils.Base64Utils
@@ -9,7 +11,6 @@ import ltd.guimc.lgzbot.plugin.utils.RegexUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.isConsole
-import net.mamoe.mirai.event.nextEvent
 import net.mamoe.mirai.message.data.MusicKind
 import net.mamoe.mirai.message.data.MusicShare
 import net.mamoe.mirai.message.data.PlainText
@@ -29,7 +30,11 @@ object MusicCommand: CompositeCommand(
                 logger.warning("请在群里使用")
                 return
             }
-            val url = "http://cloud-music.pl-fe.cn/search?keywords=${URLEncoder.encode(name.replace("+", " "), "utf-8")}"
+            val url = "http://cloud-music.pl-fe.cn/search?keywords=${
+                withContext(Dispatchers.IO) {
+                    URLEncoder.encode(name.replace("+", " "), "utf-8")
+                }
+            }"
             // Get json
             val json = getJson(url)
             // Get song id
@@ -67,7 +72,11 @@ object MusicCommand: CompositeCommand(
                 logger.warning("请在聊天环境下使用")
                 return
             }
-            val url = "http://cloud-music.pl-fe.cn/search?keywords=${URLEncoder.encode(name.replace("+", " "), "utf-8")}"
+            val url = "http://cloud-music.pl-fe.cn/search?keywords=${
+                withContext(Dispatchers.IO) {
+                    URLEncoder.encode(name.replace("+", " "), "utf-8")
+                }
+            }"
             // Get json
             val json = getJson(url)
             // Get song id
@@ -96,7 +105,7 @@ object MusicCommand: CompositeCommand(
                 MusicKind.KuwoMusic -> "kuwo"
                 else -> throw Exception("不支持的音乐类型")
             }
-            var shortjson = JSONObject()
+            val shortjson = JSONObject()
                 .put("type", musictype)
                 .put("title", musics.title)
                 .put("summary", musics.summary)

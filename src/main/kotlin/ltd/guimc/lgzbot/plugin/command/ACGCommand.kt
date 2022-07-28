@@ -2,14 +2,10 @@ package ltd.guimc.lgzbot.plugin.command
 
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.plugin.PluginMain
-import ltd.guimc.lgzbot.plugin.PluginMain.logger
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
-import net.mamoe.mirai.contact.Contact
-import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.isUploaded
-import net.mamoe.mirai.utils.ExternalResource
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
@@ -37,12 +33,12 @@ object ACGCommand: SimpleCommand (
                 if (inputstream != null) {
                     val image = subject!!.uploadImage(inputstream.toExternalResource())
                     if (image.isUploaded(bot!!)) {
-                        subject!!.sendMessage(image)
+                        subject?.sendMessage(image)
                         return@launch
                     }
                 }
             }
         }
-        subject!!.sendMessage("Oops, something went wrong.")
+        subject?.sendMessage("Oops, something went wrong.")
     }
 }
