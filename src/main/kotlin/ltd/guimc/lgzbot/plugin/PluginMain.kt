@@ -62,6 +62,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(MusicCommand)
         registerCommand(ACGCommand)
         registerCommand(RiskCommand)
+        registerCommand(HttpCatCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
