@@ -2,6 +2,7 @@ package ltd.guimc.lgzbot.plugin
 
 
 import ltd.guimc.lgzbot.plugin.command.*
+import ltd.guimc.lgzbot.plugin.command.github.*
 import ltd.guimc.lgzbot.plugin.files.Config
 import ltd.guimc.lgzbot.plugin.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.CommandManager
@@ -19,6 +20,7 @@ import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.PlainText
+import java.util.*
 import kotlin.math.round
 
 object PluginMain : KotlinPlugin(
@@ -63,6 +65,10 @@ object PluginMain : KotlinPlugin(
         registerCommand(ACGCommand)
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
+        registerCommand(RepoCommand)
+    }
+
+    private fun registerSchedule() {
     }
 
     private fun registerEvents() = GlobalEventChannel.run {

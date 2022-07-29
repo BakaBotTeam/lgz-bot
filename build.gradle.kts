@@ -12,6 +12,7 @@ dependencies {
     implementation("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
     implementation("org.json:json:20220320")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.kohsuke:github-api:1.302")
 }
 
 version = "0.1.2"

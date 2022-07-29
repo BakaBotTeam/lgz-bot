@@ -37,6 +37,6 @@ object TextUtils {
 
     // 去除不可见字符
     fun String.removeNonVisible(): String {
-        return this.replace("\\p{C}", "")
+        return this.replace("\\p{C}".toRegex(), "")
     }
 }
