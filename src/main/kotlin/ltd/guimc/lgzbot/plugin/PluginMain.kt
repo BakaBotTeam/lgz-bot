@@ -2,14 +2,10 @@ package ltd.guimc.lgzbot.plugin
 
 
 import ltd.guimc.lgzbot.plugin.command.*
-import ltd.guimc.lgzbot.plugin.command.github.*
 import ltd.guimc.lgzbot.plugin.files.Config
-import ltd.guimc.lgzbot.plugin.files.Data
-import ltd.guimc.lgzbot.plugin.schedule.GithubSchedule
 import ltd.guimc.lgzbot.plugin.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.BuiltInCommands
 import net.mamoe.mirai.console.command.CommandManager
-import net.mamoe.mirai.console.command.getGroupOrNull
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
@@ -27,7 +23,6 @@ import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.ForwardMessage
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.PlainText
-import java.util.*
 import kotlin.math.round
 
 object PluginMain : KotlinPlugin(
@@ -52,15 +47,12 @@ object PluginMain : KotlinPlugin(
         registerPerms()
         registerCommands()
         registerEvents()
-        registerSchedule()
         Config.reload()
-        Data.reload()
         logger.info("$name v$version Loaded")
     }
 
     override fun onDisable() {
         Config.save()
-        Data.save()
     }
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
@@ -76,13 +68,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(ACGCommand)
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
-        registerCommand(RepoCommand)
         registerCommand(HelpCommand)
-    }
-
-    private fun registerSchedule() {
-        val timer = Timer()
-        GithubSchedule.registerSchedule(timer)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
