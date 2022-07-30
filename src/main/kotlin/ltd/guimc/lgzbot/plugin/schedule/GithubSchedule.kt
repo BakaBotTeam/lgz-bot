@@ -1,6 +1,7 @@
 package ltd.guimc.lgzbot.plugin.schedule
 
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import ltd.guimc.lgzbot.plugin.PluginMain.logger
@@ -12,20 +13,21 @@ import net.mamoe.mirai.message.data.PlainText
 import java.util.*
 
 object GithubSchedule {
-    @OptIn(DelicateCoroutinesApi::class)
-    fun registerSchedule() {
-        Timer().schedule(
+    @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
+    fun registerSchedule(timer: Timer) {
+        timer.schedule(
             object: TimerTask() {
                 override fun run() {
-                    GlobalScope.async {
-                        schedule()
-                    }.start()
+                    // Run a suspend function
+                    val synctask = GlobalScope.async { schedule() }
+                    synctask.start()
+                    synctask.getCompleted()
                 }
-        }, 30000, 60000)
+        }, 0, 30000)
     }
 
     private suspend fun schedule() {
-        println("Run Github Schedule")
+        logger.info("Run Github Schedule")
         for (i in repoListenList) {
             val commit = getRepo(i.key).getLatestCommit()
             if (commit.shA1 != repoLastCommit[i.key]) {

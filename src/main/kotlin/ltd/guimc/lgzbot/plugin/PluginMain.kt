@@ -52,6 +52,7 @@ object PluginMain : KotlinPlugin(
         registerPerms()
         registerCommands()
         registerEvents()
+        registerSchedule()
         Config.reload()
         Data.reload()
         logger.info("$name v$version Loaded")
@@ -80,7 +81,8 @@ object PluginMain : KotlinPlugin(
     }
 
     private fun registerSchedule() {
-        GithubSchedule.registerSchedule()
+        val timer = Timer()
+        GithubSchedule.registerSchedule(timer)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
