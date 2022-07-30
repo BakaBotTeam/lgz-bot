@@ -37,9 +37,10 @@ object MessageFilter {
 
         val textMessage = e.message.getPlainText()
                                 .removeNonVisible()
-        if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= 35) {
+        val stringLength = if (e.sender in riskList) 10 else 35
+        if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) {
             try {
-                e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
+                e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~\n您已被添加到风险管控名单 并且Vl设置为99"))
                 e.message.recall()
                 if (!e.sender.permitteeId.hasPermission(isSuperUser)) {
                     e.sender.mute(Config.muteTime)
@@ -47,6 +48,7 @@ object MessageFilter {
             }
             catch (_: Exception) {}
             riskList.add(e.sender)
+            setVl(e.sender.id, 99.0)
             e.cancel()
             messagesHandled++
         }
@@ -54,6 +56,14 @@ object MessageFilter {
         if (memberVl[e.sender.id] == null) {
             clearVl(e.sender.id)
             riskList.remove(e.sender)
+        }
+
+        if (memberVl[e.sender.id]!! <= 25 && e.sender in riskList) {
+            riskList.remove(e.sender)
+            e.group.sendMessage(
+                At(e.sender)+
+                    PlainText("你已经被移出了风险管控，请不要再发送广告了~")
+            )
         }
 
         if (historyMessage[e.sender.id] == null) {
@@ -98,16 +108,15 @@ object MessageFilter {
         val forwardText = e.message.getForwardMessage()
                                 .getPlainText()
                                 .removeNonVisible()
-        if (RegexUtils.matchRegex(adRegex, forwardText) && forwardText.length >= 35) {
+        if (RegexUtils.matchRegex(adRegex, forwardText)) {
             try {
-                e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~"))
+                e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~\n" +
+                    "您已被添加到风险管控名单 并且Vl设置为99"))
                 e.message.recall()
-                if (!e.sender.permitteeId.hasPermission(isSuperUser)) {
-                    e.sender.mute(Config.muteTime)
-                }
             }
             catch (_: Exception) {}
             riskList.add(e.sender)
+            setVl(e.sender.id, 99.0)
             e.cancel()
             messagesHandled++
         }
@@ -149,5 +158,10 @@ object MessageFilter {
     private fun clearVl(id: Long) {
         memberVl[id] = .0
         logger.info("$id 的VL清零了")
+    }
+
+    private fun setVl(id: Long, vl: Double) {
+        memberVl[id] = vl
+        logger.info("$id 的VL设置为 $vl")
     }
 }
