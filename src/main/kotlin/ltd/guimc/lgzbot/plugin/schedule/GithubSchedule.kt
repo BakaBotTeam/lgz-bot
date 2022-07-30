@@ -9,6 +9,7 @@ import ltd.guimc.lgzbot.plugin.files.Data.repoLastCommit
 import ltd.guimc.lgzbot.plugin.files.Data.repoListenList
 import ltd.guimc.lgzbot.plugin.utils.GithubUtils.getLatestCommit
 import ltd.guimc.lgzbot.plugin.utils.GithubUtils.getRepo
+import net.mamoe.mirai.Bot
 import net.mamoe.mirai.message.data.PlainText
 import java.util.*
 
@@ -21,19 +22,19 @@ object GithubSchedule {
                     // Run a suspend function
                     val synctask = GlobalScope.async { schedule() }
                     synctask.start()
-                    synctask.getCompleted()
                 }
         }, 0, 30000)
     }
 
     private suspend fun schedule() {
-        logger.info("Run Github Schedule")
+        // logger.info("Run Github Schedule")
+        if (Bot.instances.isEmpty()) return
         for (i in repoListenList) {
             val commit = getRepo(i.key).getLatestCommit()
             if (commit.shA1 != repoLastCommit[i.key]) {
                 repoLastCommit[i.key] = commit.shA1
                 i.value.forEach {
-                    it.sendMessage(
+                    Bot.instances[0].getGroup(it)!!.sendMessage(
                         PlainText("仓库 ${i.key} 的最新 Commit 信息:\n") +
                             PlainText("Commit ID: ${commit.shA1.substring(0, 7)}\n") +
                             PlainText("Commit Author: ${commit.committer.name} (${commit.committer.email})\n") +

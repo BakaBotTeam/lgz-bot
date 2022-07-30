@@ -5,7 +5,7 @@ import net.mamoe.mirai.console.data.value
 import net.mamoe.mirai.contact.Group
 
 object Data : AutoSavePluginData("github-sub-data") {
-    var repoListenList: MutableMap<String, MutableList<Group>> by value(mutableMapOf())
+    var repoListenList: MutableMap<String, MutableList<Long>> by value(mutableMapOf())
 
     var repoLastCommit: MutableMap<String, String> by value(mutableMapOf())
 }

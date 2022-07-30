@@ -19,16 +19,16 @@ object GithubUtils {
     fun addRepo(repo: String, group: Group) {
         if (getRepo(repo) == null) return
         if (repoListenList.keys.contains(repo)) {
-            repoListenList[repo]!!.add(group)
+            repoListenList[repo]!!.add(group.id)
         } else {
-            repoListenList[repo] = mutableListOf(group)
+            repoListenList[repo] = mutableListOf(group.id)
         }
     }
 
     fun removeRepo(repo: String, group: Group) {
         val repo2 = getRepo(repo)
         if (repoListenList.keys.contains(repo)) {
-            repoListenList[repo]!!.remove(group)
+            repoListenList[repo]!!.remove(group.id)
         } else {
             throw IllegalArgumentException("Repository $repo does not exist")
         }
