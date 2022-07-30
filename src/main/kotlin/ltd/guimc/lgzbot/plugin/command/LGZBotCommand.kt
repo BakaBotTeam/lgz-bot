@@ -38,7 +38,7 @@ object LGZBotCommand: CompositeCommand (
                 PlainText("[滥权小助手] ")+
                     At(user)+
                     PlainText(" 获得了来自 ${if (isConsole()) "CONSOLE" else name} 的禁言\n")+
-                    PlainText("时长： ${(second/60.0*100.0).roundToInt().toDouble()/100.0} 分钟\n")+
+                    PlainText("时长: ${(second/60.0*100.0).roundToInt().toDouble()/100.0} 分钟\n")+
                     PlainText("理由: $reason")
             )
         } catch (e: Exception) {

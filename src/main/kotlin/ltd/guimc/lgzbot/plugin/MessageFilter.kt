@@ -6,6 +6,7 @@ import ltd.guimc.lgzbot.plugin.PluginMain.logger
 import ltd.guimc.lgzbot.plugin.files.Config
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getForwardMessage
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getPlainText
+import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getFullText
 import ltd.guimc.lgzbot.plugin.utils.RegexUtils
 import ltd.guimc.lgzbot.plugin.utils.TextUtils.findSimilarity
 import ltd.guimc.lgzbot.plugin.utils.TextUtils.removeNonVisible
@@ -32,13 +33,13 @@ object MessageFilter {
 
     suspend fun filter(e: GroupMessageEvent) {
         // 检查权限
-        if (e.sender.isOwner() || !e.group.botAsMember.isOperator() ||
-            e.sender.permission == e.group.botPermission) return
+        if (e.sender.permission.level >= e.group.botPermission.level) return
 
         val textMessage = e.message.getPlainText()
                                 .removeNonVisible()
         val stringLength = if (e.sender in riskList) 10 else 35
-        if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) {
+        if ((RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) ||
+            textMessage.length == 0 && RegexUtils.matchRegex(adRegex, e.message.getFullText())) {
             try {
                 e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~\n您已被添加到风险管控名单 并且Vl设置为99"))
                 e.message.recall()
@@ -49,7 +50,6 @@ object MessageFilter {
             catch (_: Exception) {}
             riskList.add(e.sender)
             setVl(e.sender.id, 99.0)
-            e.cancel()
             messagesHandled++
         }
 
@@ -102,23 +102,6 @@ object MessageFilter {
                 addVl(e.sender.id, -20.0)
             }
             repeaterFucker[e.sender.id] = e.message.content
-        }
-
-        // 过滤合并转发消息广告
-        val forwardText = e.message.getForwardMessage()
-                                .getPlainText()
-                                .removeNonVisible()
-        if (RegexUtils.matchRegex(adRegex, forwardText)) {
-            try {
-                e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~\n" +
-                    "您已被添加到风险管控名单 并且Vl设置为99"))
-                e.message.recall()
-            }
-            catch (_: Exception) {}
-            riskList.add(e.sender)
-            setVl(e.sender.id, 99.0)
-            e.cancel()
-            messagesHandled++
         }
 
         // VL处罚
