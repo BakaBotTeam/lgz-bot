@@ -6,6 +6,7 @@ import ltd.guimc.lgzbot.plugin.files.Config
 import ltd.guimc.lgzbot.plugin.utils.RandomUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
+import net.mamoe.mirai.console.command.isConsole
 import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
@@ -25,6 +26,23 @@ object LGZBotCommand: CompositeCommand (
     @Description("看看机器人是否在线吧")
     suspend fun CommandSender.ping() {
         sendMessage("Pong!")
+    }
+
+    @SubCommand("mute")
+    @Description("把某人的嘴巴用胶布粘上")
+    suspend fun CommandSender.mute(user: Member, second: Int, reason: String) {
+        try {
+            user.mute(second)
+            user.group.sendMessage(
+                PlainText("[滥权小助手] ")+
+                    At(user)+
+                    PlainText(" 获得了来自 ${if (isConsole()) "CONSOLE" else name} 的禁言\n")+
+                    PlainText("时长： ${second/60} 分钟\n")+
+                    PlainText("理由: $reason")
+            )
+        } catch (e: Exception) {
+            sendMessage("好像...除了点问题... ${e.message}")
+        }
     }
 
 //     @SubCommand("atspam")

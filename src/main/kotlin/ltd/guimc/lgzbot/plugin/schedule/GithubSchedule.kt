@@ -3,17 +3,15 @@ package ltd.guimc.lgzbot.plugin.schedule
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import ltd.guimc.lgzbot.plugin.PluginMain.logger
+import ltd.guimc.lgzbot.plugin.files.Data.repoLastCommit
+import ltd.guimc.lgzbot.plugin.files.Data.repoListenList
 import ltd.guimc.lgzbot.plugin.utils.GithubUtils.getLatestCommit
-import net.mamoe.mirai.contact.Group
+import ltd.guimc.lgzbot.plugin.utils.GithubUtils.getRepo
 import net.mamoe.mirai.message.data.PlainText
-import org.kohsuke.github.GHRepository
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
 
-class GithubSchedule {
-    var repoListenList: MutableMap<GHRepository, MutableList<Group>> = mutableMapOf()
-    var repoLastCommit: MutableMap<GHRepository, String> = mutableMapOf()
-
+object GithubSchedule {
     @OptIn(DelicateCoroutinesApi::class)
     fun registerSchedule() {
         Timer().schedule(
@@ -21,19 +19,20 @@ class GithubSchedule {
                 override fun run() {
                     GlobalScope.async {
                         schedule()
-                    }
+                    }.start()
                 }
-        }, 0, 60000)
+        }, 30000, 60000)
     }
 
     private suspend fun schedule() {
+        println("Run Github Schedule")
         for (i in repoListenList) {
-            val commit = i.key.getLatestCommit()
+            val commit = getRepo(i.key).getLatestCommit()
             if (commit.shA1 != repoLastCommit[i.key]) {
                 repoLastCommit[i.key] = commit.shA1
                 i.value.forEach {
                     it.sendMessage(
-                        PlainText("仓库 ${i.key.fullName} 的最新 Commit 信息:\n") +
+                        PlainText("仓库 ${i.key} 的最新 Commit 信息:\n") +
                             PlainText("Commit ID: ${commit.shA1.substring(0, 7)}\n") +
                             PlainText("Commit Author: ${commit.committer.name} (${commit.committer.email})\n") +
                             PlainText("Commit Date: ${commit.commitDate}\n") +
@@ -42,6 +41,5 @@ class GithubSchedule {
                 }
             }
         }
-        return
     }
 }
