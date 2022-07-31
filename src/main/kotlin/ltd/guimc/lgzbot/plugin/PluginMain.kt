@@ -69,6 +69,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
         registerCommand(HelpCommand)
+        registerCommand(CloudBlackListCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {

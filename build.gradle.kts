@@ -13,6 +13,7 @@ dependencies {
     implementation("org.json:json:20220320")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("org.kohsuke:github-api:1.302")
+    implementation("org.jsoup:jsoup:1.15.2")
 }
 
 version = "0.1.2"
