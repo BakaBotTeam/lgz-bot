@@ -109,7 +109,6 @@ object MessageFilter {
             e.group.sendMessage(At(e.sender) + PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
             e.sender.mute(Config.muteTime)
             e.message.recall()
-            riskList.add(e.sender)
             try {
                 historyMessage[e.sender.id]?.forEach {
                     it.recall()
