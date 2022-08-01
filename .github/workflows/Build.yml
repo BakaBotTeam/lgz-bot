@@ -27,6 +27,10 @@ jobs:
         with:
           name: lgz-bot
           path: build/mirai/lgz-bot-0.1.2.mirai2.jar
+  deplay:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
