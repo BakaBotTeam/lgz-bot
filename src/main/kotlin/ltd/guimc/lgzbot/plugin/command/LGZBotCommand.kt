@@ -52,18 +52,7 @@ object LGZBotCommand: CompositeCommand (
     @Description("把某人嘴上的胶布撕下来")
     suspend fun CommandSender.unmute(user: Member) {
         try {
-            unmute(user)
-        }
-        catch (e: Exception) {
-            sendMessage("好像...出了点问题... ${e.message}")
-        }
-    }
-
-    @SubCommand("unmute")
-    @Description("把某人嘴上的胶布撕下来")
-    suspend fun CommandSender.unmute(user: Member, group: Group) {
-        try {
-            unmute(user, group)
+            user.mute(1)
         }
         catch (e: Exception) {
             sendMessage("好像...出了点问题... ${e.message}")
