@@ -24,4 +24,11 @@ object RiskCommand : CompositeCommand(
         riskList.remove(target)
         sendMessage("已将$target 移出风控列表")
     }
+
+    @SubCommand("add")
+    @Description("将一个人添加到风控列表")
+    suspend fun CommandSender.add(target: Member) {
+        riskList.add(target)
+        sendMessage("已将$target 加入风控列表")
+    }
 }
