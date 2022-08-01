@@ -1,21 +1,12 @@
 package ltd.guimc.lgzbot.plugin.command
 
-import kotlinx.coroutines.delay
 import ltd.guimc.lgzbot.plugin.PluginMain
-import ltd.guimc.lgzbot.plugin.files.Config
-import ltd.guimc.lgzbot.plugin.utils.RandomUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.isConsole
-import net.mamoe.mirai.console.permission.PermissionId
-import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
-import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
-import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.PlainText
-import java.util.*
-import kotlin.math.round
 import kotlin.math.roundToInt
 
 object LGZBotCommand: CompositeCommand (
@@ -42,9 +33,25 @@ object LGZBotCommand: CompositeCommand (
                     PlainText("理由: $reason")
             )
         } catch (e: Exception) {
-            sendMessage("好像...除了点问题... ${e.message}")
+            sendMessage("Oops! Something went wrong! ${e.message}")
         }
     }
+
+    @SubCommand("unmute")
+    @Description("把胶布从某人的嘴巴上撕下来")
+    suspend fun CommandSender.unmute(user: Member) {
+        try {
+            user
+            user.group.sendMessage(
+                PlainText("[滥权小助手] ")+
+                    At(user)+
+                    PlainText(" 获得了来自 ${if (isConsole()) "CONSOLE" else name} 的解除禁言")
+            )
+        } catch (e: Exception) {
+            sendMessage("Oops! Something went wrong! ${e.message}")
+        }
+    }
+
 
 //     @SubCommand("atspam")
 //     @Description("F**k You!")
