@@ -51,6 +51,7 @@ object MessageFilter {
             riskList.add(e.sender)
             setVl(e.sender.id, 99.0)
             messagesHandled++
+            e.intercept()
         }
 
         if (memberVl[e.sender.id] == null) {
@@ -118,6 +119,7 @@ object MessageFilter {
             historyMessage[e.sender.id]?.clear()
             memberVl[e.sender.id] = .0
             messagesHandled++
+            e.intercept()
         }
 
         // VL小于0时, 将其置为0
