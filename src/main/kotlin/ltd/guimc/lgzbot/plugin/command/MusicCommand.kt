@@ -31,9 +31,6 @@ object MusicCommand: CompositeCommand(
                 return
             }
             
-            sendMessage("The command is disabled")
-            return
-            
             val url = "http://cloud-music.pl-fe.cn/search?keywords=${
                 withContext(Dispatchers.IO) {
                     URLEncoder.encode(name.replace("+", " "), "utf-8")

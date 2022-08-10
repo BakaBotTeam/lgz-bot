@@ -37,9 +37,13 @@ object MessageFilter {
 
         val textMessage = e.message.getPlainText()
                                 .removeNonVisible()
+        val forwardMessage = e.message.getFullText()
         val stringLength = if (e.sender in riskList) 10 else 35
+        
+        if (forwardMessage.length == 0 && textMessage.length == 0) return
+
         if ((RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) ||
-            textMessage.length == 0 && RegexUtils.matchRegex(adRegex, e.message.getFullText())) {
+            textMessage.length == 0 && RegexUtils.matchRegex(adRegex, forwardMessage)) {
             try {
                 e.group.sendMessage(At(e.sender) + PlainText("你好像发送了广告... 检查一下你的消息吧~\n您已被添加到风险管控名单 并且Vl设置为99"))
                 e.message.recall()
