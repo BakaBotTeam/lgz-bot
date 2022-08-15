@@ -65,7 +65,7 @@ object MessageFilter {
         val textMessage = e.message.getPlainText()
                                 .removeNonVisible()
         val forwardMessage = e.message.getFullText()
-        val stringLength = 0/*if (e.sender in riskList) 10 else 35*/
+        val stringLength = if(e.group.id!=912687006L) if (e.sender in riskList) 10 else 35 else 0
 
         if (forwardMessage.length == 0 && textMessage.length == 0) return
         val name=PinyinUtils.convertToPinyin(textMessage).lowercase().replace(" ","");
