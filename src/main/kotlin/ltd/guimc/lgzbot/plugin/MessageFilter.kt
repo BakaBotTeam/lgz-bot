@@ -48,7 +48,7 @@ object MessageFilter {
                 e.group.sendMessage(PlainText("违禁词哦哦~"))
                 e.message.recall()
                 if (!e.sender.permitteeId.hasPermission(isSuperUser)) {
-                    e.sender.mute(60)
+                    e.sender.mute(Config.muteTime)
                 }
             }
             catch (_: Exception) {}
@@ -65,9 +65,7 @@ object MessageFilter {
 
         if (memberVl[e.sender.id]!! <= 25 && e.sender in riskList) {
             riskList.remove(e.sender)
-            e.group.sendMessage(
-                At(e.sender)+
-                    PlainText("你已经被移出了风险管控，请不要再发送广告了~")
+            e.group.sendMessage(PlainText("你已经被移出了风险管控，请不要再发送广告了~")
             )
         }
 
@@ -111,7 +109,7 @@ object MessageFilter {
 
         // VL处罚
         if (memberVl[e.sender.id]!! >= Config.vlPunish) {
-            e.group.sendMessage(At(e.sender) + PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
+            e.group.sendMessage(PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
             e.sender.mute(Config.muteTime)
             e.message.recall()
             try {
