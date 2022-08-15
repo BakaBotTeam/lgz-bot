@@ -21,30 +21,36 @@ object RegexUtils {
 
     // 匹配正则表达式列表 返回是否匹配
     fun matchRegex(regexList: Array<Regex>, message: String): Boolean {
+        val i=0
         for (regex in regexList) {
-            // val unPeekText = PinyinUtils.convertToPinyin(sbc2dbcCase(message)).lowercase()
-            val unPeekText = sbc2dbcCase(message).lowercase()
-                .replace(" ", "")
-                .replace(",", "")
-                .replace(".", "")
-                .replace("!", "")
-                .replace("?", "")
-                .replace(";", "")
-                .replace(":", "")
-                .replace("\"", "")
-                .replace("'", "")
-                .replace("“", "")
-                .replace("”", "")
-                .replace("‘", "")
-                .replace("’", "")
-                .replace("<", "")
-                .replace(">", "")
-                .replace("(", "")
-                .replace(")", "")
-                .replace("內", "内")
-            if (regex.containsMatchIn(unPeekText)) {
-                logger.info("匹配成功 ${regex.find(unPeekText)?.value}")
-                return true
+            i++
+            try {
+                // val unPeekText = PinyinUtils.convertToPinyin(sbc2dbcCase(message)).lowercase()
+                val unPeekText = sbc2dbcCase(message).lowercase()
+                    .replace(" ", "")
+                    .replace(",", "")
+                    .replace(".", "")
+                    .replace("!", "")
+                    .replace("?", "")
+                    .replace(";", "")
+                    .replace(":", "")
+                    .replace("\"", "")
+                    .replace("'", "")
+                    .replace("“", "")
+                    .replace("”", "")
+                    .replace("‘", "")
+                    .replace("’", "")
+                    .replace("<", "")
+                    .replace(">", "")
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace("內", "内")
+                if (regex.containsMatchIn(unPeekText)) {
+                    logger.info("匹配成功 在第${i}行 ${regex.find(unPeekText)?.value}")
+                    return true
+                }
+            }catch(e:Exception){
+
             }
         }
         return false
