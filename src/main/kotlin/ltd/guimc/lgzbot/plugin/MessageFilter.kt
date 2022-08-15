@@ -48,7 +48,7 @@ object MessageFilter {
                 e.group.sendMessage(PlainText("违禁词哦哦~"))
                 e.message.recall()
                 if (!e.sender.permitteeId.hasPermission(isSuperUser)) {
-                    e.sender.mute(60)
+                    e.sender.mute(30)
                 }
             }
             catch (_: Exception) {}
