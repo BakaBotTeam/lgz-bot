@@ -39,13 +39,42 @@ object MessageFilter {
                                 .removeNonVisible()
         val forwardMessage = e.message.getFullText()
         val stringLength = 0/*if (e.sender in riskList) 10 else 35*/
-        
-        if (forwardMessage.length == 0 && textMessage.length == 0) return
 
+        if (forwardMessage.length == 0 && textMessage.length == 0) return
+        if(e.group.id==912687006L){
+            if (textMessage.contains("陈梓希")){
+                e.message.recall()
+                e.group.sendMessage(PlainText("你先别急，天天陈梓希陈梓希，陈梓希是你爹是吧"))
+                e.sender.mute(10)
+            }else {
+                if (textMessage.contains("远控")) {
+                    e.group.sendMessage(PlainText("别急，下一个远控你"))
+                    e.sender.mute(3)
+                }else{
+                    if (textMessage.contains("余志文")) {
+                        e.group.sendMessage(PlainText("Hacked by Dimples#1337"))
+                        e.sender.mute(3)
+                    }else{
+                        if (textMessage.contains("李佳乐")) {
+                            e.message.recall()
+                            e.group.sendMessage(PlainText("天天直呼其名，恶俗狗"))
+                            e.sender.mute(3)
+                        }
+                    }
+                }
+            }
+        }
+        if(textMessage.contains("SkidderMC")){
+            e.group.sendMessage(PlainText("关于SkidderMC: 之前有一个外国人加入了UnlegitMC的团队并踢出了所有的原始dev，封锁了仓库并创建了SkidderMC。所以现在的SkidderMC是由外国人谋权篡位所建，其中没有任何一个中国人或是UnlegitMC原始开发人员。特此创建名为UnlegitMinecraft的github组织，并创建FDPCN Client(别名FDP+)Dev均为中国人，原汁原味。\n" +
+                "我们的FDPCN拥有更高的帧率，更好的绕过，更美的UI，感谢大家的选择\n" +
+                "并且SkidderMC辱华，我们也不能保证有没有远控在他们的版本中。\n" +
+                "唯一Github:http://github.com/UnlegitMinecraft/FDPClientChina\n官方网站: https://fdpclient.club/\n" +
+                "QQ群: 912687006"))
+        }
         if ((RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) ||
             textMessage.length == 0 && RegexUtils.matchRegex(adRegex, forwardMessage)) {
             try {
-                e.group.sendMessage(PlainText("违禁词哦哦~"))
+                e.group.sendMessage(PlainText("嘘~"))
                 e.message.recall()
                 if (!e.sender.permitteeId.hasPermission(isSuperUser)) {
                     e.sender.mute(30)
