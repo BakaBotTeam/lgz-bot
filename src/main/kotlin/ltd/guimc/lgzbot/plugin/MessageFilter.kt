@@ -70,6 +70,14 @@ object MessageFilter {
                                     e.message.recall()
                                     e.group.sendMessage(PlainText("天天直呼其名，恶俗狗"))
                                     e.sender.mute(3)
+                                }else{
+                                    if (textMessage.contains("崩端") || textMessage.contains("崩溃") || (textMessage.contains("fdp") && textMessage.contains("崩"))) {
+                                        e.message.recall()
+                                        e.group.sendMessage(PlainText("fdpcn崩端请看群公告解决，如果不行: \n\nTroubleshooting any problem without the error log is like driving with your eyes closed.\n" +
+                                            "在没有错误日志的情况下诊断任何问题,无异于闭眼开车\n" +
+                                            "   - Apache 官方文档Getting started篇章\n\n日志在 .minecraft/logs"))
+                                        e.sender.mute(3)
+                                    }
                                 }
                             }
                         }
