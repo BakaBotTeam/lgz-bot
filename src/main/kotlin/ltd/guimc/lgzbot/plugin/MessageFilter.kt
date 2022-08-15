@@ -7,6 +7,7 @@ import ltd.guimc.lgzbot.plugin.files.Config
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getForwardMessage
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getFullText
+import ltd.guimc.lgzbot.plugin.utils.PinyinUtils
 import ltd.guimc.lgzbot.plugin.utils.RegexUtils
 import ltd.guimc.lgzbot.plugin.utils.TextUtils.findSimilarity
 import ltd.guimc.lgzbot.plugin.utils.TextUtils.removeNonVisible
@@ -33,7 +34,6 @@ object MessageFilter {
 
     suspend fun filter(e: GroupMessageEvent) {
         // 检查权限
-        if (e.sender.permission.level >= e.group.botPermission.level) return
 
         val textMessage = e.message.getPlainText()
                                 .removeNonVisible()
@@ -41,36 +41,44 @@ object MessageFilter {
         val stringLength = 0/*if (e.sender in riskList) 10 else 35*/
 
         if (forwardMessage.length == 0 && textMessage.length == 0) return
-        if(e.group.id==912687006L){
-            if (textMessage.contains("陈梓希")){
-                e.message.recall()
-                e.group.sendMessage(PlainText("你先别急，天天陈梓希陈梓希，陈梓希是你爹是吧"))
-                e.sender.mute(10)
-            }else {
-                if (textMessage.contains("远控")) {
-                    e.group.sendMessage(PlainText("别急，下一个远控你"))
-                    e.sender.mute(3)
-                }else{
-                    if (textMessage.contains("余志文")) {
-                        e.group.sendMessage(PlainText("Hacked by Dimples#1337"))
-                        e.sender.mute(3)
-                    }else{
-                        if (textMessage.contains("李佳乐")) {
-                            e.message.recall()
-                            e.group.sendMessage(PlainText("天天直呼其名，恶俗狗"))
+        if(e.group.id==912687006L) when {
+                PinyinUtils.convertToPinyin(textMessage).lowercase().replace(" ","").contains("chenzixi") -> {
+
+                    logger.info(PinyinUtils.convertToPinyin(textMessage))
+                    e.message.recall()
+                    e.group.sendMessage(PlainText("你先别急，天天陈梓希陈梓希，陈梓希是你爹是吧"))
+                    e.sender.mute(10)
+                }
+                else -> {
+                    when {
+                        textMessage.contains("远控") -> {
+                            e.group.sendMessage(PlainText("别急，下一个远控你"))
                             e.sender.mute(3)
+                        }
+                        else -> {
+                            if (textMessage.contains("余志文")) {
+                                e.group.sendMessage(PlainText("Hacked by Dimples#1337"))
+                                e.sender.mute(3)
+                            }else{
+                                if (textMessage.contains("李佳乐")) {
+                                    e.message.recall()
+                                    e.group.sendMessage(PlainText("天天直呼其名，恶俗狗"))
+                                    e.sender.mute(3)
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-        if(textMessage.contains("SkidderMC")){
+        if(textMessage.lowercase().contains("skiddermc")){
             e.group.sendMessage(PlainText("关于SkidderMC: 之前有一个外国人加入了UnlegitMC的团队并踢出了所有的原始dev，封锁了仓库并创建了SkidderMC。所以现在的SkidderMC是由外国人谋权篡位所建，其中没有任何一个中国人或是UnlegitMC原始开发人员。特此创建名为UnlegitMinecraft的github组织，并创建FDPCN Client(别名FDP+)Dev均为中国人，原汁原味。\n" +
                 "我们的FDPCN拥有更高的帧率，更好的绕过，更美的UI，感谢大家的选择\n" +
                 "并且SkidderMC辱华，我们也不能保证有没有远控在他们的版本中。\n" +
                 "唯一Github:http://github.com/UnlegitMinecraft/FDPClientChina\n官方网站: https://fdpclient.club/\n" +
                 "QQ群: 912687006"))
         }
+
+        if (e.sender.permission.level >= e.group.botPermission.level) return
         if ((RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) ||
             textMessage.length == 0 && RegexUtils.matchRegex(adRegex, forwardMessage)) {
             try {
@@ -138,7 +146,7 @@ object MessageFilter {
         // VL处罚
         if (memberVl[e.sender.id]!! >= Config.vlPunish) {
             e.group.sendMessage(PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
-            e.sender.mute(Config.muteTime)
+            e.sender.mute(60)
             e.message.recall()
             try {
                 historyMessage[e.sender.id]?.forEach {
