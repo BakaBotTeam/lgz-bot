@@ -52,9 +52,7 @@ object MessageFilter {
             .replace("(", "")
             .replace(")", "")
             .replace("內", "内")
-        var regex=Regex("[Cc][Zz][Xx]|[阝东木辛希]|[ch.*n][z.*][x.*]");
-        if (regex.containsMatchIn(unPeekText)) {
-            logger.info("匹配成功")
+        if (Regex("|[ch.*n][z.*][x.*]").containsMatchIn(unPeekText) || Regex("[Cc][Zz][Xx]|[阝东木辛希]|[ch.*n][z.*][x.*]").containsMatchIn(unPeekText) || Regex("[阝东木幸希]").containsMatchIn(unPeekText)) {
             return true
         }
         return false
