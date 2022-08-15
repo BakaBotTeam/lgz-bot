@@ -4,6 +4,7 @@ import ltd.guimc.lgzbot.plugin.PluginMain.adRegex
 import ltd.guimc.lgzbot.plugin.PluginMain.isSuperUser
 import ltd.guimc.lgzbot.plugin.PluginMain.logger
 import ltd.guimc.lgzbot.plugin.files.Config
+import ltd.guimc.lgzbot.plugin.utils.AsciiUtil
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getForwardMessage
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getFullText
@@ -31,7 +32,33 @@ object MessageFilter {
 
     private var messagesHandled = 0
     var riskList = ArrayList<Member>()
-
+    fun checkczx(str :String):Boolean{
+        val unPeekText = AsciiUtil.sbc2dbcCase(str).lowercase()
+            .replace(" ", "")
+            .replace(",", "")
+            .replace(".", "")
+            .replace("!", "")
+            .replace("?", "")
+            .replace(";", "")
+            .replace(":", "")
+            .replace("\"", "")
+            .replace("'", "")
+            .replace("“", "")
+            .replace("”", "")
+            .replace("‘", "")
+            .replace("’", "")
+            .replace("<", "")
+            .replace(">", "")
+            .replace("(", "")
+            .replace(")", "")
+            .replace("內", "内")
+        var regex=Regex("[Cc][Zz][Xx]|[阝东木辛希]|[ch.*n][z.*][x.*]");
+        if (regex.containsMatchIn(unPeekText)) {
+            logger.info("匹配成功")
+            return true
+        }
+        return false
+    }
     suspend fun filter(e: GroupMessageEvent) {
         // 检查权限
 
@@ -43,9 +70,9 @@ object MessageFilter {
         if (forwardMessage.length == 0 && textMessage.length == 0) return
         val name=PinyinUtils.convertToPinyin(textMessage).lowercase().replace(" ","");
         if(e.group.id==912687006L) when {
-                ((name.contains("chen") || name.contains("cheng") || name.contains("cen")) &&
+            (((name.contains("chen") || name.contains("cheng") || name.contains("cen")) &&
                 (name.contains("zi") || name.contains("zhi")) &&
-                (name.contains("xi")) && (name.contains("zixi") || name.contains("zhixi"))) -> {
+                (name.contains("xi")) && (name.contains("zixi") || name.contains("zhixi"))) || checkczx(textMessage)) -> {
                     if(name.contains("chenzixi"))
                         e.sender.mute(10);
                     else{
