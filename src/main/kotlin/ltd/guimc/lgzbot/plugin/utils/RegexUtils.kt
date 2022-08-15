@@ -21,7 +21,7 @@ object RegexUtils {
 
     // 匹配正则表达式列表 返回是否匹配
     fun matchRegex(regexList: Array<Regex>, message: String): Boolean {
-        val i=0
+        var i=0
         for (regex in regexList) {
             i++
             try {
