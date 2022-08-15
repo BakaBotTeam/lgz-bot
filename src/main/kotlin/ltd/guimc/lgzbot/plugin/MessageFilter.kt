@@ -41,13 +41,19 @@ object MessageFilter {
         val stringLength = 0/*if (e.sender in riskList) 10 else 35*/
 
         if (forwardMessage.length == 0 && textMessage.length == 0) return
+        val name=PinyinUtils.convertToPinyin(textMessage).lowercase().replace(" ","");
         if(e.group.id==912687006L) when {
-                PinyinUtils.convertToPinyin(textMessage).lowercase().replace(" ","").contains("chenzixi") -> {
-
-                    logger.info(PinyinUtils.convertToPinyin(textMessage))
-                    e.message.recall()
+                ((name.contains("chen") || name.contains("cheng") || name.contains("cen")) &&
+                (name.contains("zi") || name.contains("zhi")) &&
+                (name.contains("xi")) && (name.contains("zixi") || name.contains("zhixi"))) -> {
+                    if(name.contains("chenzixi"))
+                        e.sender.mute(10);
+                    else{
+                        e.sender.mute(65);
+                    }
                     e.group.sendMessage(PlainText("你先别急，天天陈梓希陈梓希，陈梓希是你爹是吧"))
                     e.sender.mute(10)
+                    e.message.recall()
                 }
                 else -> {
                     when {
