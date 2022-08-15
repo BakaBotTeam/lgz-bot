@@ -66,7 +66,6 @@ object MessageFilter {
         if (memberVl[e.sender.id]!! <= 25 && e.sender in riskList) {
             riskList.remove(e.sender)
             //e.group.sendMessage(PlainText("你已经被移出了风险管控，请不要再发送广告了~")
-            )
         }
 
         if (historyMessage[e.sender.id] == null) {
