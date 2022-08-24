@@ -40,7 +40,7 @@ object MessageFilter {
         val textMessage = e.message.getPlainText()
             .removeNonVisible()
         val forwardMessage = e.message.getFullText()
-        val stringLength = if (e.group.id == 912687006L && e.group.id == 735874917L) {
+        val stringLength = if (e.group.id == 413868243L || e.group.id == 735874917L) {
             0
         } else if (e.sender in riskList) {
             10
@@ -49,7 +49,7 @@ object MessageFilter {
         }
 
         if (forwardMessage.isEmpty() && textMessage.isEmpty()) return
-        if (e.group.id == 912687006L) cxzTeacher.specialCheck(e, textMessage)
+        if (e.group.id == 413868243L) cxzTeacher.specialCheck(e, textMessage)
 
         if (e.sender.permission.level >= e.group.botPermission.level) return
         if ((RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) ||
