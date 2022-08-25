@@ -1,4 +1,4 @@
-package ltd.guimc.lgzbot
+package ltd.guimc.lgzbot.listener.message
 
 import ltd.guimc.lgzbot.PluginMain.adRegex
 import ltd.guimc.lgzbot.PluginMain.bypassMute

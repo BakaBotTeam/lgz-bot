@@ -1,6 +1,6 @@
 package ltd.guimc.lgzbot.command
 
-import ltd.guimc.lgzbot.MessageFilter.riskList
+import ltd.guimc.lgzbot.listener.message.MessageFilter.riskList
 import ltd.guimc.lgzbot.PluginMain
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand

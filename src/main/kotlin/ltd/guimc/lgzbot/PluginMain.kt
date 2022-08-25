@@ -3,6 +3,9 @@ package ltd.guimc.lgzbot
 
 import ltd.guimc.lgzbot.command.*
 import ltd.guimc.lgzbot.files.Config
+import ltd.guimc.lgzbot.listener.github.CommitListener
+import ltd.guimc.lgzbot.listener.message.GithubUrlListener
+import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.BuiltInCommands
 import net.mamoe.mirai.console.command.CommandManager
@@ -37,6 +40,7 @@ object PluginMain : KotlinPlugin(
     lateinit var notMuteMessagePush: Permission
     lateinit var notTalkativeMessagePush: Permission
     lateinit var bypassMute: Permission
+    lateinit var commitListener: CommitListener
     lateinit var adRegex: Array<Regex>
     var helpMessage: ForwardMessage? = null
 
@@ -44,6 +48,8 @@ object PluginMain : KotlinPlugin(
     override fun onEnable() {
         logger.info("$name v$version Loading")
         adRegex = getDefaultRegex()
+        commitListener = CommitListener()
+
         registerPerms()
         registerCommands()
         registerEvents()
@@ -81,7 +87,9 @@ object PluginMain : KotlinPlugin(
                 .build()
         }
 
-        subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> ltd.guimc.lgzbot.MessageFilter.filter(event) }
+        subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
+
+        subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event) }
 
         subscribeAlways<MemberMuteEvent> {
             if (!it.group.permitteeId.hasPermission(notMuteMessagePush)) {
