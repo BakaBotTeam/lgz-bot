@@ -19,14 +19,14 @@ jobs:
       - uses: burrunan/gradle-cache-action@v1
         name: BuildPlugin
         with:
-          job-id: jdk8
+          job-id: jdk11
           arguments: buildPlugin
           gradle-version: wrapper
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: lgz-bot
-          path: build/mirai/lgz-bot-0.1.2.mirai2.jar
+          path: build/mirai/lgz-bot-*.mirai2.jar
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -34,5 +34,5 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Deplay to server
         run: |
-          scp -oStrictHostKeyChecking=no ./build/mirai/lgz-bot-0.1.2.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/root/mirai/plugins
+          scp -oStrictHostKeyChecking=no ./build/mirai/lgz-bot-*.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/root/mirai/plugins
           ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} "screen -S mirai -p 0 -X stuff \"^C\""
