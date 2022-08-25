@@ -34,5 +34,5 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Deplay to server
         run: |
-          scp -oStrictHostKeyChecking=no ./build/mirai/lgz-bot-0.1.2.mirai2.jar ${{ secrets.SSH_SERVER }}:/root/mirai/plugins
-          ssh -oStrictHostKeyChecking=no ${{ secrets.SSH_SERVER }} "screen -S mirai -p 0 -X stuff \"^C\""
+          scp -oStrictHostKeyChecking=no ./build/mirai/lgz-bot-0.1.2.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/root/mirai/plugins
+          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} "screen -S mirai -p 0 -X stuff \"^C\""
