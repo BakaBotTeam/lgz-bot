@@ -1,4 +1,4 @@
-package ltd.guimc.lgzbot.plugin.utils
+package ltd.guimc.lgzbot.utils
 
 import net.mamoe.mirai.message.data.*
 

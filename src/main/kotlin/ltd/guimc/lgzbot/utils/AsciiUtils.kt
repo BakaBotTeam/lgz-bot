@@ -1,4 +1,4 @@
-package ltd.guimc.lgzbot.plugin.utils
+package ltd.guimc.lgzbot.utils
 
 object AsciiUtil {
     const val SBC_SPACE = 12288 // 全角空格 12288

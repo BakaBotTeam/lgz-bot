@@ -1,4 +1,4 @@
-package ltd.guimc.lgzbot.plugin.files
+package ltd.guimc.lgzbot.files
 
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.value

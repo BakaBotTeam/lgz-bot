@@ -1,6 +1,6 @@
-package ltd.guimc.lgzbot.plugin.command
+package ltd.guimc.lgzbot.command
 
-import ltd.guimc.lgzbot.plugin.PluginMain
+import ltd.guimc.lgzbot.PluginMain
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.isConsole

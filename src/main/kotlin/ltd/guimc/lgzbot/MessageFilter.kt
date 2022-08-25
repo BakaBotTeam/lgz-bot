@@ -1,26 +1,23 @@
-package ltd.guimc.lgzbot.plugin
+package ltd.guimc.lgzbot
 
-import ltd.guimc.lgzbot.plugin.PluginMain.adRegex
-import ltd.guimc.lgzbot.plugin.PluginMain.isSuperUser
-import ltd.guimc.lgzbot.plugin.PluginMain.logger
-import ltd.guimc.lgzbot.plugin.files.Config
-import ltd.guimc.lgzbot.plugin.special.CZXTeacher
-import ltd.guimc.lgzbot.plugin.utils.AsciiUtil
-import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getForwardMessage
-import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getPlainText
-import ltd.guimc.lgzbot.plugin.utils.MessageUtils.getFullText
-import ltd.guimc.lgzbot.plugin.utils.PinyinUtils
-import ltd.guimc.lgzbot.plugin.utils.RegexUtils
-import ltd.guimc.lgzbot.plugin.utils.TextUtils.findSimilarity
-import ltd.guimc.lgzbot.plugin.utils.TextUtils.removeNonVisible
+import ltd.guimc.lgzbot.PluginMain.adRegex
+import ltd.guimc.lgzbot.PluginMain.bypassMute
+import ltd.guimc.lgzbot.PluginMain.logger
+import ltd.guimc.lgzbot.files.Config
+import ltd.guimc.lgzbot.special.CZXTeacher
+import ltd.guimc.lgzbot.utils.MessageUtils.getFullText
+import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
+import ltd.guimc.lgzbot.utils.RegexUtils
+import ltd.guimc.lgzbot.utils.TextUtils.findSimilarity
+import ltd.guimc.lgzbot.utils.TextUtils.removeNonVisible
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.Member
-import net.mamoe.mirai.contact.isOperator
-import net.mamoe.mirai.contact.isOwner
 import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
+import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.content
 import java.lang.Thread.sleep
 import java.time.Instant
 
@@ -58,7 +55,7 @@ object MessageFilter {
             try {
                 e.group.sendMessage(PlainText("嘘~"))
                 e.message.recall()
-                if (!e.sender.permitteeId.hasPermission(isSuperUser)) {
+                if (!e.sender.permitteeId.hasPermission(bypassMute)) {
                     e.sender.mute(30)
                 }
             } catch (_: Exception) {

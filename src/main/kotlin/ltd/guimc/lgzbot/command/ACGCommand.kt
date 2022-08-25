@@ -1,7 +1,7 @@
-package ltd.guimc.lgzbot.plugin.command
+package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.launch
-import ltd.guimc.lgzbot.plugin.PluginMain
+import ltd.guimc.lgzbot.PluginMain
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi

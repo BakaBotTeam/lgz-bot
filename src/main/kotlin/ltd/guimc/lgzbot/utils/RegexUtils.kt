@@ -1,7 +1,7 @@
-package ltd.guimc.lgzbot.plugin.utils
+package ltd.guimc.lgzbot.utils
 
-import ltd.guimc.lgzbot.plugin.PluginMain.logger
-import ltd.guimc.lgzbot.plugin.utils.AsciiUtil.sbc2dbcCase
+import ltd.guimc.lgzbot.PluginMain.logger
+import ltd.guimc.lgzbot.utils.AsciiUtil.sbc2dbcCase
 
 object RegexUtils {
     // 获取正则表达式列表

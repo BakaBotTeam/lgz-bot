@@ -1,13 +1,13 @@
-package ltd.guimc.lgzbot.plugin.command
+package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ltd.guimc.lgzbot.plugin.PluginMain
-import ltd.guimc.lgzbot.plugin.PluginMain.logger
-import ltd.guimc.lgzbot.plugin.utils.Base64Utils
-import ltd.guimc.lgzbot.plugin.utils.HttpUtils.getJson
-import ltd.guimc.lgzbot.plugin.utils.HttpUtils.getResponse
-import ltd.guimc.lgzbot.plugin.utils.RegexUtils
+import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.PluginMain.logger
+import ltd.guimc.lgzbot.utils.Base64Utils
+import ltd.guimc.lgzbot.utils.HttpUtils.getJson
+import ltd.guimc.lgzbot.utils.HttpUtils.getResponse
+import ltd.guimc.lgzbot.utils.RegexUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.isConsole

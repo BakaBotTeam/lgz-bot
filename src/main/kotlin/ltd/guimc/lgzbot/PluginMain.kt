@@ -1,9 +1,9 @@
-package ltd.guimc.lgzbot.plugin
+package ltd.guimc.lgzbot
 
 
-import ltd.guimc.lgzbot.plugin.command.*
-import ltd.guimc.lgzbot.plugin.files.Config
-import ltd.guimc.lgzbot.plugin.utils.RegexUtils.getDefaultRegex
+import ltd.guimc.lgzbot.command.*
+import ltd.guimc.lgzbot.files.Config
+import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.BuiltInCommands
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
@@ -36,7 +36,7 @@ object PluginMain : KotlinPlugin(
 ) {
     lateinit var notMuteMessagePush: Permission
     lateinit var notTalkativeMessagePush: Permission
-    lateinit var isSuperUser: Permission
+    lateinit var bypassMute: Permission
     lateinit var adRegex: Array<Regex>
     var helpMessage: ForwardMessage? = null
 
@@ -58,7 +58,7 @@ object PluginMain : KotlinPlugin(
     private fun registerPerms() = PermissionService.INSTANCE.run {
         notMuteMessagePush = register(PermissionId("lgzbot.event.notpush", "mute"), "不推送禁言权限 (仅适用于群聊)")
         notTalkativeMessagePush = register(PermissionId("lgzbot.event.notpush", "talkative"), "不推送新龙王权限 (仅适用于群聊)")
-        isSuperUser = register(PermissionId("lgz.plugin", "admin"), "是否为超级用户")
+        bypassMute = register(PermissionId("lgz.plugin", "bypassmute"), "Bypass Mute")
 
     }
 
@@ -69,7 +69,6 @@ object PluginMain : KotlinPlugin(
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
         registerCommand(HelpCommand)
-        registerCommand(CloudBlackListCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
@@ -82,7 +81,7 @@ object PluginMain : KotlinPlugin(
                 .build()
         }
 
-        subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
+        subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> ltd.guimc.lgzbot.MessageFilter.filter(event) }
 
         subscribeAlways<MemberMuteEvent> {
             if (!it.group.permitteeId.hasPermission(notMuteMessagePush)) {

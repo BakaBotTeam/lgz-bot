@@ -1,7 +1,7 @@
-package ltd.guimc.lgzbot.plugin.special
+package ltd.guimc.lgzbot.special
 
-import ltd.guimc.lgzbot.plugin.utils.AsciiUtil
-import ltd.guimc.lgzbot.plugin.utils.PinyinUtils
+import ltd.guimc.lgzbot.utils.AsciiUtil
+import ltd.guimc.lgzbot.utils.PinyinUtils
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
 import net.mamoe.mirai.message.data.PlainText
