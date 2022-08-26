@@ -16,7 +16,7 @@ object GithubUrlListener {
         val gitLink = GithubUtils.findGitLink(event.message.getPlainText())
 
         if (gitLink != null) {
-            logger.debug("Find Git Link! $gitLink")
+            logger.info("Find Git Link! $gitLink")
         } else {
             return
         }
@@ -34,7 +34,6 @@ object GithubUrlListener {
             Update Time: ${info.updateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))}
         """.trimIndent()
 
-        if (RegexUtils.matchRegex(adRegex, s)) return
         event.group.sendMessage(s)
     }
 }
