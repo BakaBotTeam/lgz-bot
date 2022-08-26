@@ -5,7 +5,7 @@ import kotlinx.coroutines.withContext
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.utils.Base64Utils
-import ltd.guimc.lgzbot.utils.HttpUtils.getJson
+import ltd.guimc.lgzbot.utils.HttpUtils.getJsonObject
 import ltd.guimc.lgzbot.utils.HttpUtils.getResponse
 import ltd.guimc.lgzbot.utils.RegexUtils
 import net.mamoe.mirai.console.command.CommandSender
@@ -37,7 +37,7 @@ object MusicCommand: CompositeCommand(
                 }
             }"
             // Get json
-            val json = getJson(url)
+            val json = getJsonObject(url)
             // Get song id
             val song = json.getJSONObject("result").getJSONArray("songs").getJSONObject(0)
             val id = song.getLong("id")
@@ -79,7 +79,7 @@ object MusicCommand: CompositeCommand(
                 }
             }"
             // Get json
-            val json = getJson(url)
+            val json = getJsonObject(url)
             // Get song id
             val song = json.getJSONObject("result").getJSONArray("songs").getJSONObject(0)
             val id = song.getLong("id")

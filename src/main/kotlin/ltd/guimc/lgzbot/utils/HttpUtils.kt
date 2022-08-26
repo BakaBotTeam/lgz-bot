@@ -1,15 +1,25 @@
 package ltd.guimc.lgzbot.utils
 
+import org.json.JSONArray
 import org.json.JSONObject
 
 object HttpUtils {
-    fun getJson(url: String): JSONObject {
+    fun getJsonObject(url: String): JSONObject {
         val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
         connection.requestMethod = "GET"
         connection.connect()
         // 转换到json对象
         val raw = connection.inputStream.bufferedReader().readText()
         return JSONObject(raw)
+    }
+
+    fun getJsonArray(url: String): JSONArray {
+        val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        // 转换到json对象
+        val raw = connection.inputStream.bufferedReader().readText()
+        return JSONArray(raw)
     }
 
     fun getResponse(url: String): String {
