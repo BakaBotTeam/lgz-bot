@@ -19,7 +19,7 @@ object GithubUtils {
 
     fun apiObject(url: String): JSONObject = HttpUtils.getJsonObject("https://api.github.com$url")
 
-    fun apiArray(url: String): JSONArray = HttpUtils.getJsonArray(url)
+    fun apiArray(url: String): JSONArray = HttpUtils.getJsonArray("https://api.github.com$url")
 
     fun convert(url: String): String {
         val s = url
