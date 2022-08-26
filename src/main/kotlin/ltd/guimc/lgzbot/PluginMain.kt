@@ -3,6 +3,7 @@ package ltd.guimc.lgzbot
 
 import ltd.guimc.lgzbot.command.*
 import ltd.guimc.lgzbot.files.Config
+import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.listener.github.CommitListener
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
@@ -54,11 +55,13 @@ object PluginMain : KotlinPlugin(
         registerCommands()
         registerEvents()
         Config.reload()
+        GithubSubConfig.reload()
         logger.info("$name v$version Loaded")
     }
 
     override fun onDisable() {
         Config.save()
+        GithubSubConfig.save()
     }
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
@@ -75,6 +78,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
         registerCommand(HelpCommand)
+        registerCommand(GithubSubCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {

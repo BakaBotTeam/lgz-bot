@@ -1,28 +1,20 @@
 package ltd.guimc.lgzbot.listener.message
 
 import ltd.guimc.lgzbot.PluginMain.adRegex
-import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.utils.GithubUtils
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RegexUtils
 import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.message.data.PlainText
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 object GithubUrlListener {
     suspend fun onMessage(event: GroupMessageEvent) {
-        val gitLink = GithubUtils.findGitLink(event.message.getPlainText())
-
-        if (gitLink != null) {
-            logger.info("Find Git Link! $gitLink")
-        } else {
-            return
-        }
+        val gitLink = GithubUtils.findGitLink(event.message.getPlainText()) ?: return
 
         val info = GithubUtils.getGithubRepo(GithubUtils.convert(gitLink))
         val s = """
-            [GitHub]
+            [GitHub] (Preview Version)
             Repo: ${info.repo}
             Descriptor: ${info.descriptor}
             Owner: ${info.author.name}
