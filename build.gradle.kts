@@ -15,7 +15,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.15.2")
 }
 
-version = "0.1.2"
+version = "0.2.0-pre1"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
