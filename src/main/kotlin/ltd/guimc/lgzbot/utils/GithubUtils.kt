@@ -7,6 +7,7 @@ import ltd.guimc.lgzbot.github.UserInfo
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 object GithubUtils {
     val gitLinkRegex = Regex("(git|https|git@)(:\\/\\/|)github.com(:|\\/).*\\/.*(.git|\\/| |)")
@@ -35,8 +36,8 @@ object GithubUtils {
             repo,
             OwnerInfo(infoJson.getJSONObject("owner").getString("login")),
             infoJson.getString("description"),
-            LocalDateTime.parse(infoJson.getString("created_at")),
-            LocalDateTime.parse(infoJson.getString("pushed_at")),
+            LocalDateTime.parse(infoJson.getString("created_at"), DateTimeFormatter.ISO_DATE_TIME),
+            LocalDateTime.parse(infoJson.getString("pushed_at"), DateTimeFormatter.ISO_DATE_TIME),
             getLastCommit(repo),
             infoJson.getString("language"),
             infoJson.getString("default_branch")
@@ -56,7 +57,7 @@ object GithubUtils {
             false
         }
         val commitMessage = commit.getString("message")
-        val commitTime = LocalDateTime.parse(commit.getJSONObject("committer").getString("date"))
+        val commitTime = LocalDateTime.parse(commit.getJSONObject("committer").getString("date"), DateTimeFormatter.ISO_DATE_TIME)
 
         return CommitInfo(
             commitID,
