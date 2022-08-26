@@ -12,7 +12,6 @@ import java.time.format.FormatStyle
 
 object GithubUrlListener {
     suspend fun onMessage(event: GroupMessageEvent) {
-        if (event.message.any { i -> i !is PlainText }) return
         val gitLink = GithubUtils.findGitLink(event.message.getPlainText())
 
         if (gitLink != null) {
@@ -34,6 +33,7 @@ object GithubUrlListener {
             Update Time: ${info.updateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))}
         """.trimIndent()
 
+        if (RegexUtils.matchRegex(adRegex, s)) return
         event.group.sendMessage(s)
     }
 }

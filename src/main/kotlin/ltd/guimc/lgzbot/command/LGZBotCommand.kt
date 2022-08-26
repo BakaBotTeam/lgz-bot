@@ -5,6 +5,7 @@ import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.isConsole
 import net.mamoe.mirai.contact.Member
+import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.PlainText
 import kotlin.math.roundToInt
@@ -41,7 +42,7 @@ object LGZBotCommand: CompositeCommand (
     @Description("把胶布从某人的嘴巴上撕下来")
     suspend fun CommandSender.unmute(user: Member) {
         try {
-            user
+            (user as NormalMember).unmute()
             user.group.sendMessage(
                 PlainText("[滥权小助手] ")+
                     At(user)+
