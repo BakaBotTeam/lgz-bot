@@ -47,7 +47,7 @@ object GithubUtils {
     fun getLastCommit(repo: String): CommitInfo {
         val infoJson = apiArray("/repos/$repo/commits").getJSONObject(0)
         val commit = infoJson.getJSONObject("commit")
-        val author = infoJson.getJSONObject("committer")
+        val author = commit.getJSONObject("committer")
         val commitID = infoJson.getString("sha").dropLast(8)
 
         // Commit Info
