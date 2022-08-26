@@ -30,7 +30,7 @@ object GithubUtils {
     }
 
     fun getGithubRepo(repo: String): RepoInfo {
-        val infoJson = apiObject("/repo/$repo")
+        val infoJson = apiObject("/repos/$repo")
         return RepoInfo(
             repo,
             OwnerInfo(infoJson.getJSONObject("owner").getString("login")),
@@ -44,7 +44,7 @@ object GithubUtils {
     }
 
     fun getLastCommit(repo: String): CommitInfo {
-        val infoJson = apiArray("/repo/$repo/commits").getJSONObject(0)
+        val infoJson = apiArray("/repos/$repo/commits").getJSONObject(0)
         val author = infoJson.getJSONObject("committer")
         val commit = infoJson.getJSONObject("commit")
         val commitID = infoJson.getString("sha").dropLast(8)
