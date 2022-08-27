@@ -10,7 +10,9 @@ import java.time.format.FormatStyle
 
 object GithubUrlListener {
     suspend fun onMessage(event: GroupMessageEvent) {
-        val gitLink = GithubUtils.findGitLink(event.message.getPlainText()) ?: return
+        val plain = event.message.getPlainText()
+        val gitLink = GithubUtils.findGitLink(plain) ?: return
+        if (plain.indexOf("/gh-sub") != -1) return
 
         val info = GithubUtils.getGithubRepo(GithubUtils.convert(gitLink))
         val s = """
