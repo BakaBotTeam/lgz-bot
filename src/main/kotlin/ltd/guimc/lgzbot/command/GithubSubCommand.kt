@@ -14,8 +14,9 @@ object GithubSubCommand: CompositeCommand(
 ) {
     @SubCommand("add")
     @Description("Add a new sub")
-    suspend fun CommandSender.ltd_guimc_command_git_add(url: String) {
+    suspend fun CommandSender.iI1I1I1i1I1I1iI1i1I1Ii1I1i1I1I(url: String) {
         var repo = GithubUtils.findGitLink(url)
+        val groupId = (getGroupOrNull()?: return).id
         if (repo == null) {
             sendMessage("Failed to get Repo Info")
             return
@@ -24,13 +25,13 @@ object GithubSubCommand: CompositeCommand(
         }
 
         if (GithubSubConfig.subList.keys.indexOf(repo) == -1) {
-            GithubSubConfig.subList[repo] = mutableListOf(getGroupOrNull()?: return)
+            GithubSubConfig.subList[repo] = mutableListOf(groupId)
         } else {
-            if (GithubSubConfig.subList[repo]!!.indexOf(getGroupOrNull()?: return) != -1) {
+            if (GithubSubConfig.subList[repo]!!.indexOf(groupId) != -1) {
                 sendMessage("?")
                 return
             }
-            GithubSubConfig.subList[repo]!!.add(getGroupOrNull()?: return)
+            GithubSubConfig.subList[repo]!!.add(groupId)
         }
 
         sendMessage("OK")
@@ -38,17 +39,18 @@ object GithubSubCommand: CompositeCommand(
 
     @SubCommand("del")
     @Description("Delete a repo from sub")
-    suspend fun CommandSender.ltd_guimc_command_git_del(repo: String) {
+    suspend fun CommandSender.iI1I1I1I1i1I1Ii1I1i1I1I1I1Ii1I1(repo: String) {
+        val groupId = (getGroupOrNull()?: return).id
         if (GithubSubConfig.subList.keys.indexOf(repo) == -1) {
             sendMessage("?")
             return
         }
 
-        if (GithubSubConfig.subList[repo]!!.indexOf(getGroupOrNull()?: return) == -1) {
+        if (GithubSubConfig.subList[repo]!!.indexOf(groupId) == -1) {
             sendMessage("?")
             return
         }
 
-        GithubSubConfig.subList[repo]!!.remove(getGroupOrNull()?: return)
+        GithubSubConfig.subList[repo]!!.remove(groupId)
     }
 }
