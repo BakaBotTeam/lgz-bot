@@ -16,6 +16,7 @@ import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
+import net.mamoe.mirai.console.plugin.author
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
@@ -35,19 +36,20 @@ object PluginMain : KotlinPlugin(
         "0.1.2",
         "LgzBot",
     ){
-        author("Guimc")
+        author("汐洛 & YounKoo & 笨蛋们")
     }
 ) {
     lateinit var notMuteMessagePush: Permission
     lateinit var notTalkativeMessagePush: Permission
     lateinit var bypassMute: Permission
+    lateinit var disableGroup: Permission
     lateinit var commitListener: CommitListener
     lateinit var adRegex: Array<Regex>
     var helpMessage: ForwardMessage? = null
 
 
     override fun onEnable() {
-        logger.info("$name v$version Loading")
+        logger.info("$name v$version by $author Loading")
         adRegex = getDefaultRegex()
         commitListener = CommitListener()
 
@@ -56,19 +58,22 @@ object PluginMain : KotlinPlugin(
         registerEvents()
         Config.reload()
         GithubSubConfig.reload()
-        logger.info("$name v$version Loaded")
+        logger.info("$name v$version by $author Loaded")
     }
 
     override fun onDisable() {
+        logger.info("$name v$version by $author Disabling")
         Config.save()
         GithubSubConfig.save()
+
+        commitListener.isQuitting = true
     }
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
         notMuteMessagePush = register(PermissionId("lgzbot.event.notpush", "mute"), "不推送禁言权限 (仅适用于群聊)")
         notTalkativeMessagePush = register(PermissionId("lgzbot.event.notpush", "talkative"), "不推送新龙王权限 (仅适用于群聊)")
-        bypassMute = register(PermissionId("lgz.plugin", "bypassmute"), "Bypass Mute")
-
+        bypassMute = register(PermissionId("lgz.plugin", "bypassmute"), "让某个笨蛋绕过广告禁言")
+        disableGroup= register(PermissionId("lgzbot", "blocked"), "坏蛋群专属权限!")
     }
 
     private fun registerCommands() = CommandManager.run {

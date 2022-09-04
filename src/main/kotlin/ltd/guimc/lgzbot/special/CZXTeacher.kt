@@ -2,11 +2,16 @@ package ltd.guimc.lgzbot.special
 
 import ltd.guimc.lgzbot.utils.AsciiUtil
 import ltd.guimc.lgzbot.utils.PinyinUtils
+import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
 import net.mamoe.mirai.message.data.PlainText
 
 class CZXTeacher {
+    fun isFDPGroup(group: Group): Boolean {
+        return group.id == 413868243L || group.id == 735874917L
+    }
+
     fun checkczx(str: String): Boolean {
         val unPeekText = AsciiUtil.sbc2dbcCase(str).lowercase()
             .replace(" ", "")
@@ -34,15 +39,15 @@ class CZXTeacher {
     }
 
     suspend fun specialCheck(e: GroupMessageEvent, textMessage: String) {
-        val name = PinyinUtils.convertToPinyin(textMessage).lowercase().replace(" ", "");
+        val name = PinyinUtils.convertToPinyin(textMessage).lowercase().replace(" ", "")
         when {
             (((name.contains("chen") || name.contains("cheng") || name.contains("cen")) &&
                 (name.contains("zi") || name.contains("zhi")) &&
                 (name.contains("xi")) && (name.contains("zixi") || name.contains("zhixi"))) || checkczx(textMessage)) -> {
                 if (name.contains("chenzixi"))
-                    e.sender.mute(10);
+                    e.sender.mute(10)
                 else {
-                    e.sender.mute(65);
+                    e.sender.mute(65)
                 }
                 e.group.sendMessage(PlainText("你先别急，天天陈梓希陈梓希，陈梓希是你爹是吧"))
                 e.sender.mute(10)

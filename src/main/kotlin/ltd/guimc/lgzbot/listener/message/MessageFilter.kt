@@ -5,6 +5,7 @@ import ltd.guimc.lgzbot.PluginMain.bypassMute
 import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.special.CZXTeacher
+import ltd.guimc.lgzbot.utils.MemberUtils.mute
 import ltd.guimc.lgzbot.utils.MessageUtils.getFullText
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RegexUtils
@@ -12,11 +13,11 @@ import ltd.guimc.lgzbot.utils.TextUtils.findSimilarity
 import ltd.guimc.lgzbot.utils.TextUtils.removeNonVisible
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
+import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
-import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.content
 import java.lang.Thread.sleep
 import java.time.Instant
@@ -32,12 +33,13 @@ object MessageFilter {
     var riskList = ArrayList<Member>()
     val cxzTeacher = CZXTeacher()
     suspend fun filter(e: GroupMessageEvent) {
+        var muted = false
         // 检查权限
 
         val textMessage = e.message.getPlainText()
             .removeNonVisible()
         val forwardMessage = e.message.getFullText()
-        val stringLength = if (e.group.id == 413868243L || e.group.id == 735874917L) {
+        val stringLength = if (cxzTeacher.isFDPGroup(e.group)) {
             0
         } else if (e.sender in riskList) {
             10
@@ -46,24 +48,21 @@ object MessageFilter {
         }
 
         if (forwardMessage.isEmpty() && textMessage.isEmpty()) return
-        if (e.group.id == 413868243L) cxzTeacher.specialCheck(e, textMessage)
+        if (cxzTeacher.isFDPGroup(e.group)) cxzTeacher.specialCheck(e, textMessage)
 
         if (e.sender.permission.level >= e.group.botPermission.level) return
         if ((RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) ||
             textMessage.isEmpty() && RegexUtils.matchRegex(adRegex, forwardMessage)
         ) {
             try {
-                e.group.sendMessage(PlainText("嘘~"))
                 e.message.recall()
-                if (!e.sender.permitteeId.hasPermission(bypassMute)) {
-                    e.sender.mute(30)
-                }
+                e.group.mute(e.sender, "非法发言内容")
+                muted = true
             } catch (_: Exception) {
             }
             riskList.add(e.sender)
             setVl(e.sender.id, 99.0)
             messagesHandled++
-            e.intercept()
         }
 
         if (memberVl[e.sender.id] == null) {
@@ -116,25 +115,27 @@ object MessageFilter {
 
         // VL处罚
         if (memberVl[e.sender.id]!! >= Config.vlPunish) {
-            e.group.sendMessage(PlainText("你的VL已经超过了${Config.vlPunish}了!! 你的嘴现在被我黏上了~~"))
-            e.sender.mute(60)
+            if (muted) return
+            e.group.mute(e.sender, "不允许的速度/发言内容重复")
+            muted = true
             e.message.recall()
             try {
                 historyMessage[e.sender.id]?.forEach {
                     it.recall()
-                    sleep(50)
+                    sleep(100)
                 }
             } catch (_: Exception) {}
             historyMessage[e.sender.id]?.clear()
             memberVl[e.sender.id] = .0
             messagesHandled++
-            e.intercept()
         }
 
         // VL小于0时, 将其置为0
         if (memberVl[e.sender.id]!! < 0) {
             memberVl[e.sender.id] = .0
         }
+
+        if (muted) e.intercept()
     }
 
     private fun addVl(id: Long, vl: Double) {
@@ -157,4 +158,6 @@ object MessageFilter {
         memberVl[id] = vl
         logger.info("$id 的VL设置为 $vl")
     }
+
+    private suspend fun Group.mute(mem: Member, reason: String) = mem.mute(if (mem.permitteeId.hasPermission(bypassMute)) 1 else if (cxzTeacher.isFDPGroup(this)) 60 else 600, "Message Filter: $reason")
 }
