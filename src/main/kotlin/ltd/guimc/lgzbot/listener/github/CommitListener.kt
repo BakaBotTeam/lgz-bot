@@ -54,7 +54,7 @@ class CommitListener {
                     }
                 }
 
-                sleep(1000*60*60)
+                sleep(1000*60)
             }
         }.start()
 
