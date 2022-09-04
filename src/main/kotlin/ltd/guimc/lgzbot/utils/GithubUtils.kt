@@ -18,9 +18,9 @@ object GithubUtils {
         return gitLinkRegex.find(text)?.value
     }
 
-    fun apiObject(url: String): JSONObject = HttpUtils.getJsonObject("https://${if (GithubSubConfig.key != "" ) "${GithubSubConfig.key}:" else ""}api.github.com$url")
+    fun apiObject(url: String): JSONObject = HttpUtils.getJsonObject("https://${if (GithubSubConfig.key != "" ) "${GithubSubConfig.key}@" else ""}api.github.com$url")
 
-    fun apiArray(url: String): JSONArray = HttpUtils.getJsonArray("https://${if (GithubSubConfig.key != "" ) "${GithubSubConfig.key}:" else ""}api.github.com$url")
+    fun apiArray(url: String): JSONArray = HttpUtils.getJsonArray("https://${if (GithubSubConfig.key != "" ) "${GithubSubConfig.key}@" else ""}api.github.com$url")
 
     fun convert(url: String): String {
         val s = url
