@@ -14,7 +14,7 @@ class RepoInfo(val repo: String, val author: OwnerInfo, val descriptor: String, 
 
     fun checkUpdate(): Boolean {
         val newCommit = GithubUtils.getLastCommit(repo)
-        return if (commit == null || newCommit != commit) {
+        return if (commit == null || newCommit.commitId != commit.commitId) {
             commit = newCommit
             true
         } else {
