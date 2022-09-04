@@ -42,7 +42,7 @@ object PluginMain : KotlinPlugin(
     lateinit var notMuteMessagePush: Permission
     lateinit var notTalkativeMessagePush: Permission
     lateinit var bypassMute: Permission
-    lateinit var disableGroup: Permission
+    lateinit var blocked: Permission
     lateinit var commitListener: CommitListener
     lateinit var adRegex: Array<Regex>
     var helpMessage: ForwardMessage? = null
@@ -73,7 +73,7 @@ object PluginMain : KotlinPlugin(
         notMuteMessagePush = register(PermissionId("lgzbot.event.notpush", "mute"), "不推送禁言权限 (仅适用于群聊)")
         notTalkativeMessagePush = register(PermissionId("lgzbot.event.notpush", "talkative"), "不推送新龙王权限 (仅适用于群聊)")
         bypassMute = register(PermissionId("lgz.plugin", "bypassmute"), "让某个笨蛋绕过广告禁言")
-        disableGroup= register(PermissionId("lgzbot", "blocked"), "坏蛋群专属权限!")
+        blocked = register(PermissionId("lgzbot", "blocked"), "坏蛋专属权限!")
     }
 
     private fun registerCommands() = CommandManager.run {

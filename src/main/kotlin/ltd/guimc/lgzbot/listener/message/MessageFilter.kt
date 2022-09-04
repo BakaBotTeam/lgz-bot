@@ -1,5 +1,6 @@
 package ltd.guimc.lgzbot.listener.message
 
+import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.PluginMain.adRegex
 import ltd.guimc.lgzbot.PluginMain.bypassMute
 import ltd.guimc.lgzbot.PluginMain.logger
@@ -47,6 +48,10 @@ object MessageFilter {
             35
         }
 
+        if (e.sender.permitteeId.hasPermission(PluginMain.blocked) || e.group.permitteeId.hasPermission(PluginMain.blocked)) {
+            e.intercept()
+            return
+        }
         if (forwardMessage.isEmpty() && textMessage.isEmpty()) return
         if (cxzTeacher.isFDPGroup(e.group)) cxzTeacher.specialCheck(e, textMessage)
 
