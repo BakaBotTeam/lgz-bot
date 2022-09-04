@@ -8,6 +8,9 @@ import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.utils.GithubUtils
 import ltd.guimc.lgzbot.utils.RegexUtils
 import net.mamoe.mirai.Bot
+import java.lang.Thread.sleep
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @OptIn(DelicateCoroutinesApi::class)
 class CommitListener {
@@ -35,19 +38,23 @@ class CommitListener {
                 for (i in GithubSubConfig.subList.keys) {
                     val repo = GithubUtils.getGithubRepo(i)
                     if (repo.checkUpdate()) {
-                        val commit = repo.lastCommitInfo
+                        val commit = repo.commit
                         for (i2 in GithubSubConfig.subList.get(i)!!) {
                             val group = bot.getGroup(i2) ?: continue
                             val s = "[GitHub] (Preview Version)\n" +
                                 "$i has a new commit!\n" +
                                 "CommitId: ${commit.commitId}\n" +
-                                "CommitMessage: ${commit.commitMessage}"
+                                "CommitMessage: ${commit.commitMessage}\n" +
+                                "Author: ${commit.author.name} (${commit.author.email})" +
+                                "Time: ${commit.commitTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))}"
 
                             if (RegexUtils.matchRegex(PluginMain.adRegex, s)) continue
                             GlobalScope.async { group.sendMessage(s) }
                         }
                     }
                 }
+
+                sleep(1000*60*60)
             }
         }.start()
 

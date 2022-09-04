@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 // TODO: Add some features
 class RepoInfo(val repo: String, val author: OwnerInfo, val descriptor: String, val createdTime: LocalDateTime, val updateTime: LocalDateTime, val lastCommitInfo: CommitInfo, val language: String, val defaultBranch: String) {
-    var commit: CommitInfo? = null
+    var commit: CommitInfo = lastCommitInfo
     override fun equals(other: Any?): Boolean {
         if (other !is RepoInfo) return false
         return other.repo == this.repo
@@ -14,7 +14,7 @@ class RepoInfo(val repo: String, val author: OwnerInfo, val descriptor: String, 
 
     fun checkUpdate(): Boolean {
         val newCommit = GithubUtils.getLastCommit(repo)
-        return if (commit == null || newCommit.commitId != commit!!.commitId) {
+        return if (newCommit.commitId != commit.commitId) {
             commit = newCommit
             true
         } else {

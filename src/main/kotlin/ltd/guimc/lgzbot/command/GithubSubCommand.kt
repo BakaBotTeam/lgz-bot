@@ -53,4 +53,11 @@ object GithubSubCommand: CompositeCommand(
 
         GithubSubConfig.subList[repo]!!.remove(groupId)
     }
+
+    @SubCommand("key")
+    @Description("Set a Github Key")
+    suspend fun CommandSender.III11Ii1I1i1IIL1IL1il1IL1(key: String) {
+        GithubSubConfig.key = key
+        sendMessage("OK")
+    }
 }
