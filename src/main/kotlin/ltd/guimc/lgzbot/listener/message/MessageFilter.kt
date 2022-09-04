@@ -48,7 +48,7 @@ object MessageFilter {
             35
         }
 
-        if (e.sender.permitteeId.hasPermission(PluginMain.blocked) || e.group.permitteeId.hasPermission(PluginMain.blocked)) {
+        if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) || e.group.permitteeId.hasPermission(PluginMain.blocked)) {
             e.intercept()
             return
         }
