@@ -18,10 +18,10 @@ class CommitListener {
     val logger = PluginMain.logger
 
     init {
-        for (i in GithubSubConfig.subList.keys) {
-            val repo = GithubUtils.getGithubRepo(i)
-            repo.checkUpdate()
-        }
+        // for (i in GithubSubConfig.subList.keys) {
+        //     val repo = GithubUtils.getGithubRepo(i)
+        //     repo.checkUpdate()
+        // }
 
         Thread {
             while (!isQuitting) {
@@ -56,8 +56,8 @@ class CommitListener {
 
                 sleep(1000*60)
             }
-        }.start()
+        }
 
-        logger.info("Github Sub is Running!")
+        // logger.info("Github Sub is Running!")
     }
 }
