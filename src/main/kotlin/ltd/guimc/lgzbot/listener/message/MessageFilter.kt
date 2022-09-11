@@ -48,11 +48,7 @@ object MessageFilter {
             35
         }
 
-        if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) || e.group.permitteeId.hasPermission(PluginMain.blocked)) {
-            e.intercept()
-            return
-        }
-        if (forwardMessage.isEmpty() && textMessage.isEmpty()) return
+        if (forwardMessage.isEmpty() && textMessage.isEmpty() && e.message.content.isEmpty()) return
         if (cxzTeacher.isFDPGroup(e.group)) cxzTeacher.specialCheck(e, textMessage)
 
         if (e.sender.permission.level >= e.group.botPermission.level) return
@@ -63,8 +59,7 @@ object MessageFilter {
                 e.message.recall()
                 e.group.mute(e.sender, "非法发言内容")
                 muted = true
-            } catch (_: Exception) {
-            }
+            } catch (_: Exception) {}
             riskList.add(e.sender)
             setVl(e.sender.id, 99.0)
             messagesHandled++
@@ -140,6 +135,13 @@ object MessageFilter {
             memberVl[e.sender.id] = .0
         }
 
+        // Permission block
+        if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) || e.group.permitteeId.hasPermission(PluginMain.blocked)) {
+            e.intercept()
+            return
+        }
+
+        // Cancel Event
         if (muted) e.intercept()
     }
 
