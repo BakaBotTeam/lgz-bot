@@ -2,20 +2,29 @@ package ltd.guimc.lgzbot.utils
 
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.*
 
 object HttpUtils {
-    fun getJsonObject(url: String): JSONObject {
+    fun getJsonObject(url: String, auth: String? = null): JSONObject {
         val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
         connection.requestMethod = "GET"
+        if (auth != null) {
+            val basicAuth = "Basic : " + String(Base64.getEncoder().encode(auth.toByteArray()))
+            connection.setRequestProperty("Authorization", basicAuth)
+        }
         connection.connect()
         // 转换到json对象
         val raw = connection.inputStream.bufferedReader().readText()
         return JSONObject(raw)
     }
 
-    fun getJsonArray(url: String): JSONArray {
+    fun getJsonArray(url: String, auth: String? = null): JSONArray {
         val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
         connection.requestMethod = "GET"
+        if (auth != null) {
+            val basicAuth = "Basic : " + String(Base64.getEncoder().encode(auth.toByteArray()))
+            connection.setRequestProperty("Authorization", basicAuth)
+        }
         connection.connect()
         // 转换到json对象
         val raw = connection.inputStream.bufferedReader().readText()

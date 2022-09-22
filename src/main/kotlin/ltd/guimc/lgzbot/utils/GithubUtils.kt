@@ -11,16 +11,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object GithubUtils {
-    val gitLinkRegex = Regex("(git|https|git@)(:\\/\\/|)github.com(:|\\/).*\\/.*(.git|\\/| |)")
-    val githubHead = Regex("(git|https|git@)(:\\/\\/|)github.com(:|\\/)")
+    val gitLinkRegex = Regex(pattern = "(git|https|git@)(:\\/\\/|)github.com(:|\\/).*\\/.*(.git|\\/| |)")
+    val githubHead = Regex(pattern = "(git|https|git@)(:\\/\\/|)github.com(:|\\/)")
 
     fun findGitLink(text: String): String? {
         return gitLinkRegex.find(text)?.value
     }
 
-    fun apiObject(url: String): JSONObject = HttpUtils.getJsonObject("https://${if (GithubSubConfig.key != "" ) "${GithubSubConfig.key}@" else ""}api.github.com$url")
+    private fun apiObject(url: String): JSONObject = HttpUtils.getJsonObject("https://api.github.com$url", if (GithubSubConfig.key != "" ) GithubSubConfig.key else null)
 
-    fun apiArray(url: String): JSONArray = HttpUtils.getJsonArray("https://${if (GithubSubConfig.key != "" ) "${GithubSubConfig.key}@" else ""}api.github.com$url")
+    private fun apiArray(url: String): JSONArray = HttpUtils.getJsonArray("https://api.github.com$url", if (GithubSubConfig.key != "" ) GithubSubConfig.key else null)
 
     fun convert(url: String): String {
         val s = url
