@@ -70,6 +70,4 @@ object LGZBotCommand: CompositeCommand (
             e.printStackTrace()
         }
     }
-
-    // @SubCommand("info")
 }

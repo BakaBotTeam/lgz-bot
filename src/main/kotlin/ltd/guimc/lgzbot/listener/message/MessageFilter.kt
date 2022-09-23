@@ -180,5 +180,13 @@ object MessageFilter {
         logger.info("$id 的VL设置为 $vl")
     }
 
-    private suspend fun Group.mute(mem: Member, reason: String) = mem.mute(if (mem.permitteeId.hasPermission(bypassMute)) 1 else if (cxzTeacher.isFDPGroup(this)) 60 else 600, "Message Filter: $reason")
+    private suspend fun Group.mute(mem: Member, reason: String) {
+        mem.mute(
+            if (mem.permitteeId.hasPermission(bypassMute)) 1
+                else if (cxzTeacher.isFDPGroup(this)) 60
+                else if (riskList.indexOf(mem) != -1) 1200
+                else 600,
+            "Message Filter: $reason"
+        )
+    }
 }
