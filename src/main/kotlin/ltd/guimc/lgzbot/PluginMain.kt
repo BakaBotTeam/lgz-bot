@@ -7,6 +7,7 @@ import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.listener.github.CommitListener
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
+import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.BuiltInCommands
 import net.mamoe.mirai.console.command.CommandManager
@@ -14,8 +15,6 @@ import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService
-import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
-import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.console.plugin.author
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
@@ -23,12 +22,13 @@ import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.*
-import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
+import net.mamoe.mirai.event.events.BotOnlineEvent
+import net.mamoe.mirai.event.events.GroupMessageEvent
+import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.message.data.ForwardMessage
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.PlainText
-import kotlin.math.round
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -45,12 +45,14 @@ object PluginMain : KotlinPlugin(
     lateinit var blocked: Permission
     lateinit var commitListener: CommitListener
     lateinit var adRegex: Array<Regex>
+    lateinit var adPinyinRegex: Array<Regex>
     var helpMessage: ForwardMessage? = null
 
 
     override fun onEnable() {
         logger.info("$name v$version by $author Loading")
         adRegex = getDefaultRegex()
+        adPinyinRegex = getDefaultPinyinRegex()
         commitListener = CommitListener()
 
         registerPerms()

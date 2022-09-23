@@ -1,6 +1,7 @@
 package ltd.guimc.lgzbot.command
 
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.listener.message.MessageFilter
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.isConsole
@@ -53,24 +54,22 @@ object LGZBotCommand: CompositeCommand (
         }
     }
 
+    @SubCommand("clear")
+    @Description("清除某人的状态")
+    suspend fun CommandSender.I1Ii1I1(member: Member) {
+        try {
+            MessageFilter.riskList.remove(member)
+            MessageFilter.clearVl(member.id)
+            sendMessage(
+                PlainText("清除了")+
+                    At(member)+
+                    PlainText("的VL, 并移出在本群的风险管控")
+            )
+        } catch (e: Exception) {
+            sendMessage("Oops! 在尝试执行操作的时候发生了一些错误!")
+            e.printStackTrace()
+        }
+    }
 
-//     @SubCommand("atspam")
-//     @Description("F**k You!")
-//     suspend fun CommandSender.atspam(target: Member, times: Int, sleepTime: Double) {
-//         var sleepTime1 = sleepTime
-//         if (target.permission.level > 0) {
-//             sendMessage("你不能这么做")
-//             return
-//         }
-//         if (sleepTime <= .0) {
-//             sleepTime1 = 1.0
-//         }
-//         sendMessage("Ok! Processing...")
-//         repeat(times) {
-//             delay(round(sleepTime1 * 1000L).toLong())
-//             var lastMesg = sendMessage(At(target) + PlainText(RandomUtils.randomText(6)))
-//             // delay(100L)
-//             lastMesg?.recall()
-//         }
-//     }
+    // @SubCommand("info")
 }

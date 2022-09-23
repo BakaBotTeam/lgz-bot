@@ -1,6 +1,7 @@
 package ltd.guimc.lgzbot.listener.message
 
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.PluginMain.adPinyinRegex
 import ltd.guimc.lgzbot.PluginMain.adRegex
 import ltd.guimc.lgzbot.PluginMain.bypassMute
 import ltd.guimc.lgzbot.PluginMain.logger
@@ -27,8 +28,8 @@ object MessageFilter {
     private var spammerFucker = mutableMapOf<Long, Int>()
     private var spammerFucker2 = mutableMapOf<Long, Long>()
     private var repeaterFucker = mutableMapOf<Long, String>()
-    private var memberVl = mutableMapOf<Long, Double>()
     private var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
+    private var memberVl = mutableMapOf<Long, Double>()
 
     private var messagesHandled = 0
     var riskList = ArrayList<Member>()
@@ -61,6 +62,19 @@ object MessageFilter {
                 muted = true
             } catch (_: Exception) {}
             riskList.add(e.sender)
+            setVl(e.sender.id, 99.0)
+            messagesHandled++
+        }
+
+        // 拼音检查发言
+        if (!muted && riskList.indexOf(e.sender) != -1 && ((RegexUtils.matchRegexPinyin(adPinyinRegex, textMessage)) ||
+            textMessage.isEmpty() && RegexUtils.matchRegexPinyin(adPinyinRegex, forwardMessage))
+        ) {
+            try {
+                e.message.recall()
+                e.group.mute(e.sender, "非法发言内容 (对于风控人员的拼音检查)")
+                muted = true
+            } catch (_: Exception) {}
             setVl(e.sender.id, 99.0)
             messagesHandled++
         }
@@ -145,7 +159,7 @@ object MessageFilter {
         if (muted) e.intercept()
     }
 
-    private fun addVl(id: Long, vl: Double) {
+    fun addVl(id: Long, vl: Double) {
         if (memberVl[id] == null) {
             memberVl[id] = .0
         }
@@ -156,12 +170,12 @@ object MessageFilter {
         }
     }
 
-    private fun clearVl(id: Long) {
+    fun clearVl(id: Long) {
         memberVl[id] = .0
         logger.info("$id 的VL清零了")
     }
 
-    private fun setVl(id: Long, vl: Double) {
+    fun setVl(id: Long, vl: Double) {
         memberVl[id] = vl
         logger.info("$id 的VL设置为 $vl")
     }
