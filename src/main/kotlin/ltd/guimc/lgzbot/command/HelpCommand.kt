@@ -2,12 +2,12 @@ package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
-import net.mamoe.mirai.console.command.*
 import net.mamoe.mirai.console.command.BuiltInCommands.HelpCommand.generateDefaultHelp
+import net.mamoe.mirai.console.command.CommandSender
+import net.mamoe.mirai.console.command.ConsoleCommandSender.permitteeId
 import net.mamoe.mirai.console.command.ConsoleCommandSender.sendMessage
-import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
-import net.mamoe.mirai.message.data.ForwardMessageBuilder
-import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.console.command.SimpleCommand
+import net.mamoe.mirai.console.command.isConsole
 
 object HelpCommand: SimpleCommand (
     owner = PluginMain,
@@ -21,8 +21,8 @@ object HelpCommand: SimpleCommand (
         if (isConsole()) {
             sendMessage(generateDefaultHelp(permitteeId))
         } else {
+            require(bot != null)
             sendMessage("请稍等")
-            if (bot == null) throw Exception("bot == null")
             sendMessage(PluginMain.helpMessage!!)
         }
     }

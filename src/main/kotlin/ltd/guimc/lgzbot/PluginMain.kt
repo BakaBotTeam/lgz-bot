@@ -4,7 +4,6 @@ package ltd.guimc.lgzbot
 import ltd.guimc.lgzbot.command.*
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
-import ltd.guimc.lgzbot.listener.github.CommitListener
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
@@ -43,7 +42,6 @@ object PluginMain : KotlinPlugin(
     lateinit var notTalkativeMessagePush: Permission
     lateinit var bypassMute: Permission
     lateinit var blocked: Permission
-    lateinit var commitListener: CommitListener
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
     var helpMessage: ForwardMessage? = null
@@ -53,7 +51,6 @@ object PluginMain : KotlinPlugin(
         logger.info("$name v$version by $author Loading")
         adRegex = getDefaultRegex()
         adPinyinRegex = getDefaultPinyinRegex()
-        commitListener = CommitListener()
 
         registerPerms()
         registerCommands()
@@ -67,8 +64,6 @@ object PluginMain : KotlinPlugin(
         logger.info("$name v$version by $author Disabling")
         Config.save()
         GithubSubConfig.save()
-
-        commitListener.isQuitting = true
     }
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
@@ -90,7 +85,7 @@ object PluginMain : KotlinPlugin(
 
     private fun registerEvents() = GlobalEventChannel.run {
         subscribeAlways<BotOnlineEvent> {
-            if (helpMessage != null) return@subscribeAlways
+            require(helpMessage != null)
             helpMessage = ForwardMessageBuilder(it.bot.asFriend)
                 .add(bot, PlainText(
                     BuiltInCommands.HelpCommand.generateDefaultHelp(AbstractPermitteeId.Console)

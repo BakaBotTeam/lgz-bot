@@ -18,9 +18,7 @@ object HttpCatCommand: SimpleCommand (
     fun CommandSender.onHandler(code: Int) = ltd_guimc_command_httpcat(code)
 
     fun CommandSender.ltd_guimc_command_httpcat(code: Int) = launch{
-        if (subject == null || bot == null) {
-            throw Exception("Oops, something is empty")
-        }
+        require(!(subject == null || bot == null))
         val httpclients = HttpClients.createDefault()
         val httpget = HttpGet("https://http.cat/$code")
         val entity = httpclients.execute(httpget).entity

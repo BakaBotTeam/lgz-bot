@@ -20,9 +20,7 @@ object ACGCommand: SimpleCommand (
     fun CommandSender.onHandler() = ltd_guimc_command_acg()
 
     fun CommandSender.ltd_guimc_command_acg() = launch{
-        if (subject == null || bot == null) {
-            throw Exception("Oops, something is empty")
-        }
+        require(!(subject == null || bot == null)) { "Subject or Bot cannot be null" }
         val httpclients = HttpClients.createDefault()
         val httpget = HttpGet("https://www.dmoe.cc/random.php")
         val response = httpclients.execute(httpget)
