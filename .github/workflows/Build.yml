@@ -32,17 +32,8 @@ jobs:
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Auth with Sakurafrp Service
-        continue-on-error: true
-        run: |
-          curl -s -X POST --data-urlencode "pw=${{ secrets.SAKURAFRP_PASSWORD }}" --data-urlencode "csrf=0000000000000000" --data-urlencode "ip=${{ steps.ip.outputs.ipv4 }}" -k "https://${{ secrets.SAKURAFRP_URL }}:${{ secrets.PORT }}/"
       - name: Deplay to server
-        continue-on-error: true
         run: |
-          echo Step1
-          ssh -oStrictHostKeyChecking=no alpto@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "rm -rf /home/alpto/mirai/plugins/lgz-bot-*.mirai2.jar"
-          echo Step2
-          scp -oStrictHostKeyChecking=no -P ${{ secrets.PORT }} ./build/mirai/lgz-bot-*.mirai2.jar alpto@${{ secrets.SSH_SERVER_ADDRESS }}:/home/alpto/mirai/plugins
-          echo Step3
-          ssh -oStrictHostKeyChecking=no alpto@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "screen -S mirai-core -p 0 -X stuff \"^C\""
-          echo Done
+          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} "rm -rf /root/mirai/plugins/lgz-bot-*.mirai2.jar"
+          scp -oStrictHostKeyChecking=no ./build/mirai/lgz-bot-*.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/root/mirai/plugins
+          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} "screen -S mirai -p 0 -X stuff \"^C\""
