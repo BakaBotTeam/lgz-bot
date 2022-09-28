@@ -1,3 +1,12 @@
+/*
+ * THIS FILE IS PART OF lgz-bot PROJECT
+ *
+ * You must disclose the source code of your modified work and the source code you took from this project. This means you are not allowed to use code from this project (even partially) in a closed-source (or even obfuscated) application.
+ * Your modified application must also be licensed under the AGPLv3.
+ *
+ * Copyright (c) 2022 - now Guimc Team.
+ */
+
 package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +39,7 @@ object MusicCommand: CompositeCommand(
                 logger.warning("请在群里使用")
                 return
             }
-            
+
             val url = "http://cloud-music.pl-fe.cn/search?keywords=${
                 withContext(Dispatchers.IO) {
                     URLEncoder.encode(name.replace("+", " "), "utf-8")

@@ -1,3 +1,12 @@
+/*
+ * THIS FILE IS PART OF lgz-bot PROJECT
+ *
+ * You must disclose the source code of your modified work and the source code you took from this project. This means you are not allowed to use code from this project (even partially) in a closed-source (or even obfuscated) application.
+ * Your modified application must also be licensed under the AGPLv3.
+ *
+ * Copyright (c) 2022 - now Guimc Team.
+ */
+
 package ltd.guimc.lgzbot.listener.message
 
 import ltd.guimc.lgzbot.PluginMain
@@ -68,7 +77,7 @@ object MessageFilter {
 
         // 拼音检查发言
         if (!muted && riskList.indexOf(e.sender) != -1 && ((RegexUtils.matchRegexPinyin(adPinyinRegex, textMessage)) ||
-            textMessage.isEmpty() && RegexUtils.matchRegexPinyin(adPinyinRegex, forwardMessage))
+                textMessage.isEmpty() && RegexUtils.matchRegexPinyin(adPinyinRegex, forwardMessage))
         ) {
             try {
                 e.message.recall()
@@ -183,9 +192,9 @@ object MessageFilter {
     private suspend fun Group.mute(mem: Member, reason: String) {
         mem.mute(
             if (mem.permitteeId.hasPermission(bypassMute)) 1
-                else if (cxzTeacher.isFDPGroup(this)) 60
-                else if (riskList.indexOf(mem) != -1) 1200
-                else 600,
+            else if (cxzTeacher.isFDPGroup(this)) 60
+            else if (riskList.indexOf(mem) != -1) 1200
+            else 600,
             "Message Filter: $reason"
         )
     }

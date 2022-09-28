@@ -1,8 +1,16 @@
+/*
+ * THIS FILE IS PART OF lgz-bot PROJECT
+ *
+ * You must disclose the source code of your modified work and the source code you took from this project. This means you are not allowed to use code from this project (even partially) in a closed-source (or even obfuscated) application.
+ * Your modified application must also be licensed under the AGPLv3.
+ *
+ * Copyright (c) 2022 - now Guimc Team.
+ */
+
 package ltd.guimc.lgzbot.utils
 
-import java.util.regex.Pattern
-import kotlin.math.min
 import kotlin.math.max
+import kotlin.math.min
 
 object TextUtils {
     private fun getLevenshteinDistance(X: String, Y: String): Int {
@@ -25,6 +33,7 @@ object TextUtils {
         }
         return T[m][n]
     }
+
     // 寻找两字符串相似度，返回双精度浮点数
     fun findSimilarity(x: String?, y: String?): Double {
         require(!(x == null || y == null)) { "Strings should not be null" }
