@@ -33,6 +33,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Deplay to server
+        continue-on-error: true
         run: |
           ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} "rm -rf /root/mirai/plugins/lgz-bot-*.mirai2.jar"
           scp -oStrictHostKeyChecking=no ./build/mirai/lgz-bot-*.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/root/mirai/plugins
