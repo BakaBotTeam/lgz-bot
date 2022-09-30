@@ -4,8 +4,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/05a867056904e1a9f5b1/maintainability)](https://codeclimate.com/github/guimc233/lgz-bot/maintainability)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/f4fa5faaba9a42e0bf4213a42ba92a94)](https://www.codacy.com/gh/guimc233/lgz-bot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=guimc233/lgz-bot&amp;utm_campaign=Badge_Grade)
 
-* Thanks for use it!
-* Thanks for EVERYONE!!!
+* Thanks for everyone!!
+* Online demo: 1324248744 (QQ)
 
 ## License
 This project is subject to the [GNU Affero General Public License v3.0](LICENSE). This does only apply for source code located directly in this clean repository. During the development and compilation process, additional source code may be used to which we have obtained no rights. Such code is not covered by the GPL license.
