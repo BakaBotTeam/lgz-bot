@@ -196,7 +196,7 @@ object MessageFilter {
             else if (cxzTeacher.isFDPGroup(this)) 60
             else if (riskList.indexOf(mem) != -1) 1200
             else 600,
-            "Message Filter: $reason ${if (mem.permitteeId.hasPermission(bypassMute)) "(减轻处罚)" else ""}"
+            "Message Filter: $reason"
         )
     }
 }
