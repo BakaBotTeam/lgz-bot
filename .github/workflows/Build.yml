@@ -27,22 +27,12 @@ jobs:
         with:
           name: lgz-bot
           path: build/mirai/lgz-bot-*.mirai2.jar
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Auth with Sakurafrp Service
-        continue-on-error: true
-        run: |
-          curl -s -X POST --data-urlencode "pw=${{ secrets.SAKURAFRP_PASSWORD }}" --data-urlencode "csrf=0000000000000000" --data-urlencode "ip=${{ steps.ip.outputs.ipv4 }}" -k "https://${{ secrets.SAKURAFRP_URL }}:${{ secrets.PORT }}/"
-      - name: Deplay to server
-        continue-on-error: true
-        run: |
-          echo Step1
-          ssh -oStrictHostKeyChecking=no alpto@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "rm -rf /home/alpto/mirai/plugins/lgz-bot-*.mirai2.jar"
-          echo Step2
-          scp -oStrictHostKeyChecking=no -P ${{ secrets.PORT }} ./build/mirai/lgz-bot-*.mirai2.jar alpto@${{ secrets.SSH_SERVER_ADDRESS }}:/home/alpto/mirai/plugins
-          echo Step3
-          ssh -oStrictHostKeyChecking=no alpto@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "screen -S mirai-core -p 0 -X stuff \"^C\""
-          echo Done
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Development Build"
+          files: |
+            build/mirai/lgz-bot-*.mirai2.jar
