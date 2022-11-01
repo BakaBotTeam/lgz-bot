@@ -50,6 +50,7 @@ object MessageFilter {
         val textMessage = e.message.getPlainText()
             .removeNonVisible()
         val forwardMessage = e.message.getFullText()
+            .removeNonVisible()
         val stringLength = if (cxzTeacher.isFDPGroup(e.group)) {
             0
         } else if (e.sender in riskList) {
@@ -125,9 +126,9 @@ object MessageFilter {
 
         // 重复内容过滤
         if (repeaterFucker[e.sender.id] == null) {
-            repeaterFucker[e.sender.id] = e.message.content
+            repeaterFucker[e.sender.id] = textMessage
         } else {
-            val slimer = findSimilarity(repeaterFucker[e.sender.id]!!, e.message.content)
+            val slimer = findSimilarity(repeaterFucker[e.sender.id]!!, textMessage)
             if (slimer >= 0.75) {
                 addVl(e.sender.id, slimer * 25)
             } else {
