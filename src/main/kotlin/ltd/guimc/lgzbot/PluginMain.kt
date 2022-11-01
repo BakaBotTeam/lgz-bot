@@ -74,7 +74,7 @@ object PluginMain : KotlinPlugin(
     }
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
-        bypassMute = register(PermissionId("lgz.plugin", "bypassmute"), "让某个笨蛋绕过广告禁言")
+        bypassMute = register(PermissionId("lgzbot", "bypassmute"), "让某个笨蛋绕过广告禁言")
         blocked = register(PermissionId("lgzbot", "blocked"), "坏蛋专属权限!")
     }
 

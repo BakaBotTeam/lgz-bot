@@ -160,7 +160,9 @@ object MessageFilter {
         }
 
         // Permission block
-        if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) || e.group.permitteeId.hasPermission(PluginMain.blocked)) {
+        if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) ||
+            (e.group.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute))
+        ) {
             e.intercept()
             return
         }
