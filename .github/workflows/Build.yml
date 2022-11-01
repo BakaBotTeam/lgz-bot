@@ -36,3 +36,19 @@ jobs:
           title: "Development Build"
           files: |
             build/mirai/lgz-bot-*.mirai2.jar
+      - name: Install SSH key
+        continue-on-error: true
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Deplay to server
+        continue-on-error: true
+        run: |
+          echo Step1
+          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "rm -rf /home/alpto/mirai/plugins/lgz-bot-*.mirai2.jar"
+          echo Step2
+          scp -oStrictHostKeyChecking=no -P ${{ secrets.PORT }} ./build/mirai/lgz-bot-*.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/home/alpto/mirai/plugins
+          echo Step3
+          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "screen -S mirai -p 0 -X stuff \"^C\""
+          echo Done
