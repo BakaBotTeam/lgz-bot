@@ -6,7 +6,7 @@
 
 * **Thanks for everyone!!**
 * Online demo: `1324248744` (QQ)
-* 赞助 @ https://afdian.net/a/lgz-bot
+* 赞助 @ [爱发电](https://afdian.net/a/lgz-bot)
 
 ## License
 This project is subject to the [GNU Affero General Public License v3.0](LICENSE). This does only apply for source code located directly in this clean repository. During the development and compilation process, additional source code may be used to which we have obtained no rights. Such code is not covered by the GPL license.
