@@ -47,9 +47,9 @@ jobs:
         continue-on-error: true
         run: |
           echo Step1
-          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "rm -rf /home/alpto/mirai/plugins/lgz-bot-*.mirai2.jar"
+          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "rm -rf /root/mirai/plugins/lgz-bot-*.mirai2.jar"
           echo Step2
-          scp -oStrictHostKeyChecking=no -P ${{ secrets.PORT }} ./build/mirai/lgz-bot-*.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/home/alpto/mirai/plugins
+          scp -oStrictHostKeyChecking=no -P ${{ secrets.PORT }} ./build/mirai/lgz-bot-*.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/root/mirai/plugins
           echo Step3
           ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "screen -S mirai -p 0 -X stuff \"^C\""
           echo Done
