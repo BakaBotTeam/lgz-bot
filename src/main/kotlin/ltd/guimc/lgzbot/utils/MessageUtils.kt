@@ -36,7 +36,7 @@ object MessageUtils {
     }
 
     fun MessageChain.getForwardMessage(): MessageChain {
-        var msgcb = MessageChainBuilder()
+        val msgcb = MessageChainBuilder()
         for (u in listIterator()) if (u is ForwardMessage) for (i in u.nodeList) for (k in i.messageChain.listIterator()) msgcb.add(k)
         return msgcb.build()
     }

@@ -15,6 +15,7 @@ import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
+import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.BuiltInCommands
@@ -28,15 +29,14 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
+import net.mamoe.mirai.contact.Friend
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
-import net.mamoe.mirai.event.events.BotOnlineEvent
-import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.event.events.NewFriendRequestEvent
+import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.data.ForwardMessage
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.toMessageChain
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -51,8 +51,9 @@ object PluginMain : KotlinPlugin(
     lateinit var blocked: Permission
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
-    var helpMessage: ForwardMessage? = null
+    var helpMessages: Array<ForwardMessage>? = null
 
+    val iI1I1i1I1i1: Regex = Regex("@.*#.* with <.*>")
 
     override fun onEnable() {
         logger.info("$name v$version by $author Loading")
@@ -90,19 +91,53 @@ object PluginMain : KotlinPlugin(
 
     private fun registerEvents() = GlobalEventChannel.run {
         subscribeAlways<BotOnlineEvent> {
-            require(helpMessage != null)
-            helpMessage = ForwardMessageBuilder(it.bot.asFriend)
-                .add(bot, PlainText(
-                    BuiltInCommands.HelpCommand.generateDefaultHelp(AbstractPermitteeId.Console)
-                ))
-                .build()
+            if (helpMessages == null) {
+                val _helpMessages = mutableListOf<ForwardMessage>()
+                var helpMessage = ForwardMessageBuilder(it.bot.asFriend)
+                var length = 0
+                BuiltInCommands.HelpCommand
+                    .generateDefaultHelp(AbstractPermitteeId.Console)
+                    .split("\n")
+                    .forEach { str ->
+                        if (length >= 99) {
+                            _helpMessages.add(helpMessage.build())
+                            helpMessage = ForwardMessageBuilder(it.bot.asFriend)
+                            length = 0
+                        }
+
+                        length++
+                        helpMessage.add(it.bot, PlainText(str))
+                    }
+                helpMessages = _helpMessages.toTypedArray()
+            }
         }
 
         subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
 
         subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event) }
 
-        subscribeAlways<BotInvitedJoinGroupRequestEvent> { it.accept() }
-        subscribeAlways<NewFriendRequestEvent> { it.accept() }
+        subscribeAlways<BotInvitedJoinGroupRequestEvent> {
+            // it.accept()
+            require(it.invitor != null) { "Must have a invitor in BotInvitedJoinGroupRequestEvent" }
+
+            it.invitor!!.sendMessage(
+                "貌似你很喜欢使用这个机器人呢！\n" +
+                    "但是为了安全考虑 我们关闭了快速通过机器人受邀进群..\n" +
+                    "您可以带着 Event ID 联系超管来让机器人进群!\n" +
+                    "Event ID: ${it.eventId}"
+            )
+        }
+
+        subscribeAlways<NewFriendRequestEvent> {
+            it.accept()
+            it.bot.getFriendOrFail(it.fromId).sendMessage(PlainText("你好呀 大笨蛋!"))
+        }
+
+        subscribeAlways<MessagePreSendEvent> { e ->
+            if (e.target is Friend) if (iI1I1i1I1i1.containsMatchIn(
+                    e.message.toMessageChain().getPlainText()
+                )
+            ) e.intercept()
+        }
     }
 }

@@ -165,11 +165,12 @@ object MessageFilter {
             (e.group.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute))
         ) {
             e.intercept()
+            e.cancel()
             return
         }
 
         // Cancel Event
-        if (muted) e.intercept()
+        if (muted) e.intercept(); e.cancel()
     }
 
     fun addVl(id: Long, vl: Double) {
