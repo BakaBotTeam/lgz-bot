@@ -32,7 +32,9 @@ object HelpCommand: SimpleCommand (
         } else {
             require(bot != null)
             sendMessage("请稍等")
-            sendMessage(PluginMain.helpMessage!!)
+            for (i in PluginMain.helpMessages!!) {
+                sendMessage(i)
+            }
         }
     }
 }
