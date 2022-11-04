@@ -138,9 +138,8 @@ object MessageFilter {
         }
 
         // VL处罚
-        if (memberVl[e.sender.id]!! >= Config.vlPunish) {
-            if (muted) return
-            if (e.sender.id==1242788764L) return
+        if (memberVl[e.sender.id]!! >= Config.vlPunish && !muted) {
+            if (e.sender.id == 1242788764L) return
             e.group.mute(e.sender, "不允许的速度/发言内容重复")
             muted = true
             e.message.recall()
@@ -149,7 +148,8 @@ object MessageFilter {
                     it.recall()
                     sleep(100)
                 }
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+            }
             historyMessage[e.sender.id]?.clear()
             memberVl[e.sender.id] = .0
             messagesHandled++
@@ -164,13 +164,11 @@ object MessageFilter {
         if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) ||
             (e.group.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute))
         ) {
-            e.intercept()
-            e.cancel()
-            return
+            muted = true
         }
 
         // Cancel Event
-        if (muted) e.intercept(); e.cancel()
+        if (muted) e.intercept()
     }
 
     fun addVl(id: Long, vl: Double) {
