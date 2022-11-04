@@ -99,7 +99,7 @@ object PluginMain : KotlinPlugin(
                     .generateDefaultHelp(AbstractPermitteeId.Console)
                     .split("\n")
                     .forEach { str ->
-                        if (length >= 99) {
+                        if (length >= 60) {
                             _helpMessages.add(helpMessage.build())
                             helpMessage = ForwardMessageBuilder(it.bot.asFriend)
                             length = 0
@@ -108,6 +108,7 @@ object PluginMain : KotlinPlugin(
                         length++
                         helpMessage.add(it.bot, PlainText(str))
                     }
+                _helpMessages.add(helpMessage.build())
                 helpMessages = _helpMessages.toTypedArray()
             }
         }
