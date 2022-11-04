@@ -41,7 +41,7 @@ import net.mamoe.mirai.message.data.toMessageChain
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         "ltd.guimc.lgzbot.plugin",
-        "0.1.2",
+        "0.2.1",
         "LgzBot",
     ){
         author("汐洛 & YounKoo & 笨蛋们")
@@ -53,7 +53,7 @@ object PluginMain : KotlinPlugin(
     lateinit var adPinyinRegex: Array<Regex>
     var helpMessages: Array<ForwardMessage>? = null
 
-    val iI1I1i1I1i1: Regex = Regex("@.*#.* with <.*>")
+    val iI1I1i1I1i1: Regex = Regex("with <.*>")
 
     override fun onEnable() {
         logger.info("$name v$version by $author Loading")
