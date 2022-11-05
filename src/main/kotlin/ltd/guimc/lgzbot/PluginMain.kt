@@ -24,12 +24,16 @@ import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService
+import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
+import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.console.plugin.author
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
 import net.mamoe.mirai.contact.Friend
+import net.mamoe.mirai.contact.Group
+import net.mamoe.mirai.contact.getMember
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.*
@@ -49,6 +53,7 @@ object PluginMain : KotlinPlugin(
 ) {
     lateinit var bypassMute: Permission
     lateinit var blocked: Permission
+    lateinit var nudgeMute: Permission
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
     var helpMessages: Array<ForwardMessage>? = null
@@ -77,6 +82,7 @@ object PluginMain : KotlinPlugin(
     private fun registerPerms() = PermissionService.INSTANCE.run {
         bypassMute = register(PermissionId("lgzbot", "bypassmute"), "让某个笨蛋绕过广告禁言")
         blocked = register(PermissionId("lgzbot", "blocked"), "坏蛋专属权限!")
+        nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言")
     }
 
     private fun registerCommands() = CommandManager.run {
@@ -139,6 +145,13 @@ object PluginMain : KotlinPlugin(
                     e.message.toMessageChain().getPlainText()
                 )
             ) e.intercept()
+        }
+
+        subscribeAlways<NudgeEvent> { e ->
+            if (e.target == e.bot && e.subject is Group && (e.subject as Group).permitteeId.hasPermission(
+                    nudgeMute
+                )
+            ) (e.subject as Group).getMember(e.from.id)!!.mute(600)
         }
     }
 }
