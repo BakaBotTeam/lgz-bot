@@ -10,6 +10,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - uses: nadock/verified_commits_check@v1
       - name: Java setup
         uses: actions/setup-java@v2
         with:
@@ -19,20 +20,36 @@ jobs:
       - uses: burrunan/gradle-cache-action@v1
         name: BuildPlugin
         with:
-          job-id: jdk8
+          job-id: jdk11
           arguments: buildPlugin
           gradle-version: wrapper
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: lgz-bot
-          path: build/mirai/lgz-bot-0.1.2.mirai2.jar
+          path: build/mirai/lgz-bot-*.mirai2.jar
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Development Build"
+          files: |
+            build/mirai/lgz-bot-*.mirai2.jar
       - name: Install SSH key
+        continue-on-error: true
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Deplay to server
+        continue-on-error: true
         run: |
-          scp -oStrictHostKeyChecking=no ./build/mirai/lgz-bot-0.1.2.mirai2.jar ${{ secrets.SSH_SERVER }}:/root/mirai/plugins
-          ssh -oStrictHostKeyChecking=no ${{ secrets.SSH_SERVER }} "screen -S mirai -p 0 -X stuff \"^C\""
+          echo Step1
+          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "rm -rf /root/mirai/plugins/lgz-bot-*.mirai2.jar"
+          echo Step2
+          scp -oStrictHostKeyChecking=no -P ${{ secrets.PORT }} ./build/mirai/lgz-bot-*.mirai2.jar root@${{ secrets.SSH_SERVER_ADDRESS }}:/root/mirai/plugins
+          echo Step3
+          ssh -oStrictHostKeyChecking=no root@${{ secrets.SSH_SERVER_ADDRESS }} -p ${{ secrets.PORT }} "screen -S mirai -p 0 -X stuff \"^C\""
+          echo Done
