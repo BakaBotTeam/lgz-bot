@@ -15,7 +15,7 @@ import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
-import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
+import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.BuiltInCommands
@@ -24,23 +24,17 @@ import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService
-import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
-import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.console.plugin.author
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
-import net.mamoe.mirai.contact.Friend
-import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.getMember
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.data.ForwardMessage
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.toMessageChain
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -48,7 +42,7 @@ object PluginMain : KotlinPlugin(
         "0.2.1",
         "LgzBot",
     ){
-        author("汐洛 & YounKoo & 笨蛋们")
+        author("BakaBotTeam成员 & Everyone")
     }
 ) {
     lateinit var bypassMute: Permission
@@ -57,8 +51,6 @@ object PluginMain : KotlinPlugin(
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
     var helpMessages: Array<ForwardMessage>? = null
-
-    val iI1I1i1I1i1: Regex = Regex("with <.*>")
 
     override fun onEnable() {
         logger.info("$name v$version by $author Loading")
@@ -140,18 +132,6 @@ object PluginMain : KotlinPlugin(
             it.bot.getFriendOrFail(it.fromId).sendMessage(PlainText("你好呀 大笨蛋!"))
         }
 
-        subscribeAlways<MessagePreSendEvent> { e ->
-            if (e.target is Friend) if (iI1I1i1I1i1.containsMatchIn(
-                    e.message.toMessageChain().getPlainText()
-                )
-            ) e.intercept()
-        }
-
-        subscribeAlways<NudgeEvent> { e ->
-            if (e.target == e.bot && e.subject is Group && (e.subject as Group).permitteeId.hasPermission(
-                    nudgeMute
-                )
-            ) (e.subject as Group).getMember(e.from.id)!!.mute(600)
-        }
+        subscribeAlways<NudgeEvent>(priority = EventPriority.HIGHEST) { e -> AntiNudgeSpam.onNudge(e) }
     }
 }
