@@ -21,7 +21,7 @@ jobs:
         name: BuildPluginLegacy
         with:
           job-id: jdk11
-          arguments: buildPlugin
+          arguments: buildPluginLegacy
           gradle-version: wrapper
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
