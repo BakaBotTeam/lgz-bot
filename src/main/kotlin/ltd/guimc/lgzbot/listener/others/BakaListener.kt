@@ -39,13 +39,13 @@ object BakaListener {
         }
     }
 
-    suspend fun recall(e: MessageRecallEvent.GroupRecall) {
-        if (e.operator == null) return
-        if (e.authorId != e.operator!!.id) return
-        if (rand.nextDouble() >= 0.9) {
-            e.group.sendMessage(format(RECALL.random(), e.operator!!.id))
-        }
-    }
+    // suspend fun recall(e: MessageRecallEvent.GroupRecall) {
+    //     if (e.operator == null) return
+    //     if (e.authorId != e.operator!!.id) return
+    //     if (rand.nextDouble() >= 0.9) {
+    //         e.group.sendMessage(format(RECALL.random(), e.operator!!.id))
+    //     }
+    // }
 
     suspend fun kick(e: MemberLeaveEvent) {
         if (e.member == e.bot) return

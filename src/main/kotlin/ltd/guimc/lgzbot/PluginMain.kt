@@ -115,7 +115,7 @@ object PluginMain : KotlinPlugin(
         subscribeAlways<MemberUnmuteEvent> { e -> BakaListener.unmute(e) }
         subscribeAlways<MemberMuteEvent> { e -> BakaListener.mute(e) }
         subscribeAlways<MemberLeaveEvent> { e -> BakaListener.kick(e) }
-        subscribeAlways<MessageRecallEvent.GroupRecall> { e -> BakaListener.recall(e) }
+        // subscribeAlways<MessageRecallEvent.GroupRecall> { e -> BakaListener.recall(e) }
         subscribeAlways<NudgeEvent> { e -> BakaListener.nudge(e) }
     }
 }
