@@ -16,11 +16,10 @@ import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
+import ltd.guimc.lgzbot.listener.others.BakaListener
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
-import net.mamoe.mirai.console.command.BuiltInCommands
 import net.mamoe.mirai.console.command.CommandManager
-import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService
@@ -33,8 +32,6 @@ import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.data.ForwardMessage
-import net.mamoe.mirai.message.data.ForwardMessageBuilder
-import net.mamoe.mirai.message.data.PlainText
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -83,34 +80,10 @@ object PluginMain : KotlinPlugin(
         registerCommand(ACGCommand)
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
-        registerCommand(HelpCommand)
         registerCommand(GithubSubCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
-        subscribeAlways<BotOnlineEvent> {
-            if (helpMessages == null) {
-                val _helpMessages = mutableListOf<ForwardMessage>()
-                var helpMessage = ForwardMessageBuilder(it.bot.asFriend)
-                var length = 0
-                BuiltInCommands.HelpCommand
-                    .generateDefaultHelp(AbstractPermitteeId.Console)
-                    .split("\n")
-                    .forEach { str ->
-                        if (length >= 60) {
-                            _helpMessages.add(helpMessage.build())
-                            helpMessage = ForwardMessageBuilder(it.bot.asFriend)
-                            length = 0
-                        }
-
-                        length++
-                        helpMessage.add(it.bot, PlainText(str))
-                    }
-                _helpMessages.add(helpMessage.build())
-                helpMessages = _helpMessages.toTypedArray()
-            }
-        }
-
         subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
 
         subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event) }
@@ -129,9 +102,20 @@ object PluginMain : KotlinPlugin(
 
         subscribeAlways<NewFriendRequestEvent> {
             it.accept()
-            it.bot.getFriendOrFail(it.fromId).sendMessage(PlainText("你好呀 大笨蛋!"))
         }
 
+        // Anti NudgeSpam
         subscribeAlways<NudgeEvent>(priority = EventPriority.HIGHEST) { e -> AntiNudgeSpam.onNudge(e) }
+
+        // BakaListener
+        subscribeAlways<BotJoinGroupEvent> { e -> BakaListener.botJoinGroup(e) }
+        subscribeAlways<BotUnmuteEvent> { e -> BakaListener.unmuteBot(e) }
+        subscribeAlways<BotMuteEvent> { e -> BakaListener.muteBot(e) }
+        subscribeAlways<MemberJoinEvent> { e -> BakaListener.newMember(e) }
+        subscribeAlways<MemberUnmuteEvent> { e -> BakaListener.unmute(e) }
+        subscribeAlways<MemberMuteEvent> { e -> BakaListener.mute(e) }
+        subscribeAlways<MemberLeaveEvent> { e -> BakaListener.kick(e) }
+        subscribeAlways<MessageRecallEvent.GroupRecall> { e -> BakaListener.recall(e) }
+        subscribeAlways<NudgeEvent> { e -> BakaListener.nudge(e) }
     }
 }

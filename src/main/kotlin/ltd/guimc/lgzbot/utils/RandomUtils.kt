@@ -16,4 +16,12 @@ object RandomUtils {
             .map { charset.random() }
             .joinToString("")
     }
+
+    fun randomLong(): Long {
+        val charset = "1234567980"
+        return (1..15)
+            .map { charset.random() }
+            .joinToString("")
+            .toLong()
+    }
 }
