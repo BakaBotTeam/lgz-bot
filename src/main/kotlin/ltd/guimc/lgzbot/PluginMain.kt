@@ -15,8 +15,8 @@ import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
+import ltd.guimc.lgzbot.listener.multi.BakaListener
 import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
-import ltd.guimc.lgzbot.listener.others.BakaListener
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import net.mamoe.mirai.console.command.CommandManager
@@ -31,15 +31,14 @@ import net.mamoe.mirai.console.plugin.version
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.*
-import net.mamoe.mirai.message.data.ForwardMessage
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         "ltd.guimc.lgzbot.plugin",
-        "0.2.1",
+        "0.2.2",
         "LgzBot",
     ){
-        author("BakaBotTeam成员 & Everyone")
+        author("BakaBotTeam")
     }
 ) {
     lateinit var bypassMute: Permission
@@ -47,7 +46,6 @@ object PluginMain : KotlinPlugin(
     lateinit var nudgeMute: Permission
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
-    var helpMessages: Array<ForwardMessage>? = null
 
     override fun onEnable() {
         logger.info("$name v$version by $author Loading")

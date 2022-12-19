@@ -6,24 +6,23 @@
  *
  * Copyright (c) 2022 - now Guimc Team.
  */
-package ltd.guimc.lgzbot.listener.others
+package ltd.guimc.lgzbot.listener.multi
 
-import ltd.guimc.lgzbot.utils.RandomUtils
 import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
-import kotlin.random.Random
 
 object BakaListener {
     // 使用 % 分割
     // 发送者: source, 目标(可能没有): target
     private val NUDGE: Array<String> =
         arrayOf("唔...", "喵! (咬)", "不要动我! (气鼓鼓)", "source%是大坏蛋!", "打！", ">_<")
-    private val RECALL: Array<String> = arrayOf("不用再撤回啦~ 我都看到了! %source")
+
+    // private val RECALL: Array<String> = arrayOf("不用再撤回啦~ 我都看到了! %source")
     private val QUIT: Array<String> = arrayOf("source% 悄悄退群了")
-    private val KICK: Array<String> = arrayOf("[神权提示]%target% were kicked by %source%!")
+    private val KICK: Array<String> = arrayOf("[神权提示]%target% have been removed from your group.")
     private val MUTE: Array<String> = arrayOf("[神权提示]%source% 禁言了 %target%!")
     private val UNMUTE: Array<String> = arrayOf("[神权提示]%source% 解除禁言 %target%!")
     private val NEW_MEMBER: Array<String> = arrayOf("欢迎新笨蛋 %source%!", "本群的新RBQ %source% 来啦!")
@@ -31,7 +30,7 @@ object BakaListener {
     private val UNMUTE_TO_BOT: Array<String> = arrayOf("我...我能说话了! 谢谢大笨蛋%source%!")
     private val BOT_JOIN_GROUP: Array<String> = arrayOf("锵锵! 本笨蛋姬器人来啦!")
 
-    private val rand = Random(RandomUtils.randomLong())
+    // private val rand = Random(RandomUtils.randomLong())
 
     suspend fun nudge(e: NudgeEvent) {
         if (e.target == e.bot) {

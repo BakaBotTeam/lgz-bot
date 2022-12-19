@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
-import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.message.data.Image.Key.isUploaded
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import org.apache.http.client.methods.HttpGet
@@ -22,9 +21,8 @@ import org.apache.http.impl.client.HttpClients
 object ACGCommand: SimpleCommand (
     owner = PluginMain,
     primaryName = "acg",
-    description = "啊哈哈哈哈 acg图片来咯"
+    description = "二次元图片"
 ) {
-    @OptIn(ConsoleExperimentalApi::class)
     @Handler
     fun CommandSender.onHandler() = ltd_guimc_command_acg()
 
