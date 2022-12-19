@@ -8,13 +8,15 @@
  */
 package ltd.guimc.lgzbot.listener.multi
 
+import net.mamoe.mirai.event.EventHandler
+import net.mamoe.mirai.event.ListenerHost
 import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
 
-object BakaListener {
+object BakaListener : ListenerHost {
     // 使用 % 分割
     // 发送者: source, 目标(可能没有): target
     private val NUDGE: Array<String> =
@@ -32,44 +34,56 @@ object BakaListener {
 
     // private val rand = Random(RandomUtils.randomLong())
 
-    suspend fun nudge(e: NudgeEvent) {
-        if (e.target == e.bot) {
-            e.subject.sendMessage(format(NUDGE.random(), e.target.id, e.from.id))
+    @EventHandler
+    suspend fun NudgeEvent.nudge() {
+        if (this.target == this.bot) {
+            this.subject.sendMessage(format(NUDGE.random(), this.target.id, this.from.id))
         }
     }
 
-    // suspend fun recall(e: MessageRecallEvent.GroupRecall) {
-    //     if (e.operator == null) return
-    //     if (e.authorId != e.operator!!.id) return
+    // @EventHandler
+    // suspend fun MessageRecallEvent.GroupRecall.recall() {
+    //     if (this.operator == null) return
+    //     if (this.authorId != this.operator!!.id) return
     //     if (rand.nextDouble() >= 0.9) {
-    //         e.group.sendMessage(format(RECALL.random(), e.operator!!.id))
+    //         this.group.sendMessage(format(RECALL.random(), this.operator!!.id))
     //     }
     // }
 
-    suspend fun kick(e: MemberLeaveEvent) {
-        if (e.member == e.bot) return
-        if (e !is MemberLeaveEvent.Kick) {
-            e.group.sendMessage(format(QUIT.random(), e.member.id))
+    @EventHandler
+    suspend fun MemberLeaveEvent.kick() {
+        if (this.member == this.bot) return
+        if (this !is MemberLeaveEvent.Kick) {
+            this.group.sendMessage(format(QUIT.random(), this.member.id))
             return
         }
-        if (e.operator == null) return
-        e.group.sendMessage(format(KICK.random(), e.member.id, e.operator!!.id))
+        if (this.operator == null) return
+        this.group.sendMessage(format(KICK.random(), this.member.id, this.operator!!.id))
     }
 
-    suspend fun mute(e: MemberMuteEvent) {
-        if (e.operator == null) return
-        e.group.sendMessage(format(MUTE.random(), e.member.id, e.operator!!.id))
+    @EventHandler
+    suspend fun MemberMuteEvent.mute() {
+        if (this.operator == null) return
+        this.group.sendMessage(format(MUTE.random(), this.member.id, this.operator!!.id))
     }
 
-    suspend fun unmute(e: MemberUnmuteEvent) {
-        if (e.operator == null) return
-        e.group.sendMessage(format(UNMUTE.random(), e.member.id, e.operator!!.id))
+    @EventHandler
+    suspend fun MemberUnmuteEvent.unmute() {
+        if (this.operator == null) return
+        this.group.sendMessage(format(UNMUTE.random(), this.member.id, this.operator!!.id))
     }
 
-    suspend fun newMember(e: MemberJoinEvent) = e.group.sendMessage(format(NEW_MEMBER.random(), e.member.id))
-    suspend fun muteBot(e: BotMuteEvent) = e.operator.sendMessage(format(MUTE_TO_BOT.random()))
-    suspend fun unmuteBot(e: BotUnmuteEvent) = e.group.sendMessage(format(UNMUTE_TO_BOT.random(), e.operator.id))
-    suspend fun botJoinGroup(e: BotJoinGroupEvent) = e.group.sendMessage(format(BOT_JOIN_GROUP.random()))
+    @EventHandler
+    suspend fun MemberJoinEvent.newMember() = this.group.sendMessage(format(NEW_MEMBER.random(), this.member.id))
+
+    @EventHandler
+    suspend fun BotMuteEvent.muteBot() = this.operator.sendMessage(format(MUTE_TO_BOT.random()))
+
+    @EventHandler
+    suspend fun BotUnmuteEvent.unmuteBot() = this.group.sendMessage(format(UNMUTE_TO_BOT.random(), this.operator.id))
+
+    @EventHandler
+    suspend fun BotJoinGroupEvent.botJoinGroup() = this.group.sendMessage(format(BOT_JOIN_GROUP.random()))
 
     private fun format(str: String, target: Long, source: Long): MessageChain {
         val messages = MessageChainBuilder()

@@ -30,7 +30,10 @@ import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.*
+import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
+import net.mamoe.mirai.event.events.GroupMessageEvent
+import net.mamoe.mirai.event.events.NewFriendRequestEvent
+import net.mamoe.mirai.event.events.NudgeEvent
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -106,14 +109,6 @@ object PluginMain : KotlinPlugin(
         subscribeAlways<NudgeEvent>(priority = EventPriority.HIGHEST) { e -> AntiNudgeSpam.onNudge(e) }
 
         // BakaListener
-        subscribeAlways<BotJoinGroupEvent> { e -> BakaListener.botJoinGroup(e) }
-        subscribeAlways<BotUnmuteEvent> { e -> BakaListener.unmuteBot(e) }
-        subscribeAlways<BotMuteEvent> { e -> BakaListener.muteBot(e) }
-        subscribeAlways<MemberJoinEvent> { e -> BakaListener.newMember(e) }
-        subscribeAlways<MemberUnmuteEvent> { e -> BakaListener.unmute(e) }
-        subscribeAlways<MemberMuteEvent> { e -> BakaListener.mute(e) }
-        subscribeAlways<MemberLeaveEvent> { e -> BakaListener.kick(e) }
-        // subscribeAlways<MessageRecallEvent.GroupRecall> { e -> BakaListener.recall(e) }
-        subscribeAlways<NudgeEvent> { e -> BakaListener.nudge(e) }
+        registerListenerHost(BakaListener)
     }
 }
