@@ -16,6 +16,7 @@ import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.listener.multi.BakaListener
+import ltd.guimc.lgzbot.listener.mute.AutoQuit
 import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
@@ -110,5 +111,6 @@ object PluginMain : KotlinPlugin(
 
         // BakaListener
         registerListenerHost(BakaListener)
+        registerListenerHost(AutoQuit)
     }
 }
