@@ -15,40 +15,34 @@ import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
-import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
+import ltd.guimc.lgzbot.listener.multi.BakaListener
+import ltd.guimc.lgzbot.listener.mute.AutoQuit
+import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
-import net.mamoe.mirai.console.command.BuiltInCommands
 import net.mamoe.mirai.console.command.CommandManager
-import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
 import net.mamoe.mirai.console.permission.PermissionService
-import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
-import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.console.plugin.author
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
-import net.mamoe.mirai.contact.Friend
-import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.getMember
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.*
-import net.mamoe.mirai.message.data.ForwardMessage
-import net.mamoe.mirai.message.data.ForwardMessageBuilder
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.toMessageChain
+import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
+import net.mamoe.mirai.event.events.GroupMessageEvent
+import net.mamoe.mirai.event.events.NewFriendRequestEvent
+import net.mamoe.mirai.event.events.NudgeEvent
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         "ltd.guimc.lgzbot.plugin",
-        "0.2.1",
+        "0.2.2",
         "LgzBot",
     ){
-        author("汐洛 & YounKoo & 笨蛋们")
+        author("BakaBotTeam")
     }
 ) {
     lateinit var bypassMute: Permission
@@ -56,9 +50,6 @@ object PluginMain : KotlinPlugin(
     lateinit var nudgeMute: Permission
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
-    var helpMessages: Array<ForwardMessage>? = null
-
-    val iI1I1i1I1i1: Regex = Regex("with <.*>")
 
     override fun onEnable() {
         logger.info("$name v$version by $author Loading")
@@ -91,34 +82,10 @@ object PluginMain : KotlinPlugin(
         registerCommand(ACGCommand)
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
-        registerCommand(HelpCommand)
         registerCommand(GithubSubCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
-        subscribeAlways<BotOnlineEvent> {
-            if (helpMessages == null) {
-                val _helpMessages = mutableListOf<ForwardMessage>()
-                var helpMessage = ForwardMessageBuilder(it.bot.asFriend)
-                var length = 0
-                BuiltInCommands.HelpCommand
-                    .generateDefaultHelp(AbstractPermitteeId.Console)
-                    .split("\n")
-                    .forEach { str ->
-                        if (length >= 60) {
-                            _helpMessages.add(helpMessage.build())
-                            helpMessage = ForwardMessageBuilder(it.bot.asFriend)
-                            length = 0
-                        }
-
-                        length++
-                        helpMessage.add(it.bot, PlainText(str))
-                    }
-                _helpMessages.add(helpMessage.build())
-                helpMessages = _helpMessages.toTypedArray()
-            }
-        }
-
         subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
 
         subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event) }
@@ -137,21 +104,13 @@ object PluginMain : KotlinPlugin(
 
         subscribeAlways<NewFriendRequestEvent> {
             it.accept()
-            it.bot.getFriendOrFail(it.fromId).sendMessage(PlainText("你好呀 大笨蛋!"))
         }
 
-        subscribeAlways<MessagePreSendEvent> { e ->
-            if (e.target is Friend) if (iI1I1i1I1i1.containsMatchIn(
-                    e.message.toMessageChain().getPlainText()
-                )
-            ) e.intercept()
-        }
+        // Anti NudgeSpam
+        subscribeAlways<NudgeEvent>(priority = EventPriority.HIGHEST) { e -> AntiNudgeSpam.onNudge(e) }
 
-        subscribeAlways<NudgeEvent> { e ->
-            if (e.target == e.bot && e.subject is Group && (e.subject as Group).permitteeId.hasPermission(
-                    nudgeMute
-                )
-            ) (e.subject as Group).getMember(e.from.id)!!.mute(600)
-        }
+        // BakaListener
+        registerListenerHost(BakaListener)
+        registerListenerHost(AutoQuit)
     }
 }
