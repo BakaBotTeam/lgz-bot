@@ -48,6 +48,8 @@ object PluginMain : KotlinPlugin(
     lateinit var bypassMute: Permission
     lateinit var blocked: Permission
     lateinit var nudgeMute: Permission
+    lateinit var disableSpamCheck: Permission
+    lateinit var disableADCheck: Permission
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
 
@@ -74,6 +76,8 @@ object PluginMain : KotlinPlugin(
         bypassMute = register(PermissionId("lgzbot", "bypassmute"), "让某个笨蛋绕过广告禁言")
         blocked = register(PermissionId("lgzbot", "blocked"), "坏蛋专属权限!")
         nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言")
+        disableSpamCheck = register(PermissionId("lgzbot.disable", "spamcheck"), "关闭群聊刷屏检查")
+        disableADCheck = register(PermissionId("lgzbot.disable", "spamcheck"), "关闭群聊广告检查")
     }
 
     private fun registerCommands() = CommandManager.run {
@@ -83,6 +87,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
         registerCommand(GithubSubCommand)
+        registerCommand(DisableCheckCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
