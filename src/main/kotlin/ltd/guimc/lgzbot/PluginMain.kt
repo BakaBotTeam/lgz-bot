@@ -50,6 +50,8 @@ object PluginMain : KotlinPlugin(
     lateinit var nudgeMute: Permission
     lateinit var disableSpamCheck: Permission
     lateinit var disableADCheck: Permission
+    lateinit var root: Permission
+    lateinit var disableRoot: Permission
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
 
@@ -73,11 +75,14 @@ object PluginMain : KotlinPlugin(
     }
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
-        bypassMute = register(PermissionId("lgzbot", "bypassmute"), "让某个笨蛋绕过广告禁言")
-        blocked = register(PermissionId("lgzbot", "blocked"), "坏蛋专属权限!")
-        nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言")
-        disableSpamCheck = register(PermissionId("lgzbot", "disablespamcheck"), "关闭群聊刷屏检查")
-        disableADCheck = register(PermissionId("lgzbot", "disablespamcheck"), "关闭群聊广告检查")
+        root = register(PermissionId("lgzbot", "*"), "The root permission")
+        bypassMute = register(PermissionId("lgzbot", "bypassmute"), "让某个笨蛋绕过广告禁言", root)
+        blocked = register(PermissionId("lgzbot", "blocked"), "坏蛋专属权限!", root)
+        nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言", root)
+
+        disableRoot = register(PermissionId("lgzbot.disable", "*"), "The root permission", root)
+        disableSpamCheck = register(PermissionId("lgzbot.disable", "spamcheck"), "关闭群聊刷屏检查", disableRoot)
+        disableADCheck = register(PermissionId("lgzbot.disable", "adcheck"), "关闭群聊广告检查", disableRoot)
     }
 
     private fun registerCommands() = CommandManager.run {
