@@ -14,7 +14,7 @@ import net.mamoe.mirai.contact.isOperator
 object DisableCheckCommand : CompositeCommand(
     owner = PluginMain,
     primaryName = "disablecheck",
-    description = "Github Sub"
+    description = "关闭检测"
 ) {
     @SubCommand("spam")
     @Description("开/关刷屏检查")
@@ -52,10 +52,10 @@ object DisableCheckCommand : CompositeCommand(
         if (member.permission.isOperator()) {
             if (group.permitteeId.hasPermission(PluginMain.disableADCheck)) {
                 group.permitteeId.cancel(PluginMain.disableADCheck, false)
-                sendMessage("已重新开启本群的刷屏检测")
+                sendMessage("已重新开启本群的广告检测")
             } else {
                 group.permitteeId.permit(PluginMain.disableADCheck)
-                sendMessage("已关闭本群的刷屏检测")
+                sendMessage("已关闭本群的广告检测")
             }
         } else {
             sendMessage("只有管理才能使用这个指令的说..")

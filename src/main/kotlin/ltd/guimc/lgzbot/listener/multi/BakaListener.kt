@@ -74,16 +74,24 @@ object BakaListener : ListenerHost {
     }
 
     @EventHandler
-    suspend fun MemberJoinEvent.newMember() = this.group.sendMessage(format(NEW_MEMBER.random(), this.member.id))
+    suspend fun MemberJoinEvent.newMember() {
+        this.group.sendMessage(format(NEW_MEMBER.random(), this.member.id))
+    }
 
     @EventHandler
-    suspend fun BotMuteEvent.muteBot() = this.operator.sendMessage(format(MUTE_TO_BOT.random()))
+    suspend fun BotMuteEvent.muteBot() {
+        this.operator.sendMessage(format(MUTE_TO_BOT.random()))
+    }
 
     @EventHandler
-    suspend fun BotUnmuteEvent.unmuteBot() = this.group.sendMessage(format(UNMUTE_TO_BOT.random(), this.operator.id))
+    suspend fun BotUnmuteEvent.unmuteBot() {
+        this.group.sendMessage(format(UNMUTE_TO_BOT.random(), this.operator.id))
+    }
 
     @EventHandler
-    suspend fun BotJoinGroupEvent.botJoinGroup() = this.group.sendMessage(format(BOT_JOIN_GROUP.random()))
+    suspend fun BotJoinGroupEvent.botJoinGroup() {
+        this.group.sendMessage(format(BOT_JOIN_GROUP.random()))
+    }
 
     private fun format(str: String, target: Long, source: Long): MessageChain {
         val messages = MessageChainBuilder()
