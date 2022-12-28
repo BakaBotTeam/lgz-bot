@@ -11,6 +11,7 @@ package ltd.guimc.lgzbot.special
 
 import ltd.guimc.lgzbot.utils.AsciiUtil
 import ltd.guimc.lgzbot.utils.PinyinUtils
+import ltd.guimc.lgzbot.utils.TextUtils.removeInterference
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
@@ -22,25 +23,9 @@ class CZXTeacher {
     }
 
     fun checkczx(str: String): Boolean {
-        val unPeekText = AsciiUtil.sbc2dbcCase(str).lowercase()
-            .replace(" ", "")
-            .replace(",", "")
-            .replace(".", "")
-            .replace("!", "")
-            .replace("?", "")
-            .replace(";", "")
-            .replace(":", "")
-            .replace("\"", "")
-            .replace("'", "")
-            .replace("“", "")
-            .replace("”", "")
-            .replace("‘", "")
-            .replace("’", "")
-            .replace("<", "")
-            .replace(">", "")
-            .replace("(", "")
-            .replace(")", "")
-            .replace("內", "内")
+        val unPeekText = AsciiUtil.sbc2dbcCase(str)
+            .lowercase()
+            .removeInterference()
         if (Regex("czx|(ch.*n?z).*[x×]|(陈.*梓)|(梓.*希)").containsMatchIn(unPeekText)) {
             return true
         }

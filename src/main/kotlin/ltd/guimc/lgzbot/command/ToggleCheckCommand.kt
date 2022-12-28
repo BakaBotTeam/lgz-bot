@@ -11,10 +11,10 @@ import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.getMemberOrFail
 import net.mamoe.mirai.contact.isOperator
 
-object DisableCheckCommand : CompositeCommand(
+object ToggleCheckCommand : CompositeCommand(
     owner = PluginMain,
-    primaryName = "disablecheck",
-    description = "关闭检测"
+    primaryName = "togglecheck",
+    description = "开关检测"
 ) {
     @SubCommand("spam")
     @Description("开/关刷屏检查")

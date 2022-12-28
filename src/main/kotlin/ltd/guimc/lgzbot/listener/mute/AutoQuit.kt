@@ -6,12 +6,12 @@ import net.mamoe.mirai.event.events.BotMuteEvent
 import net.mamoe.mirai.event.events.MessageEvent
 
 object AutoQuit : ListenerHost {
-    private const val autoQuitTime = 60 * 60 * 24
+    private const val autoQuitTime = 60 * 60 * 24 // 1Day
 
     @EventHandler
     suspend fun BotMuteEvent.onEvent() {
         if (this.durationSeconds >= autoQuitTime) {
-            this.operator.sendMessage("[AutoQuit] 自动退出本群 由于机器人被禁言时长大于1d")
+            this.operator.sendMessage("[AutoQuit] 触发自动退群")
             this.group.quit()
         }
     }

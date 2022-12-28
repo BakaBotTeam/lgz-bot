@@ -48,4 +48,26 @@ object TextUtils {
     fun String.removeNonVisible(): String {
         return this.replace("\\p{C}".toRegex(), "")
     }
+
+    // 去除干扰字符
+    fun String.removeInterference(): String {
+        return this.replace(" ", "")
+            .replace(",", "")
+            .replace(".", "")
+            .replace("!", "")
+            .replace("?", "")
+            .replace(";", "")
+            .replace(":", "")
+            .replace("\"", "")
+            .replace("'", "")
+            .replace("“", "")
+            .replace("”", "")
+            .replace("‘", "")
+            .replace("’", "")
+            .replace("<", "")
+            .replace(">", "")
+            .replace("(", "")
+            .replace(")", "")
+            .replace("內", "内")
+    }
 }

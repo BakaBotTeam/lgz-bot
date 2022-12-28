@@ -38,8 +38,8 @@ import net.mamoe.mirai.event.events.NudgeEvent
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
-        "ltd.guimc.lgzbot.plugin",
-        "0.2.2",
+        "ltd.guimc.lgzbot",
+        "0.2.3",
         "LgzBot",
     ){
         author("BakaBotTeam")
@@ -92,7 +92,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
         registerCommand(GithubSubCommand)
-        registerCommand(DisableCheckCommand)
+        registerCommand(ToggleCheckCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {

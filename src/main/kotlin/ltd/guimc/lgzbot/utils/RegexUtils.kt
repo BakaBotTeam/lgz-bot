@@ -11,6 +11,8 @@ package ltd.guimc.lgzbot.utils
 
 import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.utils.AsciiUtil.sbc2dbcCase
+import ltd.guimc.lgzbot.utils.TextUtils.removeInterference
+import ltd.guimc.lgzbot.utils.TextUtils.removeNonVisible
 
 object RegexUtils {
     // 获取正则表达式列表
@@ -46,25 +48,10 @@ object RegexUtils {
     fun matchRegex(regexList: Array<Regex>, message: String): Boolean {
         try {
             var i = 0
-            val unPeekText = sbc2dbcCase(message).lowercase()
-                .replace(" ", "")
-                .replace(",", "")
-                .replace(".", "")
-                .replace("!", "")
-                .replace("?", "")
-                .replace(";", "")
-                .replace(":", "")
-                .replace("\"", "")
-                .replace("'", "")
-                .replace("“", "")
-                .replace("”", "")
-                .replace("‘", "")
-                .replace("’", "")
-                .replace("<", "")
-                .replace(">", "")
-                .replace("(", "")
-                .replace(")", "")
-                .replace("內", "内")
+            val unPeekText = sbc2dbcCase(message)
+                .lowercase()
+                .removeInterference()
+                .removeNonVisible()
             for (regex in regexList) {
                 i++
                 if (regex.containsMatchIn(unPeekText)) {
@@ -79,25 +66,10 @@ object RegexUtils {
     fun matchRegexPinyin(regexList: Array<Regex>, message: String): Boolean {
         try {
             var i = 0
-            val unPeekText = PinyinUtils.convertToPinyin(sbc2dbcCase(message)).lowercase()
-                .replace(" ", "")
-                .replace(",", "")
-                .replace(".", "")
-                .replace("!", "")
-                .replace("?", "")
-                .replace(";", "")
-                .replace(":", "")
-                .replace("\"", "")
-                .replace("'", "")
-                .replace("“", "")
-                .replace("”", "")
-                .replace("‘", "")
-                .replace("’", "")
-                .replace("<", "")
-                .replace(">", "")
-                .replace("(", "")
-                .replace(")", "")
-                .replace("內", "内")
+            val unPeekText = PinyinUtils.convertToPinyin(sbc2dbcCase(message))
+                .lowercase()
+                .removeInterference()
+                .removeNonVisible()
             for (regex in regexList) {
                 i++
                 if (regex.containsMatchIn(unPeekText)) {
