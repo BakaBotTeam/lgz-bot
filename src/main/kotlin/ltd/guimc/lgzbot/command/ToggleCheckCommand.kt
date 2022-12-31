@@ -35,7 +35,7 @@ object ToggleCheckCommand : CompositeCommand(
                 sendMessage("已关闭本群的刷屏检测")
             }
         } else {
-            sendMessage("只有管理才能使用这个指令的说..")
+            sendMessage("只有管理才能使用这个指令的说...")
         }
     }
 
@@ -58,7 +58,7 @@ object ToggleCheckCommand : CompositeCommand(
                 sendMessage("已关闭本群的广告检测")
             }
         } else {
-            sendMessage("只有管理才能使用这个指令的说..")
+            sendMessage("只有管理才能使用这个指令的说...")
         }
     }
 }

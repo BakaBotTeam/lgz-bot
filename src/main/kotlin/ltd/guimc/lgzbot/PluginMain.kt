@@ -105,10 +105,11 @@ object PluginMain : KotlinPlugin(
             require(it.invitor != null) { "Must have a invitor in BotInvitedJoinGroupRequestEvent" }
 
             it.invitor!!.sendMessage(
-                "貌似你很喜欢使用这个机器人呢！\n" +
-                    "但是为了安全考虑 我们关闭了快速通过机器人受邀进群..\n" +
-                    "您可以带着 Event ID 联系超管来让机器人进群!\n" +
-                    "Event ID: ${it.eventId}"
+                "Event ID: ${it.eventId}"
+            )
+            it.invitor!!.sendMessage(
+                "请将上面的消息发送给机器人所有者/机器人所有者所授权的人来通过此次邀请进群\n" +
+                    "注意: 请不要截图发送 而是把上面一条消息复制发送给指定的人!"
             )
         }
 
