@@ -1,4 +1,4 @@
-# LGZ-bot
+# LGZ bot
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Super%20ShitCode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fguimc233%2Flgz-bot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fguimc233%2Flgz-bot?ref=badge_shield)
 [![Maintainability](https://api.codeclimate.com/v1/badges/05a867056904e1a9f5b1/maintainability)](https://codeclimate.com/github/guimc233/lgz-bot/maintainability)
@@ -6,7 +6,12 @@
 
 * **Thanks for everyone!!**
 * Online demo: `1324248744` (QQ)
-* 赞助 @ [爱发电](https://afdian.net/a/lgz-bot)
+* Sponsor @ [Afdian](https://afdian.net/a/lgz-bot)
+
+## About LGZ bot
+* 这是[Mirai](https://github.com/mamoe/mirai)框架的插件,依赖于[Mirai Console](https://github.com/mamoe/mirai-console)运行.
+* 本插件可以为使用者提供群消息合规性检查,并作出相应的处罚.
+* 还有一些有趣的小东西 \>_\<
 
 ## License
 This project is subject to the [GNU Affero General Public License v3.0](LICENSE). This does only apply for source code located directly in this clean repository. During the development and compilation process, additional source code may be used to which we have obtained no rights. Such code is not covered by the GPL license.
