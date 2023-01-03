@@ -3,6 +3,7 @@ package ltd.guimc.lgzbot.command
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.PluginMain.logger
+import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RequestUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -22,17 +23,21 @@ object ReviewCommand : SimpleCommand(
             if (bot == null) {
                 throw IllegalAccessError("请勿在控制台运行")
             }
+
+            val realSource = user!!.id
+            val realSubject = subject!!
+
             val event = RequestUtils.Group.find(id)
             sendMessage(
                 "找到事件!\n" +
                     "发起人: ${event.invitorId}\n" +
                     "群聊: ${event.groupId}\n" +
-                    "使用\"同意\"/\"拒绝\"/\"取消\""
+                    "使用 同意/拒绝/取消"
             )
             GlobalEventChannel.filter { it is BotEvent && it.bot.id == bot!!.id }
                 .subscribe<MessageEvent> {
-                    if (it.source == source) {
-                        return@subscribe when (it.message.toString()) {
+                    if (it.subject == realSubject && it.sender.id == realSource) {
+                        return@subscribe when (it.message.getPlainText()) {
                             "同意" -> {
                                 event.accept()
                                 RequestUtils.Group.remove(id)
@@ -53,7 +58,7 @@ object ReviewCommand : SimpleCommand(
                             }
 
                             else -> {
-                                sendMessage("请发送\"同意\"/\"拒绝\"/\"取消\"")
+                                sendMessage("请发送 同意/拒绝/取消")
                                 ListeningStatus.LISTENING
                             }
                         }

@@ -10,12 +10,13 @@ object RequestUtils {
         fun remove(id: Long) = groups.remove(id)
 
         fun find(id: Long): BotInvitedJoinGroupRequestEvent {
-            val events = groups.filter { it.key == id }
-
-            if (events.isEmpty())
-                throw NoSuchElementException("Can't find request")
-
-            return events[0]!!
+            try {
+                return groups[id]!!
+            } catch (e: NullPointerException) {
+                throw NoSuchElementException("Can't find the event")
+            } catch (e: Throwable) {
+                throw e
+            }
         }
     }
 }
