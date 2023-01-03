@@ -20,6 +20,7 @@ import ltd.guimc.lgzbot.listener.mute.AutoQuit
 import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
+import ltd.guimc.lgzbot.utils.RequestUtils
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
@@ -93,6 +94,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(HttpCatCommand)
         registerCommand(GithubSubCommand)
         registerCommand(ToggleCheckCommand)
+        registerCommand(ReviewCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
@@ -111,6 +113,7 @@ object PluginMain : KotlinPlugin(
                 "请将上面的消息发送给机器人所有者/机器人所有者所授权的人来通过此次邀请进群\n" +
                     "注意: 请不要截图发送 而是把上面一条消息复制发送给指定的人!"
             )
+            RequestUtils.Group.add(it)
         }
 
         subscribeAlways<NewFriendRequestEvent> {
