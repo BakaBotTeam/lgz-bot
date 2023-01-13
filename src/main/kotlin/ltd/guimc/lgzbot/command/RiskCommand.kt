@@ -40,4 +40,11 @@ object RiskCommand : CompositeCommand(
         riskList.add(target)
         sendMessage("已将$target 加入风控列表")
     }
+
+    @SubCommand("clear")
+    @Description("清空风控列表")
+    suspend fun CommandSender.clear() {
+        riskList.clear()
+        sendMessage("已清空!")
+    }
 }
