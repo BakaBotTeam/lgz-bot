@@ -2,8 +2,8 @@ package ltd.guimc.lgzbot.listener.mute
 
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.event.ListenerHost
+import net.mamoe.mirai.event.events.BotEvent
 import net.mamoe.mirai.event.events.BotMuteEvent
-import net.mamoe.mirai.event.events.MessageEvent
 
 object AutoQuit : ListenerHost {
     private const val autoQuitTime = 60 * 60 * 24 // 1Day
@@ -17,7 +17,7 @@ object AutoQuit : ListenerHost {
     }
 
     @EventHandler
-    suspend fun MessageEvent.onEvent() {
+    suspend fun BotEvent.onEvent() {
         try {
             this.bot.groups.forEach {
                 if (it.botMuteRemaining >= autoQuitTime) {

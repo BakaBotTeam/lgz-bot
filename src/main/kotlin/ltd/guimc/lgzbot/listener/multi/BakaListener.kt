@@ -8,6 +8,9 @@
  */
 package ltd.guimc.lgzbot.listener.multi
 
+import net.mamoe.mirai.console.permission.Permission
+import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
+import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.event.ListenerHost
 import net.mamoe.mirai.event.events.*
@@ -76,6 +79,9 @@ object BakaListener : ListenerHost {
     @EventHandler
     suspend fun MemberJoinEvent.newMember() {
         this.group.sendMessage(format(NEW_MEMBER.random(), this.member.id))
+        if (this.member.permitteeId.hasPermission(Permission.getRootPermission())) {
+            this.group.sendMessage("挖欧！这是一个拥有机器人全部权限的人！")
+        }
     }
 
     @EventHandler
