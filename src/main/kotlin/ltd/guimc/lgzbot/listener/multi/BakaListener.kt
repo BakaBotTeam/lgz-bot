@@ -80,7 +80,7 @@ object BakaListener : ListenerHost {
     suspend fun MemberJoinEvent.newMember() {
         this.group.sendMessage(format(NEW_MEMBER.random(), this.member.id))
         if (this.member.permitteeId.hasPermission(Permission.getRootPermission())) {
-            this.group.sendMessage("挖欧！这是一个拥有机器人全部权限的人！")
+            this.group.sendMessage("挖欧！这是一个拥有机器人根权限的人！")
         }
     }
 
