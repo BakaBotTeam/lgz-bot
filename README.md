@@ -31,3 +31,7 @@ this project entirely or partially for free and even commercially. However, plea
 Do the above and share your source code with everyone; just like we do.
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fguimc233%2Flgz-bot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fguimc233%2Flgz-bot?ref=badge_large)
+
+## Kotlin
+我们正在使用Kotlin开发此项目
+![Kotlin logo](https://resources.jetbrains.com/storage/products/company/brand/logos/Kotlin.svg)
