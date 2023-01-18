@@ -13,6 +13,7 @@ package ltd.guimc.lgzbot
 import ltd.guimc.lgzbot.command.*
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
+import ltd.guimc.lgzbot.listener.message.FunListener
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.listener.multi.BakaListener
@@ -100,7 +101,7 @@ object PluginMain : KotlinPlugin(
     private fun registerEvents() = GlobalEventChannel.run {
         subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
 
-        subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event) }
+        subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event); FunListener.onMessage(event) }
 
         subscribeAlways<BotInvitedJoinGroupRequestEvent> {
             // it.accept()
@@ -123,7 +124,6 @@ object PluginMain : KotlinPlugin(
         // Anti NudgeSpam
         subscribeAlways<NudgeEvent>(priority = EventPriority.HIGHEST) { e -> AntiNudgeSpam.onNudge(e) }
 
-        // BakaListener
         registerListenerHost(BakaListener)
         registerListenerHost(AutoQuit)
     }

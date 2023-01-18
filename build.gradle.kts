@@ -11,7 +11,7 @@ dependencies {
     implementation("com.github.promeg:tinypinyin:2.0.3")
     implementation("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
     implementation("org.json:json:20220924")
-    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
     implementation("org.jsoup:jsoup:1.15.3")
 }
 
