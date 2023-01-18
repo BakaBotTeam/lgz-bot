@@ -89,11 +89,8 @@ object PluginMain : KotlinPlugin(
 
     private fun registerCommands() = CommandManager.run {
         registerCommand(LGZBotCommand)
-        registerCommand(MusicCommand)
         registerCommand(ACGCommand)
-        registerCommand(RiskCommand)
         registerCommand(HttpCatCommand)
-        registerCommand(GithubSubCommand)
         registerCommand(ToggleCheckCommand)
         registerCommand(ReviewCommand)
     }
