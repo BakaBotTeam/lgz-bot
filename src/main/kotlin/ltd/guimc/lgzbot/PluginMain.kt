@@ -22,9 +22,6 @@ import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import ltd.guimc.lgzbot.utils.RequestUtils
-import ltd.guimc.lgzbot.utils.timer.MSTimer
-import net.hypixel.api.HypixelAPI
-import net.hypixel.api.apache.ApacheHttpClient
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
@@ -40,8 +37,6 @@ import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.event.events.NudgeEvent
-import java.util.*
-import kotlin.concurrent.thread
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
