@@ -114,8 +114,8 @@ object HypixelCommand: SimpleCommand(
                             "总游戏数: ${duelStats.getInt("rounds_played")}\n" +
                             "胜利/失败: ${duelStats.getInt("wins")}/${duelStats.getInt("losses")}\n" +
                             "Kill/Death: ${duelStats.getInt("kills")}/${duelStats.getInt("deaths")}\n" +
-                            "近战命中率: ${(((duelStats.getInt("melee_hits")/duelStats.getInt("melee_swings"))*10000).toDouble()).roundToInt() / 10000}%\n" +
-                            "弓箭命中率: ${(((duelStats.getInt("bow_hits")/duelStats.getInt("bow_shots"))*10000).toDouble()).roundToInt() / 10000}%\n" +
+                            "近战命中: ${duelStats.getInt("melee_hits")}/${duelStats.getInt("melee_swings")}\n" +
+                            "弓箭命中: ${duelStats.getInt("bow_hits")}/${duelStats.getInt("bow_shots")}\n" +
                             "\n共计:\n" +
                             "造成了 ${duelStats.getInt("damage_dealt")} 伤害, 恢复了 ${duelStats.getInt("health_regenerated")} 血量"))
                     }
