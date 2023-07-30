@@ -22,6 +22,9 @@ import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import ltd.guimc.lgzbot.utils.RequestUtils
+import ltd.guimc.lgzbot.utils.timer.MSTimer
+import net.hypixel.api.HypixelAPI
+import net.hypixel.api.apache.ApacheHttpClient
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
@@ -37,6 +40,8 @@ import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.event.events.NudgeEvent
+import java.util.*
+import kotlin.concurrent.thread
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -56,22 +61,26 @@ object PluginMain : KotlinPlugin(
     lateinit var disableRoot: Permission
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
+    var isRunning = false
 
     override fun onEnable() {
         logger.info("$name v$version by $author Loading")
+        Config.reload()
+        GithubSubConfig.reload()
+
         adRegex = getDefaultRegex()
         adPinyinRegex = getDefaultPinyinRegex()
 
         registerPerms()
         registerCommands()
         registerEvents()
-        Config.reload()
-        GithubSubConfig.reload()
+        isRunning = true
         logger.info("$name v$version by $author Loaded")
     }
 
     override fun onDisable() {
         logger.info("$name v$version by $author Disabling")
+        isRunning = false
         Config.save()
         GithubSubConfig.save()
     }
@@ -93,6 +102,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(HttpCatCommand)
         registerCommand(ToggleCheckCommand)
         registerCommand(ReviewCommand)
+        registerCommand(HypixelCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {

@@ -9,6 +9,7 @@
 
 package ltd.guimc.lgzbot.utils
 
+import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -69,5 +70,9 @@ object TextUtils {
             .replace("(", "")
             .replace(")", "")
             .replace("內", "内")
+    }
+
+    fun String.convert2UUID(): UUID {
+        return UUID.fromString("${this.substring(0, 7)}-${this.substring(8, 11)}-${this.substring(12, 15)}-${this.substring(16, 19)}-${this.substring(20)}")
     }
 }

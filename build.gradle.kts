@@ -20,5 +20,6 @@ version = "0.3.0"
 repositories {
     maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     maven { url = uri("https://repo.repsy.io/mvn/chrynan/public") }
+    maven { url = uri("https://repo.hypixel.net/repository/Hypixel/") } // Hypixel
     mavenCentral()
 }
