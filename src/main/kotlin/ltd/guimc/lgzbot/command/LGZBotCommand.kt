@@ -19,6 +19,7 @@ import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.PlainText
 import kotlin.math.roundToInt
+import kotlin.time.Duration
 
 object LGZBotCommand: CompositeCommand (
     owner = PluginMain,
@@ -33,9 +34,11 @@ object LGZBotCommand: CompositeCommand (
 
     @SubCommand("mute")
     @Description("把某人的嘴巴用胶布粘上")
-    suspend fun CommandSender.mute(user: Member, second: Int, reason: String) {
+    suspend fun CommandSender.mute(user: Member, time: String, reason: String) {
         try {
-            user.mute(second)
+            val second: Long = Duration.parse(time).inWholeSeconds
+
+            user.mute(second.toInt())
             user.group.sendMessage(
                 PlainText("[滥权小助手] ")+
                     At(user)+
