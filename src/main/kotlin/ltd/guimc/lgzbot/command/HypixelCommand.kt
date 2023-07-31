@@ -87,6 +87,12 @@ object HypixelCommand: SimpleCommand(
             if (playerInfo.has("stats")) {
                 val playerStats = playerInfo.getJSONObject("stats")
                 try {
+                    if (playerStats.has("giftingMeta")) {
+                        val giftMeta = playerStats.getJSONObject("giftingMeta")
+                        outputMessage.add(bot!!, PlainText("这个玩家一共送出了 ${giftMeta.getInt("giftsGiven")} 份礼物!"))
+                    }
+                } catch (_: Throwable) {}
+                try {
                     if (playerStats.has("Bedwars")) {
                         val bwStats = playerStats.getJSONObject("Bedwars")
                         outputMessage.add(
@@ -120,13 +126,37 @@ object HypixelCommand: SimpleCommand(
                         val duelStats = playerStats.getJSONObject("Duels")
                         outputMessage.add(bot!!, PlainText("Duels 信息:\n" +
                             "硬币: ${duelStats.getInt("coins")}\n" +
-                            "总游戏数: ${duelStats.getInt("rounds_played")}\n" +
+                            "总游戏数: ${duelStats.getInt("time_played")}\n" +
                             "胜利/失败: ${duelStats.getInt("wins")}/${duelStats.getInt("losses")}\n" +
                             "Kill/Death: ${duelStats.getInt("kills")}/${duelStats.getInt("deaths")}\n" +
                             "近战命中: ${duelStats.getInt("melee_hits")}/${duelStats.getInt("melee_swings")}\n" +
                             "弓箭命中: ${duelStats.getInt("bow_hits")}/${duelStats.getInt("bow_shots")}\n" +
                             "\n共计:\n" +
                             "造成了 ${duelStats.getInt("damage_dealt")} 伤害, 恢复了 ${duelStats.getInt("health_regenerated")} 血量"))
+                    }
+                } catch (_: Exception) {}
+                try {
+                    if (playerStats.has("Walls3")) {
+                        val mwStats = playerStats.getJSONObject("Walls3")
+                        outputMessage.add(bot!!, PlainText("Mega Walls 信息:\n" +
+                            "硬币: ${mwStats.getInt("coins")}\n" +
+                            "总游戏数: ${mwStats.getInt("wins")+mwStats.getInt("losses")}\n" +
+                            "胜利/失败: ${mwStats.getInt("wins")}/${mwStats.getInt("losses")}\n" +
+                            "Total Kill/Death: ${mwStats.getInt("total_kills")}/${mwStats.getInt("total_deaths")}\n" +
+                            "Final Kill/Death: ${mwStats.getInt("total_final_kills")}/${mwStats.getInt("total_final_deaths")}\n" +
+                            "\n共计:\n" +
+                            "造成了 ${mwStats.getInt("damage_dealt")} 伤害, 共有 ${mwStats.getJSONArray("packages").length()} 个 Packages"))
+                    }
+                } catch (_: Exception) {}
+                try {
+                    if (playerStats.has("UHC")) {
+                        val uhcStats = playerStats.getJSONObject("UHC")
+                        outputMessage.add(bot!!, PlainText("UHC 信息:\n" +
+                            "硬币: ${uhcStats.getInt("coins")}\n" +
+                            "胜利/失败: ${uhcStats.getInt("wins")}\n" +
+                            "Kill/Death: ${uhcStats.getInt("kills")}/${uhcStats.getInt("deaths")}\n" +
+                            "\n共计:\n" +
+                            "共有 ${uhcStats.getJSONArray("packages").length()} 个 Packages"))
                     }
                 } catch (_: Exception) {}
             }
