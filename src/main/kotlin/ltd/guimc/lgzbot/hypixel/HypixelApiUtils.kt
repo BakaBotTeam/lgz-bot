@@ -1,3 +1,12 @@
+/*
+ * THIS FILE IS PART OF lgz-bot PROJECT
+ *
+ * You must disclose the source code of your modified work and the source code you took from this project. This means you are not allowed to use code from this project (even partially) in a closed-source (or even obfuscated) application.
+ * Your modified application must also be licensed under the AGPLv3.
+ *
+ * Copyright (c) 2022 - now Guimc Team.
+ */
+
 package ltd.guimc.lgzbot.hypixel
 
 import ltd.guimc.lgzbot.files.Config
@@ -35,23 +44,23 @@ object HypixelApiUtils {
         return getLevel(exp) + getPercentageToNextLevel(exp)
     }
 
-    fun getTotalExpToFullLevel(level: Double): Double {
+    private fun getTotalExpToFullLevel(level: Double): Double {
         return (HALF_GROWTH * (level - 2) + BASE) * (level - 1)
     }
 
-    fun getTotalExpToLevel(level: Double): Double {
+    private fun getTotalExpToLevel(level: Double): Double {
         val lv = floor(level)
         val x0 = getTotalExpToFullLevel(lv)
         return if (level == lv) x0 else (getTotalExpToFullLevel(lv + 1) - x0) * (level % 1) + x0
     }
 
-    fun getPercentageToNextLevel(exp: Long): Double {
+    private fun getPercentageToNextLevel(exp: Long): Double {
         val lv = getLevel(exp)
         val x0 = getTotalExpToLevel(lv)
         return (exp - x0) / (getTotalExpToLevel(lv + 1) - x0)
     }
 
-    fun getLevel(exp: Long): Double {
+    private fun getLevel(exp: Long): Double {
         return if (exp < 0) 1.0 else floor(1 + REVERSE_PQ_PREFIX + sqrt(REVERSE_CONST + GROWTH_DIVIDES_2 * exp))
     }
 
