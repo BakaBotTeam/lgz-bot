@@ -19,6 +19,7 @@ import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.listener.multi.BakaListener
 import ltd.guimc.lgzbot.listener.mute.AutoQuit
 import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
+import ltd.guimc.lgzbot.utils.FbUtils.getFbValue
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import ltd.guimc.lgzbot.utils.RequestUtils
@@ -56,6 +57,7 @@ object PluginMain : KotlinPlugin(
     lateinit var disableRoot: Permission
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
+    lateinit var fbValue: Array<String>
     var isRunning = false
 
     override fun onEnable() {
@@ -65,6 +67,7 @@ object PluginMain : KotlinPlugin(
 
         adRegex = getDefaultRegex()
         adPinyinRegex = getDefaultPinyinRegex()
+        fbValue = getFbValue()
 
         registerPerms()
         registerCommands()
@@ -98,6 +101,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(ToggleCheckCommand)
         registerCommand(ReviewCommand)
         registerCommand(HypixelCommand)
+        registerCommand(FbCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
