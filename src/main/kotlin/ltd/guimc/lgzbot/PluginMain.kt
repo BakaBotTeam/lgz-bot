@@ -42,7 +42,7 @@ import net.mamoe.mirai.event.events.NudgeEvent
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         "ltd.guimc.lgzbot",
-        "0.3.0",
+        "0.3.1",
         "LgzBot",
     ){
         author("BakaBotTeam")
