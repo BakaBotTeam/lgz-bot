@@ -17,7 +17,6 @@ import ltd.guimc.lgzbot.PluginMain.disableADCheck
 import ltd.guimc.lgzbot.PluginMain.disableSpamCheck
 import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.files.Config
-import ltd.guimc.lgzbot.special.CZXTeacher
 import ltd.guimc.lgzbot.utils.MemberUtils.mute
 import ltd.guimc.lgzbot.utils.MessageUtils.getFullText
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
@@ -29,6 +28,7 @@ import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.event.events.GroupMessageEvent
+import net.mamoe.mirai.message.data.ForwardMessage
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
 import net.mamoe.mirai.message.data.content
@@ -44,53 +44,64 @@ object MessageFilter {
 
     private var messagesHandled = 0
     var riskList = ArrayList<Member>()
-    val cxzTeacher = CZXTeacher()
     suspend fun filter(e: GroupMessageEvent) {
         var muted = false
         // 检查权限
 
         val textMessage = e.message.getPlainText()
             .removeNonVisible()
-        val forwardMessage = e.message.getFullText()
-            .removeNonVisible()
-        val stringLength = if (cxzTeacher.isFDPGroup(e.group)) {
-            0
-        } else if (e.sender in riskList) {
+        val stringLength = if (e.sender in riskList) {
             10
         } else {
             35
         }
 
-        if (forwardMessage.isEmpty() && textMessage.isEmpty() && e.message.content.isEmpty()) return
-        if (cxzTeacher.isFDPGroup(e.group)) cxzTeacher.specialCheck(e, textMessage)
+        if (textMessage.isEmpty() && e.message.content.isEmpty()) return
 
         if (e.sender.permission.level >= e.group.botPermission.level) return
 
         if (!e.group.permitteeId.hasPermission(disableADCheck)) {
-            if ((RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) ||
-                textMessage.isEmpty() && RegexUtils.matchRegex(adRegex, forwardMessage)
-            ) {
+            if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) {
                 try {
                     e.message.recall()
                     e.group.mute(e.sender, "非法发言内容")
                     muted = true
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) {}
                 riskList.add(e.sender)
                 setVl(e.sender.id, 99.0)
                 messagesHandled++
             }
 
+            // 合并转发消息提取
+            var forwardMessage: ForwardMessage? = null
+            e.message.iterator().forEach {
+                if (it is ForwardMessage) {
+                    forwardMessage = it as ForwardMessage
+                }
+            }
+
+            // 合并转发消息检测
+            if (!muted && forwardMessage != null) {
+                forwardMessage!!.nodeList.forEach {
+                    val forwardMessageItemString = it.messageChain.getPlainText()
+                    if (!muted && RegexUtils.matchRegex(adRegex, forwardMessageItemString) && forwardMessageItemString.length >= stringLength) {
+                        try {
+                            e.message.recall()
+                            e.group.mute(e.sender, "非法发言内容 (在合并转发消息内)")
+                            muted = true
+                        } catch (_: Exception) {}
+                        riskList.add(e.sender)
+                        setVl(e.sender.id, 99.0)
+                        messagesHandled++
+                    }
+                }
+            }
+
             // 拼音检查发言
-            if (!muted && riskList.indexOf(e.sender) != -1 && ((RegexUtils.matchRegexPinyin(
-                    adPinyinRegex,
-                    textMessage
-                )) ||
-                    textMessage.isEmpty() && RegexUtils.matchRegexPinyin(adPinyinRegex, forwardMessage))
-            ) {
+            if (!muted && riskList.indexOf(e.sender) != -1 && RegexUtils.matchRegexPinyin(adPinyinRegex, textMessage)) {
                 try {
                     e.message.recall()
-                    e.group.mute(e.sender, "非法发言内容 (对于风控人员的拼音检查)")
+                    e.group.mute(e.sender, "非法发言内容")
                     muted = true
                 } catch (_: Exception) {
                 }
@@ -207,7 +218,6 @@ object MessageFilter {
     private suspend fun Group.mute(mem: Member, reason: String) {
         mem.mute(
             if (mem.permitteeId.hasPermission(bypassMute)) 1
-            else if (cxzTeacher.isFDPGroup(this)) 60
             else if (riskList.indexOf(mem) != -1) 1200
             else 600,
             "Message Filter: $reason"
