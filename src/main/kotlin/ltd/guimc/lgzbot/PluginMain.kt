@@ -102,6 +102,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(ReviewCommand)
         registerCommand(HypixelCommand)
         registerCommand(FbCommand)
+        registerCommand(HypixelBanwareCommand)
     }
 
     private fun registerEvents() = GlobalEventChannel.run {
