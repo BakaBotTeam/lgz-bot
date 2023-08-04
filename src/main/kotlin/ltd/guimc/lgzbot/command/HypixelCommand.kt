@@ -11,6 +11,7 @@ package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.command.HypixelCommand.getIntOrNull
 import ltd.guimc.lgzbot.hypixel.HypixelApiUtils
 import ltd.guimc.lgzbot.utils.MojangAPIUtils
 import ltd.guimc.lgzbot.utils.TimeUtils
@@ -73,7 +74,7 @@ object HypixelCommand: SimpleCommand(
                 "在线 -> ${ try { HypixelApiUtils.resolveGameType(statusInfo.getString("gameType")) } catch (_: Exception) { "Lobby?" } }"
             }
 
-            outputMessage.add(bot!!, PlainText("Hypixel 玩家数据: (-1 为获取失败)\n" +
+            outputMessage.add(bot!!, PlainText("Hypixel 玩家数据: (负数为获取失败)\n" +
                 "玩家名: ${ if (rank != null) "[$rank]" else "" }$name\n" +
                 "等级: $level\n" +
                 "Karma: ${playerInfo.getIntOrNull("karma")}\n" +
@@ -96,12 +97,14 @@ object HypixelCommand: SimpleCommand(
                         val bwStats = playerStats.getJSONObject("Bedwars")
                         outputMessage.add(
                             bot!!, PlainText(
-                                "Bedwars 信息: (-1 为获取失败)\n" +
+                                "Bedwars 信息: (负数为获取失败)\n" +
                                     "硬币: ${bwStats.getIntOrNull("coins")}\n" +
                                     "毁床数: ${bwStats.getIntOrNull("beds_broken_bedwars")}\n" +
                                     "总游戏数: ${bwStats.getIntOrNull("games_played_bedwars")}\n" +
-                                    "胜利/失败: ${bwStats.getIntOrNull("wins_bedwars")}/${bwStats.getIntOrNull("losses_bedwars")}\n" +
-                                    "Kill/Death: ${bwStats.getIntOrNull("kills_bedwars")}/${bwStats.getIntOrNull("deaths_bedwars")}\n" +
+                                    "胜利/失败: ${bwStats.getIntOrNull("wins_bedwars")}/${bwStats.getIntOrNull("losses_bedwars")} " +
+                                    "WLR: ${calculatorR(bwStats.getIntOrNull("wins_bedwars"), bwStats.getIntOrNull("losses_bedwars"))}\n" +
+                                    "Kill/Death: ${bwStats.getIntOrNull("kills_bedwars")}/${bwStats.getIntOrNull("deaths_bedwars")} " +
+                                    "KDR: ${calculatorR(bwStats.getIntOrNull("kills_bedwars"), bwStats.getIntOrNull("deaths_bedwars"))}\n" +
                                     "最终击杀数: ${bwStats.getIntOrNull("final_kills_bedwars")}"
                             )
                         )
@@ -110,12 +113,14 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("SkyWars")) {
                         val swStats = playerStats.getJSONObject("SkyWars")
-                        outputMessage.add(bot!!, PlainText("Skywars 信息: (-1 为获取失败)\n" +
+                        outputMessage.add(bot!!, PlainText("Skywars 信息: (负数为获取失败)\n" +
                             "硬币: ${swStats.getIntOrNull("coins")}\n" +
                             "灵魂数量: ${swStats.getIntOrNull("souls")}\n" +
                             "总游戏数: ${swStats.getIntOrNull("games_played_skywars")}\n" +
-                            "胜利/失败: ${swStats.getIntOrNull("wins")}/${swStats.getIntOrNull("losses")}\n" +
-                            "Kill/Death: ${swStats.getIntOrNull("kills")}/${swStats.getIntOrNull("deaths")}\n" +
+                            "胜利/失败: ${swStats.getIntOrNull("wins")}/${swStats.getIntOrNull("losses")} " +
+                            "WLR: ${calculatorR(swStats.getIntOrNull("wins"), swStats.getIntOrNull("losses"))}\n" +
+                            "Kill/Death: ${swStats.getIntOrNull("kills")}/${swStats.getIntOrNull("deaths")} " +
+                            "KDR: ${calculatorR(swStats.getIntOrNull("kills"), swStats.getIntOrNull("deaths"))}\n" +
                             "\n共计:\n" +
                             "放置了 ${swStats.getIntOrNull("blocks_placed")} 个方块, 打开了 ${swStats.getIntOrNull("chests_opened")} 个箱子"))
                     }
@@ -123,15 +128,15 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("Duels")) {
                         val duelStats = playerStats.getJSONObject("Duels")
-                        outputMessage.add(bot!!, PlainText("Duels 信息: (-1 为获取失败)\n" +
+                        outputMessage.add(bot!!, PlainText("Duels 信息: (负数为获取失败)\n" +
                             "硬币: ${duelStats.getInt("coins")}\n" +
-                            "总游戏数: ${duelStats.getIntOrNull("time_played")}\n" +
+                            "总游戏数: ${duelStats.getIntOrNull("rounds_played")}\n" +
                             "胜利/失败: ${duelStats.getIntOrNull("wins")}/${duelStats.getIntOrNull("losses")} " +
                             "WLR: ${calculatorR(duelStats.getIntOrNull("wins"), duelStats.getIntOrNull("losses"))}\n" +
                             "Kill/Death: ${duelStats.getIntOrNull("kills")}/${duelStats.getIntOrNull("deaths")} " +
                             "KDR: ${calculatorR(duelStats.getIntOrNull("kills"), duelStats.getIntOrNull("deaths"))}\n" +
                             "近战命中: ${calculatorR(duelStats.getIntOrNull("melee_hits"), duelStats.getIntOrNull("melee_swings"))}\n" +
-                            "弓箭命中: ${duelStats.getIntOrNull("bow_hits")}/${duelStats.getIntOrNull("bow_shots")}\n" +
+                            "弓箭命中: ${calculatorR(duelStats.getIntOrNull("bow_hits"), duelStats.getIntOrNull("bow_shots"))}\n" +
                             "\n共计:\n" +
                             "造成了 ${duelStats.getIntOrNull("damage_dealt")} 伤害, 恢复了 ${duelStats.getIntOrNull("health_regenerated")} 血量"))
                     }
@@ -139,9 +144,8 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("Walls3")) {
                         val mwStats = playerStats.getJSONObject("Walls3")
-                        outputMessage.add(bot!!, PlainText("Mega Walls 信息: (-1 为获取失败)\n" +
+                        outputMessage.add(bot!!, PlainText("Mega Walls 信息: (负数为获取失败)\n" +
                             "硬币: ${mwStats.getIntOrNull("coins")}\n" +
-                            "总游戏数: ${mwStats.getIntOrNull("wins")+mwStats.getIntOrNull("losses")}\n" +
                             "胜利/失败: ${mwStats.getIntOrNull("wins")}/${mwStats.getIntOrNull("losses")} " +
                             "WLR: ${calculatorR(mwStats.getIntOrNull("wins"), mwStats.getIntOrNull("losses"))}\n" +
                             "Kill/Death: ${mwStats.getIntOrNull("kills")}/${mwStats.getIntOrNull("deaths")} " +
@@ -154,7 +158,7 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("UHC")) {
                         val uhcStats = playerStats.getJSONObject("UHC")
-                        outputMessage.add(bot!!, PlainText("UHC 信息: (-1 为获取失败)\n" +
+                        outputMessage.add(bot!!, PlainText("UHC 信息: (负数为获取失败)\n" +
                             "硬币: ${uhcStats.getIntOrNull("coins")}\n" +
                             "胜利/失败: ${uhcStats.getIntOrNull("wins")}/${uhcStats.getIntOrNull("deaths")} " +
                             "WLR: ${calculatorR(uhcStats.getIntOrNull("wins"), uhcStats.getIntOrNull("deaths"))}\n" +
