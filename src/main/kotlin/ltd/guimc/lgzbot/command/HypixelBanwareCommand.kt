@@ -67,6 +67,7 @@ object HypixelBanwareCommand: SimpleCommand(
                                 } catch (e: Throwable) { logger.warning(e) }
                             }
                         }
+                        listenerThread = null
                     }
                 }
             }

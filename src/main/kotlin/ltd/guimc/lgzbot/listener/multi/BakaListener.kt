@@ -8,6 +8,7 @@
  */
 package ltd.guimc.lgzbot.listener.multi
 
+import ltd.guimc.lgzbot.PluginMain
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
@@ -97,6 +98,16 @@ object BakaListener : ListenerHost {
     @EventHandler
     suspend fun BotJoinGroupEvent.botJoinGroup() {
         this.group.sendMessage(format(BOT_JOIN_GROUP.random()))
+    }
+
+    @EventHandler
+    fun BotOfflineEvent.offline() {
+        PluginMain.isRunning = false
+    }
+
+    @EventHandler
+    fun BotOnlineEvent.online() {
+        PluginMain.isRunning = true
     }
 
     private fun format(str: String, target: Long, source: Long): MessageChain {

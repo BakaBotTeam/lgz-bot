@@ -18,8 +18,7 @@ import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.PlainText
-import java.time.format.DateTimeFormatter
-import java.util.Date
+import org.json.JSONObject
 import kotlin.math.roundToInt
 
 object HypixelCommand: SimpleCommand(
@@ -47,7 +46,7 @@ object HypixelCommand: SimpleCommand(
             } else {
                 null
             }
-            val level = (HypixelApiUtils.getExactLevel(playerInfo.getLong("networkExp"))*100).roundToInt() / 100
+            val level: Double = try {(HypixelApiUtils.getExactLevel(playerInfo.getLong("networkExp"))*100).roundToInt().toDouble() / 100.0} catch (_: Exception) { 1.0 }
             val firstLogin = try {
                 TimeUtils.convertDate(playerInfo.getLong("firstLogin"))
             } catch (e: Throwable) {
@@ -74,10 +73,10 @@ object HypixelCommand: SimpleCommand(
                 "在线 -> ${ try { HypixelApiUtils.resolveGameType(statusInfo.getString("gameType")) } catch (_: Exception) { "Lobby?" } }"
             }
 
-            outputMessage.add(bot!!, PlainText("Hypixel 玩家数据:\n" +
+            outputMessage.add(bot!!, PlainText("Hypixel 玩家数据: (-1 为获取失败)\n" +
                 "玩家名: ${ if (rank != null) "[$rank]" else "" }$name\n" +
                 "等级: $level\n" +
-                "Karma: ${ try { playerInfo.getInt("karma") } catch (_: Exception) { "查询失败" } }\n" +
+                "Karma: ${playerInfo.getIntOrNull("karma")}\n" +
                 "玩家使用语言: ${ try { playerInfo.getString("userLanguage") } catch (_: Exception) { "查询失败" } }\n" +
                 "首次登入: $firstLogin\n" +
                 "上次登入: $lastLogin\n" +
@@ -97,13 +96,13 @@ object HypixelCommand: SimpleCommand(
                         val bwStats = playerStats.getJSONObject("Bedwars")
                         outputMessage.add(
                             bot!!, PlainText(
-                                "Bedwars 信息:\n" +
-                                    "硬币: ${bwStats.getInt("coins")}\n" +
-                                    "毁床数: ${bwStats.getInt("beds_broken_bedwars")}\n" +
-                                    "总游戏数: ${bwStats.getInt("games_played_bedwars")}\n" +
-                                    "胜利/失败: ${bwStats.getInt("wins_bedwars")}/${bwStats.getInt("losses_bedwars")}\n" +
-                                    "Kill/Death: ${bwStats.getInt("kills_bedwars")}/${bwStats.getInt("deaths_bedwars")}\n" +
-                                    "最终击杀数: ${bwStats.getInt("final_kills_bedwars")}"
+                                "Bedwars 信息: (-1 为获取失败)\n" +
+                                    "硬币: ${bwStats.getIntOrNull("coins")}\n" +
+                                    "毁床数: ${bwStats.getIntOrNull("beds_broken_bedwars")}\n" +
+                                    "总游戏数: ${bwStats.getIntOrNull("games_played_bedwars")}\n" +
+                                    "胜利/失败: ${bwStats.getIntOrNull("wins_bedwars")}/${bwStats.getIntOrNull("losses_bedwars")}\n" +
+                                    "Kill/Death: ${bwStats.getIntOrNull("kills_bedwars")}/${bwStats.getIntOrNull("deaths_bedwars")}\n" +
+                                    "最终击杀数: ${bwStats.getIntOrNull("final_kills_bedwars")}"
                             )
                         )
                     }
@@ -111,50 +110,56 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("SkyWars")) {
                         val swStats = playerStats.getJSONObject("SkyWars")
-                        outputMessage.add(bot!!, PlainText("Skywars 信息:\n" +
-                            "硬币: ${swStats.getInt("coins")}\n" +
-                            "灵魂数量: ${swStats.getInt("souls")}\n" +
-                            "总游戏数: ${swStats.getInt("games_played_skywars")}\n" +
-                            "胜利/失败: ${swStats.getInt("wins")}/${swStats.getInt("losses")}\n" +
-                            "Kill/Death: ${swStats.getInt("kills")}/${swStats.getInt("deaths")}\n" +
+                        outputMessage.add(bot!!, PlainText("Skywars 信息: (-1 为获取失败)\n" +
+                            "硬币: ${swStats.getIntOrNull("coins")}\n" +
+                            "灵魂数量: ${swStats.getIntOrNull("souls")}\n" +
+                            "总游戏数: ${swStats.getIntOrNull("games_played_skywars")}\n" +
+                            "胜利/失败: ${swStats.getIntOrNull("wins")}/${swStats.getIntOrNull("losses")}\n" +
+                            "Kill/Death: ${swStats.getIntOrNull("kills")}/${swStats.getIntOrNull("deaths")}\n" +
                             "\n共计:\n" +
-                            "放置了 ${swStats.getInt("blocks_placed")} 个方块, 打开了 ${swStats.getInt("chests_opened")} 个箱子"))
+                            "放置了 ${swStats.getIntOrNull("blocks_placed")} 个方块, 打开了 ${swStats.getIntOrNull("chests_opened")} 个箱子"))
                     }
                 } catch (_: Exception) {}
                 try {
                     if (playerStats.has("Duels")) {
                         val duelStats = playerStats.getJSONObject("Duels")
-                        outputMessage.add(bot!!, PlainText("Duels 信息:\n" +
+                        outputMessage.add(bot!!, PlainText("Duels 信息: (-1 为获取失败)\n" +
                             "硬币: ${duelStats.getInt("coins")}\n" +
-                            "总游戏数: ${duelStats.getInt("time_played")}\n" +
-                            "胜利/失败: ${duelStats.getInt("wins")}/${duelStats.getInt("losses")}\n" +
-                            "Kill/Death: ${duelStats.getInt("kills")}/${duelStats.getInt("deaths")}\n" +
-                            "近战命中: ${duelStats.getInt("melee_hits")}/${duelStats.getInt("melee_swings")}\n" +
-                            "弓箭命中: ${duelStats.getInt("bow_hits")}/${duelStats.getInt("bow_shots")}\n" +
+                            "总游戏数: ${duelStats.getIntOrNull("time_played")}\n" +
+                            "胜利/失败: ${duelStats.getIntOrNull("wins")}/${duelStats.getIntOrNull("losses")}" +
+                            "WLR: ${calculatorR(duelStats.getIntOrNull("wins"), duelStats.getIntOrNull("losses"))}\n" +
+                            "Kill/Death: ${duelStats.getIntOrNull("kills")}/${duelStats.getIntOrNull("deaths")} " +
+                            "KDR: ${calculatorR(duelStats.getIntOrNull("kills"), duelStats.getIntOrNull("deaths"))}\n" +
+                            "近战命中: ${calculatorR(duelStats.getIntOrNull("melee_hits"), duelStats.getIntOrNull("melee_swings"))}\n" +
+                            "弓箭命中: ${duelStats.getIntOrNull("bow_hits")}/${duelStats.getIntOrNull("bow_shots")}\n" +
                             "\n共计:\n" +
-                            "造成了 ${duelStats.getInt("damage_dealt")} 伤害, 恢复了 ${duelStats.getInt("health_regenerated")} 血量"))
+                            "造成了 ${duelStats.getIntOrNull("damage_dealt")} 伤害, 恢复了 ${duelStats.getIntOrNull("health_regenerated")} 血量"))
                     }
                 } catch (_: Exception) {}
                 try {
                     if (playerStats.has("Walls3")) {
                         val mwStats = playerStats.getJSONObject("Walls3")
-                        outputMessage.add(bot!!, PlainText("Mega Walls 信息:\n" +
-                            "硬币: ${mwStats.getInt("coins")}\n" +
-                            "总游戏数: ${mwStats.getInt("wins")+mwStats.getInt("losses")}\n" +
-                            "胜利/失败: ${mwStats.getInt("wins")}/${mwStats.getInt("losses")}\n" +
-                            "Total Kill/Death: ${mwStats.getInt("total_kills")}/${mwStats.getInt("total_deaths")}\n" +
-                            "Final Kill/Death: ${mwStats.getInt("total_final_kills")}/${mwStats.getInt("total_final_deaths")}\n" +
+                        outputMessage.add(bot!!, PlainText("Mega Walls 信息: (-1 为获取失败)\n" +
+                            "硬币: ${mwStats.getIntOrNull("coins")}\n" +
+                            "总游戏数: ${mwStats.getIntOrNull("wins")+mwStats.getIntOrNull("losses")}\n" +
+                            "胜利/失败: ${mwStats.getIntOrNull("wins")}/${mwStats.getIntOrNull("losses")} " +
+                            "WLR: ${calculatorR(mwStats.getIntOrNull("wins"), mwStats.getIntOrNull("losses"))}\n" +
+                            "Kill/Death: ${mwStats.getIntOrNull("kills")}/${mwStats.getIntOrNull("deaths")} " +
+                            "KDR: ${calculatorR(mwStats.getIntOrNull("kills"), mwStats.getIntOrNull("deaths"))}\n" +
+                            "Final Kill/Death: ${mwStats.getIntOrNull("final_kills")}/${mwStats.getIntOrNull("final_deaths")}\n" +
                             "\n共计:\n" +
-                            "造成了 ${mwStats.getInt("damage_dealt")} 伤害, 共有 ${mwStats.getJSONArray("packages").length()} 个 Packages"))
+                            "造成了 ${mwStats.getIntOrNull("damage_dealt")} 伤害, 共有 ${mwStats.getJSONArray("packages").length()} 个 Packages"))
                     }
                 } catch (_: Exception) {}
                 try {
                     if (playerStats.has("UHC")) {
                         val uhcStats = playerStats.getJSONObject("UHC")
-                        outputMessage.add(bot!!, PlainText("UHC 信息:\n" +
-                            "硬币: ${uhcStats.getInt("coins")}\n" +
-                            "胜利/失败: ${uhcStats.getInt("wins")}\n" +
-                            "Kill/Death: ${uhcStats.getInt("kills")}/${uhcStats.getInt("deaths")}\n" +
+                        outputMessage.add(bot!!, PlainText("UHC 信息: (-1 为获取失败)\n" +
+                            "硬币: ${uhcStats.getIntOrNull("coins")}\n" +
+                            "胜利/失败: ${uhcStats.getIntOrNull("wins")}/${uhcStats.getIntOrNull("deaths")} " +
+                            "WLR: ${calculatorR(uhcStats.getIntOrNull("wins"), uhcStats.getIntOrNull("deaths"))}\n" +
+                            "Kill/Death: ${uhcStats.getIntOrNull("kills")}/${uhcStats.getIntOrNull("deaths")} " +
+                            "KDR: ${calculatorR(uhcStats.getIntOrNull("kills"), uhcStats.getIntOrNull("deaths"))}\n" +
                             "\n共计:\n" +
                             "共有 ${uhcStats.getJSONArray("packages").length()} 个 Packages"))
                     }
@@ -166,6 +171,27 @@ object HypixelCommand: SimpleCommand(
         } catch (e: Throwable) {
             sendMessage("失败 提示: 没有进入过游戏的玩家会查询错误\n$e")
             e.printStackTrace()
+        }
+    }
+
+    private fun calculatorR(num1: Int, num2: Int): Double {
+        val result = try {
+            ((num1.toDouble() / num2.toDouble()) * 100.0).roundToInt().toDouble() / 100.0
+        } catch (_: Throwable) {
+            -1.0
+        }
+        
+        if (num1 == -1 || num2 == -1) 
+            return -1.0
+        
+        return result
+    }
+
+    private fun JSONObject.getIntOrNull(key: String): Int {
+        return try {
+            this.getInt(key)
+        } catch (_: Exception) {
+            -1
         }
     }
 }
