@@ -126,7 +126,7 @@ object HypixelCommand: SimpleCommand(
                         outputMessage.add(bot!!, PlainText("Duels 信息: (-1 为获取失败)\n" +
                             "硬币: ${duelStats.getInt("coins")}\n" +
                             "总游戏数: ${duelStats.getIntOrNull("time_played")}\n" +
-                            "胜利/失败: ${duelStats.getIntOrNull("wins")}/${duelStats.getIntOrNull("losses")}" +
+                            "胜利/失败: ${duelStats.getIntOrNull("wins")}/${duelStats.getIntOrNull("losses")} " +
                             "WLR: ${calculatorR(duelStats.getIntOrNull("wins"), duelStats.getIntOrNull("losses"))}\n" +
                             "Kill/Death: ${duelStats.getIntOrNull("kills")}/${duelStats.getIntOrNull("deaths")} " +
                             "KDR: ${calculatorR(duelStats.getIntOrNull("kills"), duelStats.getIntOrNull("deaths"))}\n" +
