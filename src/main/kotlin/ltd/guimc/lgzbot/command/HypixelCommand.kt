@@ -74,7 +74,7 @@ object HypixelCommand: SimpleCommand(
                 "在线 -> ${ try { HypixelApiUtils.resolveGameType(statusInfo.getString("gameType")) } catch (_: Exception) { "Lobby?" } }"
             }
 
-            outputMessage.add(bot!!, PlainText("Hypixel 玩家数据: (负数为获取失败)\n" +
+            outputMessage.add(bot!!, PlainText("Hypixel 玩家数据:\n" +
                 "玩家名: ${ if (rank != null) "[$rank]" else "" }$name\n" +
                 "等级: $level\n" +
                 "Karma: ${playerInfo.getIntOrNull("karma")}\n" +
@@ -97,12 +97,12 @@ object HypixelCommand: SimpleCommand(
                         val bwStats = playerStats.getJSONObject("Bedwars")
                         outputMessage.add(
                             bot!!, PlainText(
-                                "Bedwars 信息: (负数为获取失败)\n" +
+                                "Bedwars 信息:\n" +
                                     "硬币: ${bwStats.getIntOrNull("coins")}\n" +
                                     "毁床数: ${bwStats.getIntOrNull("beds_broken_bedwars")}\n" +
                                     "总游戏数: ${bwStats.getIntOrNull("games_played_bedwars")}\n" +
-                                    "胜利/失败: ${bwStats.getIntOrNull("wins_bedwars")}/${bwStats.getIntOrNull("losses_bedwars")} " +
-                                    "WLR: ${calculatorR(bwStats.getIntOrNull("wins_bedwars"), bwStats.getIntOrNull("losses_bedwars"))}\n" +
+                                    "胜利/失败: ${bwStats.getIntOrNull("wins_bedwars")+bwStats.getIntOrNull("final_kills_bedwars")}/${bwStats.getIntOrNull("losses_bedwars")} " +
+                                    "WLR: ${calculatorR(bwStats.getIntOrNull("wins_bedwars")+bwStats.getIntOrNull("final_kills_bedwars"), bwStats.getIntOrNull("losses_bedwars"))}\n" +
                                     "Kill/Death: ${bwStats.getIntOrNull("kills_bedwars")}/${bwStats.getIntOrNull("deaths_bedwars")} " +
                                     "KDR: ${calculatorR(bwStats.getIntOrNull("kills_bedwars"), bwStats.getIntOrNull("deaths_bedwars"))}\n" +
                                     "最终击杀数: ${bwStats.getIntOrNull("final_kills_bedwars")}"
@@ -113,7 +113,7 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("SkyWars")) {
                         val swStats = playerStats.getJSONObject("SkyWars")
-                        outputMessage.add(bot!!, PlainText("Skywars 信息: (负数为获取失败)\n" +
+                        outputMessage.add(bot!!, PlainText("Skywars 信息:\n" +
                             "硬币: ${swStats.getIntOrNull("coins")}\n" +
                             "灵魂数量: ${swStats.getIntOrNull("souls")}\n" +
                             "总游戏数: ${swStats.getIntOrNull("games_played_skywars")}\n" +
@@ -128,7 +128,7 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("Duels")) {
                         val duelStats = playerStats.getJSONObject("Duels")
-                        outputMessage.add(bot!!, PlainText("Duels 信息: (负数为获取失败)\n" +
+                        outputMessage.add(bot!!, PlainText("Duels 信息:\n" +
                             "硬币: ${duelStats.getInt("coins")}\n" +
                             "总游戏数: ${duelStats.getIntOrNull("rounds_played")}\n" +
                             "胜利/失败: ${duelStats.getIntOrNull("wins")}/${duelStats.getIntOrNull("losses")} " +
@@ -144,12 +144,12 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("Walls3")) {
                         val mwStats = playerStats.getJSONObject("Walls3")
-                        outputMessage.add(bot!!, PlainText("Mega Walls 信息: (负数为获取失败)\n" +
+                        outputMessage.add(bot!!, PlainText("Mega Walls 信息:\n" +
                             "硬币: ${mwStats.getIntOrNull("coins")}\n" +
                             "胜利/失败: ${mwStats.getIntOrNull("wins")}/${mwStats.getIntOrNull("losses")} " +
                             "WLR: ${calculatorR(mwStats.getIntOrNull("wins"), mwStats.getIntOrNull("losses"))}\n" +
-                            "Kill/Death: ${mwStats.getIntOrNull("kills")}/${mwStats.getIntOrNull("deaths")} " +
-                            "KDR: ${calculatorR(mwStats.getIntOrNull("kills"), mwStats.getIntOrNull("deaths"))}\n" +
+                            "Kill/Death: ${mwStats.getIntOrNull("kills")+mwStats.getIntOrNull("final_deaths")}/${mwStats.getIntOrNull("deaths")+mwStats.getIntOrNull("final_deaths")} " +
+                            "KDR: ${calculatorR(mwStats.getIntOrNull("kills")+mwStats.getIntOrNull("final_kills"), mwStats.getIntOrNull("deaths")+mwStats.getIntOrNull("final_deaths"))}\n" +
                             "Final Kill/Death: ${mwStats.getIntOrNull("final_kills")}/${mwStats.getIntOrNull("final_deaths")}\n" +
                             "\n共计:\n" +
                             "造成了 ${mwStats.getIntOrNull("damage_dealt")} 伤害, 共有 ${mwStats.getJSONArray("packages").length()} 个 Packages"))
@@ -158,7 +158,7 @@ object HypixelCommand: SimpleCommand(
                 try {
                     if (playerStats.has("UHC")) {
                         val uhcStats = playerStats.getJSONObject("UHC")
-                        outputMessage.add(bot!!, PlainText("UHC 信息: (负数为获取失败)\n" +
+                        outputMessage.add(bot!!, PlainText("UHC 信息:\n" +
                             "硬币: ${uhcStats.getIntOrNull("coins")}\n" +
                             "胜利/失败: ${uhcStats.getIntOrNull("wins")}/${uhcStats.getIntOrNull("deaths")} " +
                             "WLR: ${calculatorR(uhcStats.getIntOrNull("wins"), uhcStats.getIntOrNull("deaths"))}\n" +
@@ -182,11 +182,8 @@ object HypixelCommand: SimpleCommand(
         val result = try {
             ((num1.toDouble() / num2.toDouble()) * 100.0).roundToInt().toDouble() / 100.0
         } catch (_: Throwable) {
-            -1.0
+            num1.toDouble()
         }
-        
-        if (num1 == -1 || num2 == -1) 
-            return -1.0
         
         return result
     }
@@ -195,7 +192,7 @@ object HypixelCommand: SimpleCommand(
         return try {
             this.getInt(key)
         } catch (_: Exception) {
-            -1
+            0
         }
     }
 }
