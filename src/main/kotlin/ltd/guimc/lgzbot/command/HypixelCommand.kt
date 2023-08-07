@@ -11,9 +11,9 @@ package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
-import ltd.guimc.lgzbot.command.HypixelCommand.getIntOrNull
 import ltd.guimc.lgzbot.hypixel.HypixelApiUtils
 import ltd.guimc.lgzbot.utils.MojangAPIUtils
+import ltd.guimc.lgzbot.utils.MojangAPIUtils.unFormatted
 import ltd.guimc.lgzbot.utils.TimeUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -87,8 +87,8 @@ object HypixelCommand: SimpleCommand(
             if (playerInfo.has("stats")) {
                 val playerStats = playerInfo.getJSONObject("stats")
                 try {
-                    if (playerStats.has("giftingMeta")) {
-                        val giftMeta = playerStats.getJSONObject("giftingMeta")
+                    if (playerInfo.has("giftingMeta")) {
+                        val giftMeta = playerInfo.getJSONObject("giftingMeta")
                         outputMessage.add(bot!!, PlainText("这个玩家一共送出了 ${giftMeta.getInt("giftsGiven")} 份礼物!"))
                     }
                 } catch (_: Throwable) {}
@@ -98,13 +98,14 @@ object HypixelCommand: SimpleCommand(
                         outputMessage.add(
                             bot!!, PlainText(
                                 "Bedwars 信息:\n" +
+                                    "等级: ${try {(HypixelApiUtils.getExactLevel(bwStats.getLong("Experience"))*100).roundToInt().toDouble() / 100.0} catch (_: Exception) { 1.0 }}\n" +
                                     "硬币: ${bwStats.getIntOrNull("coins")}\n" +
                                     "毁床数: ${bwStats.getIntOrNull("beds_broken_bedwars")}\n" +
                                     "总游戏数: ${bwStats.getIntOrNull("games_played_bedwars")}\n" +
-                                    "胜利/失败: ${bwStats.getIntOrNull("wins_bedwars")+bwStats.getIntOrNull("final_kills_bedwars")}/${bwStats.getIntOrNull("losses_bedwars")} " +
-                                    "WLR: ${calculatorR(bwStats.getIntOrNull("wins_bedwars")+bwStats.getIntOrNull("final_kills_bedwars"), bwStats.getIntOrNull("losses_bedwars"))}\n" +
-                                    "Kill/Death: ${bwStats.getIntOrNull("kills_bedwars")}/${bwStats.getIntOrNull("deaths_bedwars")} " +
-                                    "KDR: ${calculatorR(bwStats.getIntOrNull("kills_bedwars"), bwStats.getIntOrNull("deaths_bedwars"))}\n" +
+                                    "胜利/失败: ${bwStats.getIntOrNull("wins_bedwars")}/${bwStats.getIntOrNull("losses_bedwars")} " +
+                                    "WLR: ${calculatorR(bwStats.getIntOrNull("wins_bedwars"), bwStats.getIntOrNull("losses_bedwars"))}\n" +
+                                    "Kill/Death: ${bwStats.getIntOrNull("kills_bedwars")+bwStats.getIntOrNull("final_kills_bedwars")}/${bwStats.getIntOrNull("deaths_bedwars")} " +
+                                    "KDR: ${calculatorR(bwStats.getIntOrNull("kills_bedwars")+bwStats.getIntOrNull("final_kills_bedwars"), bwStats.getIntOrNull("deaths_bedwars"))}\n" +
                                     "最终击杀数: ${bwStats.getIntOrNull("final_kills_bedwars")}"
                             )
                         )
@@ -114,6 +115,7 @@ object HypixelCommand: SimpleCommand(
                     if (playerStats.has("SkyWars")) {
                         val swStats = playerStats.getJSONObject("SkyWars")
                         outputMessage.add(bot!!, PlainText("Skywars 信息:\n" +
+                            "等级: ${swStats.getStringOrNull("levelFormatted").unFormatted().replace("✳", "")}\n" +
                             "硬币: ${swStats.getIntOrNull("coins")}\n" +
                             "灵魂数量: ${swStats.getIntOrNull("souls")}\n" +
                             "总游戏数: ${swStats.getIntOrNull("games_played_skywars")}\n" +
@@ -122,7 +124,7 @@ object HypixelCommand: SimpleCommand(
                             "Kill/Death: ${swStats.getIntOrNull("kills")}/${swStats.getIntOrNull("deaths")} " +
                             "KDR: ${calculatorR(swStats.getIntOrNull("kills"), swStats.getIntOrNull("deaths"))}\n" +
                             "\n共计:\n" +
-                            "放置了 ${swStats.getIntOrNull("blocks_placed")} 个方块, 打开了 ${swStats.getIntOrNull("chests_opened")} 个箱子"))
+                            "共有 ${swStats.getIntOrNull("heads")} 个 Heads, 放置了 ${swStats.getIntOrNull("blocks_placed")} 个方块, 打开了 ${swStats.getIntOrNull("chests_opened")} 个箱子"))
                     }
                 } catch (_: Exception) {}
                 try {
@@ -160,12 +162,13 @@ object HypixelCommand: SimpleCommand(
                         val uhcStats = playerStats.getJSONObject("UHC")
                         outputMessage.add(bot!!, PlainText("UHC 信息:\n" +
                             "硬币: ${uhcStats.getIntOrNull("coins")}\n" +
+                            "已选择的职业 ${uhcStats.getStringOrNull("equippedKit").replace("_", " ")}" +
                             "胜利/失败: ${uhcStats.getIntOrNull("wins")}/${uhcStats.getIntOrNull("deaths")} " +
                             "WLR: ${calculatorR(uhcStats.getIntOrNull("wins"), uhcStats.getIntOrNull("deaths"))}\n" +
                             "Kill/Death: ${uhcStats.getIntOrNull("kills")}/${uhcStats.getIntOrNull("deaths")} " +
                             "KDR: ${calculatorR(uhcStats.getIntOrNull("kills"), uhcStats.getIntOrNull("deaths"))}\n" +
                             "\n共计:\n" +
-                            "共有 ${uhcStats.getJSONArray("packages").length()} 个 Packages"))
+                            "共有 ${uhcStats.getJSONArray("packages").length()} 个合成配方"))
                     }
                 } catch (_: Exception) {}
             }
@@ -193,6 +196,14 @@ object HypixelCommand: SimpleCommand(
             this.getInt(key)
         } catch (_: Exception) {
             0
+        }
+    }
+
+    private fun JSONObject.getStringOrNull(key: String): String {
+        return try {
+            this.getString(key)
+        } catch (_: Throwable) {
+            "Null"
         }
     }
 }
