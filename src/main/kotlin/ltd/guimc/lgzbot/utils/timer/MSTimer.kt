@@ -16,4 +16,8 @@ class MSTimer() {
     fun reset() {
         this.initTime = System.currentTimeMillis()
     }
+
+    fun hasTimePassed(): Long {
+        return System.currentTimeMillis() - this.initTime
+    }
 }

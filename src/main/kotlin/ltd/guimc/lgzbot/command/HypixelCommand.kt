@@ -12,11 +12,14 @@ package ltd.guimc.lgzbot.command
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.hypixel.HypixelApiUtils
+import ltd.guimc.lgzbot.hypixel.games.ExpCalculator
 import ltd.guimc.lgzbot.utils.MojangAPIUtils
 import ltd.guimc.lgzbot.utils.MojangAPIUtils.unFormatted
 import ltd.guimc.lgzbot.utils.TimeUtils
+import ltd.guimc.lgzbot.utils.timer.MSTimer
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
+import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.PlainText
 import org.json.JSONObject
@@ -28,12 +31,25 @@ object HypixelCommand: SimpleCommand(
     secondaryNames = arrayOf("hyp"),
     description = "Hypixel Player Information"
 ) {
+    val cooldownMember = mutableMapOf<User, MSTimer>()
+
     @Handler
     fun CommandSender.onHandler(name: String) = ltd_guimc_command_hypixel(name)
 
     fun CommandSender.ltd_guimc_command_hypixel(name: String) = launch {
         try {
             requireNotNull(bot) { "Must have bot to use it" }
+            requireNotNull(user) { "Must have user to use it" }
+
+            if (user!! !in cooldownMember.keys) {
+                cooldownMember[user!!] = MSTimer()
+            } else if (cooldownMember[user!!]!!.isTimePressed(60000)) {
+                sendMessage("你的冷却时间未过, 还需要等待 ${(60000 - cooldownMember[user!!]!!.hasTimePassed()) / 1000} 秒")
+                return@launch
+            } else {
+                cooldownMember[user!!]!!.reset()
+            }
+
             val outputMessage = ForwardMessageBuilder(bot!!.asFriend)
             val uuid = MojangAPIUtils.getUUIDByName(name)
 
@@ -98,7 +114,7 @@ object HypixelCommand: SimpleCommand(
                         outputMessage.add(
                             bot!!, PlainText(
                                 "Bedwars 信息:\n" +
-                                    "等级: ${try {(HypixelApiUtils.getExactLevel(bwStats.getLong("Experience"))*100).roundToInt().toDouble() / 100.0} catch (_: Exception) { 1.0 }}\n" +
+                                    "等级: ${try {(ExpCalculator.getBedWarsLevel(bwStats.getIntOrNull("Experience"))*100).roundToInt().toDouble() / 100.0} catch (_: Exception) { 1.0 }}\n" +
                                     "硬币: ${bwStats.getIntOrNull("coins")}\n" +
                                     "毁床数: ${bwStats.getIntOrNull("beds_broken_bedwars")}\n" +
                                     "总游戏数: ${bwStats.getIntOrNull("games_played_bedwars")}\n" +
@@ -115,7 +131,7 @@ object HypixelCommand: SimpleCommand(
                     if (playerStats.has("SkyWars")) {
                         val swStats = playerStats.getJSONObject("SkyWars")
                         outputMessage.add(bot!!, PlainText("Skywars 信息:\n" +
-                            "等级: ${swStats.getStringOrNull("levelFormatted").unFormatted().replace("✳", "")}\n" +
+                            "等级: ${try {(ExpCalculator.getSkyWarsLevel(swStats.getIntOrNull("Experience"))*100).roundToInt().toDouble() / 100.0} catch (_: Exception) { 1.0 }}\n" +
                             "硬币: ${swStats.getIntOrNull("coins")}\n" +
                             "灵魂数量: ${swStats.getIntOrNull("souls")}\n" +
                             "总游戏数: ${swStats.getIntOrNull("games_played_skywars")}\n" +
