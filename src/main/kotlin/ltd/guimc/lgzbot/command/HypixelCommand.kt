@@ -43,7 +43,7 @@ object HypixelCommand: SimpleCommand(
 
             if (user!! !in cooldownMember.keys) {
                 cooldownMember[user!!] = MSTimer()
-            } else if (cooldownMember[user!!]!!.isTimePressed(60000)) {
+            } else if (!cooldownMember[user!!]!!.isTimePressed(60000)) {
                 sendMessage("你的冷却时间未过, 还需要等待 ${(60000 - cooldownMember[user!!]!!.hasTimePassed()) / 1000} 秒")
                 return@launch
             } else {
