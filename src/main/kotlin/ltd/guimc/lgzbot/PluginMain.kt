@@ -23,6 +23,7 @@ import ltd.guimc.lgzbot.utils.FbUtils.getFbValue
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import ltd.guimc.lgzbot.utils.RequestUtils
+import ltd.guimc.lgzbot.utils.timer.MSTimer
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
@@ -39,6 +40,7 @@ import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.event.events.NudgeEvent
 import net.mamoe.mirai.event.globalEventChannel
+import kotlin.concurrent.thread
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -74,6 +76,17 @@ object PluginMain : KotlinPlugin(
         registerCommands()
         registerEvents()
         isRunning = true
+        thread {
+            val msTimer = MSTimer()
+            while (isRunning) {
+                if (msTimer.isTimePressed(1000)) {
+                    msTimer.reset()
+                    try {
+                        Config.reload()
+                    } catch (_: Throwable) {}
+                }
+            }
+        }
         logger.info("$name v$version by $author Loaded")
     }
 
