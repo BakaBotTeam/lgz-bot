@@ -38,6 +38,7 @@ import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.event.events.NudgeEvent
+import net.mamoe.mirai.event.globalEventChannel
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -102,10 +103,9 @@ object PluginMain : KotlinPlugin(
         registerCommand(ReviewCommand)
         registerCommand(HypixelCommand)
         registerCommand(FbCommand)
-        registerCommand(HypixelBanwareCommand)
     }
 
-    private fun registerEvents() = GlobalEventChannel.run {
+    private fun registerEvents() = PluginMain.globalEventChannel().run {
         subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
 
         subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event); FunListener.onMessage(event) }
@@ -120,6 +120,9 @@ object PluginMain : KotlinPlugin(
             it.invitor!!.sendMessage(
                 "请将上面的消息发送给机器人所有者/机器人所有者所授权的人来通过此次邀请进群\n" +
                     "注意: 请不要截图发送 而是把上面一条消息复制发送给指定的人!"
+            )
+            it.invitor!!.sendMessage(
+                "本机器人的所有者: ${Config.BotOwner}"
             )
             RequestUtils.Group.add(it)
         }

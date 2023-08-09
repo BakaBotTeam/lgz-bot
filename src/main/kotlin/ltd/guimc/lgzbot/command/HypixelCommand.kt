@@ -12,9 +12,8 @@ package ltd.guimc.lgzbot.command
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.hypixel.HypixelApiUtils
-import ltd.guimc.lgzbot.hypixel.games.ExpCalculator
+import ltd.guimc.lgzbot.hypixel.ExpCalculator
 import ltd.guimc.lgzbot.utils.MojangAPIUtils
-import ltd.guimc.lgzbot.utils.MojangAPIUtils.unFormatted
 import ltd.guimc.lgzbot.utils.TimeUtils
 import ltd.guimc.lgzbot.utils.timer.MSTimer
 import net.mamoe.mirai.console.command.CommandSender
@@ -63,7 +62,7 @@ object HypixelCommand: SimpleCommand(
             } else {
                 null
             }
-            val level: Double = try {(HypixelApiUtils.getExactLevel(playerInfo.getLong("networkExp"))*100).roundToInt().toDouble() / 100.0} catch (_: Exception) { 1.0 }
+            val level: Double = try {(ExpCalculator.getExactLevel(playerInfo.getLong("networkExp"))*100).roundToInt().toDouble() / 100.0} catch (_: Exception) { 1.0 }
             val firstLogin = try {
                 TimeUtils.convertDate(playerInfo.getLong("firstLogin"))
             } catch (e: Throwable) {
@@ -178,7 +177,7 @@ object HypixelCommand: SimpleCommand(
                         val uhcStats = playerStats.getJSONObject("UHC")
                         outputMessage.add(bot!!, PlainText("UHC 信息:\n" +
                             "硬币: ${uhcStats.getIntOrNull("coins")}\n" +
-                            "已选择的职业 ${uhcStats.getStringOrNull("equippedKit").replace("_", " ")}" +
+                            "已选择的职业 ${uhcStats.getStringOrNull("equippedKit")}\n" +
                             "胜利/失败: ${uhcStats.getIntOrNull("wins")}/${uhcStats.getIntOrNull("deaths")} " +
                             "WLR: ${calculatorR(uhcStats.getIntOrNull("wins"), uhcStats.getIntOrNull("deaths"))}\n" +
                             "Kill/Death: ${uhcStats.getIntOrNull("kills")}/${uhcStats.getIntOrNull("deaths")} " +
