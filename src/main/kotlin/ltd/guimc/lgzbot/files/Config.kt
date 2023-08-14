@@ -10,14 +10,15 @@
 package ltd.guimc.lgzbot.files
 
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.value
 
-object Config : AutoSavePluginConfig("config") {
+object Config : ReadOnlyPluginConfig("config") {
     val BotOwner by value(0L)
 
-    var vlPunish by value(100.0)
+    val vlPunish by value(100.0)
 
-    var historyMessageLimit by value(8)
+    val historyMessageLimit by value(8)
 
-    var hypixelApiKey by value("00000000-0000-0000-0000-00000000")
+    val hypixelApiKey by value("00000000-0000-0000-0000-00000000")
 }

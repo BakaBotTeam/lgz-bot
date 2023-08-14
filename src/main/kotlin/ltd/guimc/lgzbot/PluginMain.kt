@@ -40,7 +40,13 @@ import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.event.events.NudgeEvent
 import net.mamoe.mirai.event.globalEventChannel
+import java.io.File
 import kotlin.concurrent.thread
+import java.io.IOException
+import java.nio.file.*
+import java.util.WeakHashMap
+import kotlin.io.path.*
+import kotlinx.coroutines.*
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -77,13 +83,21 @@ object PluginMain : KotlinPlugin(
         registerEvents()
         isRunning = true
         thread {
-            val msTimer = MSTimer()
+            val watcher = FileSystems.getDefault().newWatchService()
+            val watchedPath = configFolderPath
+
+            val pathkey = watchedPath.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY)
+
             while (isRunning) {
-                if (msTimer.isTimePressed(1000)) {
-                    msTimer.reset()
+                val watchkey = watcher.take()
+
+                for (e in watchkey.pollEvents()) {
                     try {
-                        Config.reload()
-                    } catch (_: Throwable) {}
+                        val event = e as WatchEvent<WatchEvent.Modifier>
+                        if (event.context().name().endsWith("config.yml")) {
+                            Config.reload()
+                        }
+                    } catch (e: Throwable) {}
                 }
             }
         }
@@ -93,8 +107,6 @@ object PluginMain : KotlinPlugin(
     override fun onDisable() {
         logger.info("$name v$version by $author Disabling")
         isRunning = false
-        Config.save()
-        GithubSubConfig.save()
     }
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
