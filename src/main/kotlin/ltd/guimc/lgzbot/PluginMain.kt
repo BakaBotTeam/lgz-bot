@@ -88,6 +88,9 @@ object PluginMain : KotlinPlugin(
 
             val pathkey = watchedPath.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY)
 
+            var lastModify = 0L
+            var changedFlag = false
+
             while (isRunning) {
                 val watchkey = watcher.take()
 
@@ -95,7 +98,8 @@ object PluginMain : KotlinPlugin(
                     try {
                         val event = e as WatchEvent<WatchEvent.Modifier>
                         if (event.context().name().endsWith("config.yml")) {
-                            Config.reload()
+                            lastModify = System.currentTimeMillis()
+                            changedFlag = true
                         }
                     } catch (e: Throwable) {}
                 }
@@ -104,6 +108,11 @@ object PluginMain : KotlinPlugin(
                     watchkey.cancel()
                     watcher.close()
                     break
+                }
+
+                if (changedFlag && System.currentTimeMillis() - lastModify >= 3000) {
+                    Config.reload()
+                    changedFlag = false
                 }
             }
             pathkey.cancel()
