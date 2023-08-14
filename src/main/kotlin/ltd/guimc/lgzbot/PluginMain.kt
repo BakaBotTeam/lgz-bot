@@ -99,7 +99,14 @@ object PluginMain : KotlinPlugin(
                         }
                     } catch (e: Throwable) {}
                 }
+
+                if (!watchkey.reset()) {
+                    watchkey.cancel()
+                    watcher.close()
+                    break
+                }
             }
+            pathkey.cancel()
         }
         logger.info("$name v$version by $author Loaded")
     }
