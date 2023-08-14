@@ -112,6 +112,7 @@ object PluginMain : KotlinPlugin(
 
                 if (changedFlag && System.currentTimeMillis() - lastModify >= 3000) {
                     Config.reload()
+                    logger.info("Reloaded Config")
                     changedFlag = false
                 }
             }
