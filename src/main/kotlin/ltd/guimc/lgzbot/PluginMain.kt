@@ -75,6 +75,7 @@ object PluginMain : KotlinPlugin(
         logger.info("$name v$version by $author Loading")
         Config.reload()
         GithubSubConfig.reload()
+        ModuleStateConfig.reload()
 
         adRegex = getDefaultRegex()
         adPinyinRegex = getDefaultPinyinRegex()
@@ -106,6 +107,8 @@ object PluginMain : KotlinPlugin(
                 while (isRunning) {
                     if (changedFlag && System.currentTimeMillis() - lastModify >= 3000) {
                         Config.reload()
+                        GithubSubConfig.reload()
+                        ModuleStateConfig.reload()
                         logger.info("Reloaded Config")
                         changedFlag = false
                     }
@@ -118,7 +121,7 @@ object PluginMain : KotlinPlugin(
 
                 for (event in watchkey.pollEvents()) {
                     val path = event.context() as? Path ?: continue
-                    if (path.name.equals("config.yml")) {
+                    if (path.name.endsWith(".yml")) {
                         lastModify = System.currentTimeMillis()
                         changedFlag = true
                     }
