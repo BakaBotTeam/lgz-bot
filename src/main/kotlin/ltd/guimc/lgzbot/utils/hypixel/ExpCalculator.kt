@@ -1,4 +1,4 @@
-package ltd.guimc.lgzbot.hypixel
+package ltd.guimc.lgzbot.utils.hypixel
 
 import kotlin.math.floor
 import kotlin.math.sqrt

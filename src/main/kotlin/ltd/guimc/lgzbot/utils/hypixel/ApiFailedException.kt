@@ -7,7 +7,7 @@
  * Copyright (c) 2022 - now Guimc Team.
  */
 
-package ltd.guimc.lgzbot.hypixel
+package ltd.guimc.lgzbot.utils.hypixel
 
 class ApiFailedException : Throwable {
     constructor() : super()
