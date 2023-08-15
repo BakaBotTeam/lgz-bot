@@ -10,6 +10,7 @@
 package ltd.guimc.lgzbot
 
 
+import com.sun.nio.file.SensitivityWatchEventModifier
 import ltd.guimc.lgzbot.command.*
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
@@ -82,26 +83,44 @@ object PluginMain : KotlinPlugin(
         registerCommands()
         registerEvents()
         isRunning = true
-        thread {
-            val watcher = FileSystems.getDefault().newWatchService()
+        launch {
             val watchedPath = configFolderPath
+            val watcher = try {
+                runInterruptible(Dispatchers.IO) {
+                    watchedPath.fileSystem.newWatchService()
+                }
+            } catch (_: IOException) {
+                logger.warning("注册文件监听器失败, 这可能会导致配置文件无法及时更新")
+                return@launch
+            }
 
-            val pathkey = watchedPath.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY)
+            runInterruptible(Dispatchers.IO) {
+                watchedPath.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY)
+            }
 
             var lastModify = 0L
             var changedFlag = false
 
-            while (isRunning) {
-                val watchkey = watcher.take()
+            thread {
+                while (isRunning) {
+                    if (changedFlag && System.currentTimeMillis() - lastModify >= 3000) {
+                        Config.reload()
+                        logger.info("Reloaded Config")
+                        changedFlag = false
+                    }
+                    Thread.sleep(1000)
+                }
+            }
 
-                for (e in watchkey.pollEvents()) {
-                    try {
-                        val event = e as WatchEvent<WatchEvent.Modifier>
-                        if (event.context().name().endsWith("config.yml")) {
-                            lastModify = System.currentTimeMillis()
-                            changedFlag = true
-                        }
-                    } catch (e: Throwable) {}
+            while (isRunning) {
+                val watchkey = runInterruptible(Dispatchers.IO, watcher::take)
+
+                for (event in watchkey.pollEvents()) {
+                    val path = event.context() as? Path ?: continue
+                    if (path.name.equals("config.yml")) {
+                        lastModify = System.currentTimeMillis()
+                        changedFlag = true
+                    }
                 }
 
                 if (!watchkey.reset()) {
@@ -109,14 +128,8 @@ object PluginMain : KotlinPlugin(
                     watcher.close()
                     break
                 }
-
-                if (changedFlag && System.currentTimeMillis() - lastModify >= 3000) {
-                    Config.reload()
-                    logger.info("Reloaded Config")
-                    changedFlag = false
-                }
             }
-            pathkey.cancel()
+            logger.warning("文件监听器已退出")
         }
         logger.info("$name v$version by $author Loaded")
     }
