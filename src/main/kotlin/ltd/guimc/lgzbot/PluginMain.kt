@@ -48,6 +48,7 @@ import java.nio.file.*
 import java.util.WeakHashMap
 import kotlin.io.path.*
 import kotlinx.coroutines.*
+import ltd.guimc.lgzbot.files.ModuleStateConfig
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -60,7 +61,7 @@ object PluginMain : KotlinPlugin(
 ) {
     lateinit var bypassMute: Permission
     lateinit var blocked: Permission
-    lateinit var nudgeMute: Permission
+    // lateinit var nudgeMute: Permission
     lateinit var disableSpamCheck: Permission
     lateinit var disableADCheck: Permission
     lateinit var root: Permission
@@ -143,7 +144,7 @@ object PluginMain : KotlinPlugin(
         root = register(PermissionId("lgzbot", "*"), "The root permission")
         bypassMute = register(PermissionId("lgzbot", "bypassmute"), "让某个笨蛋绕过广告禁言", root)
         blocked = register(PermissionId("lgzbot", "blocked"), "坏蛋专属权限!", root)
-        nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言", root)
+        // nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言", root)
 
         disableRoot = register(PermissionId("lgzbot.disable", "*"), "The root permission", root)
         disableSpamCheck = register(PermissionId("lgzbot.disable", "spamcheck"), "关闭群聊刷屏检查", disableRoot)
@@ -165,21 +166,23 @@ object PluginMain : KotlinPlugin(
 
         subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event); FunListener.onMessage(event) }
 
-        subscribeAlways<BotInvitedJoinGroupRequestEvent> {
-            // it.accept()
-            require(it.invitor != null) { "Must have a invitor in BotInvitedJoinGroupRequestEvent" }
+        if (ModuleStateConfig.invite) {
+            subscribeAlways<BotInvitedJoinGroupRequestEvent> {
+                // it.accept()
+                require(it.invitor != null) { "Must have a invitor in BotInvitedJoinGroupRequestEvent" }
 
-            it.invitor!!.sendMessage(
-                "Event ID: ${it.eventId}"
-            )
-            it.invitor!!.sendMessage(
-                "请将上面的消息发送给机器人所有者/机器人所有者所授权的人来通过此次邀请进群\n" +
-                    "注意: 请不要截图发送 而是把上面一条消息复制发送给指定的人!"
-            )
-            it.invitor!!.sendMessage(
-                "本机器人的所有者: ${Config.BotOwner}"
-            )
-            RequestUtils.Group.add(it)
+                it.invitor!!.sendMessage(
+                    "Event ID: ${it.eventId}"
+                )
+                it.invitor!!.sendMessage(
+                    "请将上面的消息发送给机器人所有者/机器人所有者所授权的人来通过此次邀请进群\n" +
+                        "注意: 请不要截图发送 而是把上面一条消息复制发送给指定的人!"
+                )
+                it.invitor!!.sendMessage(
+                    "本机器人的所有者: ${Config.BotOwner}"
+                )
+                RequestUtils.Group.add(it)
+            }
         }
 
         subscribeAlways<NewFriendRequestEvent> {

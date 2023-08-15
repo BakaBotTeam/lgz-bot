@@ -1,5 +1,6 @@
 package ltd.guimc.lgzbot.listener.message
 
+import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.utils.HttpUtils
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import net.mamoe.mirai.contact.Contact
@@ -14,30 +15,36 @@ object FunListener {
         when(event.message.getPlainText()) {
             "摸鱼", "摸鱼!", "摸鱼.",
             "摸鱼！", "摸鱼。" -> {
-                try {
-                    event.subject.sendMessage(At(event.sender) + getMoyu())
-                } catch (e: Throwable) {
-                    event.subject.sendMessage("处理时发生异常... \nStackTrace:")
-                    event.subject.sendMessage(build2forwardMessage(e.stackTraceToString(), event.subject))
+                if (ModuleStateConfig.moyu) {
+                    try {
+                        event.subject.sendMessage(At(event.sender) + getMoyu())
+                    } catch (e: Throwable) {
+                        event.subject.sendMessage("处理时发生异常... \nStackTrace:")
+                        event.subject.sendMessage(build2forwardMessage(e.stackTraceToString(), event.subject))
+                    }
                 }
             }
 
             "历史上的今天" -> {
-                try {
-                    event.subject.sendMessage(getHistoryToday(event.subject))
-                    event.subject.sendMessage(At(event.sender))
-                } catch (e: Throwable) {
-                    event.subject.sendMessage("处理时发生异常... \nStackTrace:")
-                    event.subject.sendMessage(build2forwardMessage(e.stackTraceToString(), event.subject))
+                if (ModuleStateConfig.historytoday) {
+                    try {
+                        event.subject.sendMessage(getHistoryToday(event.subject))
+                        event.subject.sendMessage(At(event.sender))
+                    } catch (e: Throwable) {
+                        event.subject.sendMessage("处理时发生异常... \nStackTrace:")
+                        event.subject.sendMessage(build2forwardMessage(e.stackTraceToString(), event.subject))
+                    }
                 }
             }
 
             "今日运势" -> {
-                try {
-                    event.subject.sendMessage(At(event.sender) + getEveryLuck(event.sender.id))
-                } catch (e: Throwable) {
-                    event.subject.sendMessage("处理时发生异常... \nStackTrace:")
-                    event.subject.sendMessage(build2forwardMessage(e.stackTraceToString(), event.subject))
+                if (ModuleStateConfig.fortune) {
+                    try {
+                        event.subject.sendMessage(At(event.sender) + getEveryLuck(event.sender.id))
+                    } catch (e: Throwable) {
+                        event.subject.sendMessage("处理时发生异常... \nStackTrace:")
+                        event.subject.sendMessage(build2forwardMessage(e.stackTraceToString(), event.subject))
+                    }
                 }
             }
         }

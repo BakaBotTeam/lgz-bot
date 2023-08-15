@@ -3,6 +3,7 @@ package ltd.guimc.lgzbot.command
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.PluginMain.logger
+import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RequestUtils
 import net.mamoe.mirai.console.command.CommandSender
@@ -22,6 +23,10 @@ object ReviewCommand : SimpleCommand(
         try {
             if (bot == null) {
                 throw IllegalAccessError("请勿在控制台运行")
+            }
+
+            if (ModuleStateConfig.invite) {
+                sendMessage("该功能已禁用")
             }
 
             val realSource = user!!.id

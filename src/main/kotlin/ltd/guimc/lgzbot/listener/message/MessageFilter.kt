@@ -17,6 +17,7 @@ import ltd.guimc.lgzbot.PluginMain.disableADCheck
 import ltd.guimc.lgzbot.PluginMain.disableSpamCheck
 import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.files.Config
+import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.utils.MemberUtils.mute
 import ltd.guimc.lgzbot.utils.MessageUtils.getFullText
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
@@ -45,6 +46,7 @@ object MessageFilter {
     private var messagesHandled = 0
     var riskList = ArrayList<Member>()
     suspend fun filter(e: GroupMessageEvent) {
+        if (!ModuleStateConfig.messageFilter) return
         var muted = false
         // 检查权限
 
