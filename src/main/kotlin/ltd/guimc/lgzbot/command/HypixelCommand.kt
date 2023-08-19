@@ -23,6 +23,7 @@ import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.PlainText
 import org.json.JSONObject
 import java.io.FileNotFoundException
+import java.io.IOException
 import kotlin.math.roundToInt
 
 object HypixelCommand: SimpleCommand(
@@ -329,11 +330,18 @@ object HypixelCommand: SimpleCommand(
 
             outputMessage.add(bot!!, PlainText("本数据仅供参考"))
             sendMessage(outputMessage.build())
+        } catch (e: IOException) {
+            if (e.message != null && e.message!!.indexOf("HTTP response code: 403 for URL: https://api.hypixel.net/") != -1) {
+                sendMessage("Hypixel APIKey失效了...")
+            } else {
+                sendMessage("失败 提示: 没有进入过游戏的玩家会查询错误\n$e")
+                e.printStackTrace()
+            }
         } catch (e: FileNotFoundException) {
             sendMessage("你好像在尝试查询一个不存在的玩家?")
             e.printStackTrace()
         } catch (e: Throwable) {
-            sendMessage("失败 提示: 没有进入过游戏的玩家会查询错误\n$e")
+            sendMessage("请求过程中出现了一点问题!\n$e")
             e.printStackTrace()
         }
     }
