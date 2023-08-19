@@ -49,6 +49,7 @@ import java.util.WeakHashMap
 import kotlin.io.path.*
 import kotlinx.coroutines.*
 import ltd.guimc.lgzbot.files.ModuleStateConfig
+import ltd.guimc.lgzbot.listener.nudge.NudgeMute
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -61,7 +62,7 @@ object PluginMain : KotlinPlugin(
 ) {
     lateinit var bypassMute: Permission
     lateinit var blocked: Permission
-    // lateinit var nudgeMute: Permission
+    lateinit var nudgeMute: Permission
     lateinit var disableSpamCheck: Permission
     lateinit var disableADCheck: Permission
     lateinit var root: Permission
@@ -145,9 +146,9 @@ object PluginMain : KotlinPlugin(
 
     private fun registerPerms() = PermissionService.INSTANCE.run {
         root = register(PermissionId("lgzbot", "*"), "The root permission")
-        bypassMute = register(PermissionId("lgzbot", "bypassmute"), "让某个笨蛋绕过广告禁言", root)
-        blocked = register(PermissionId("lgzbot", "blocked"), "坏蛋专属权限!", root)
-        // nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言", root)
+        bypassMute = register(PermissionId("lgzbot", "bypassmute"), "消息过滤器禁言豁免", root)
+        blocked = register(PermissionId("lgzbot", "blocked"), "完全屏蔽", root)
+        nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言", root)
 
         disableRoot = register(PermissionId("lgzbot.disable", "*"), "The root permission", root)
         disableSpamCheck = register(PermissionId("lgzbot.disable", "spamcheck"), "关闭群聊刷屏检查", disableRoot)
@@ -193,7 +194,10 @@ object PluginMain : KotlinPlugin(
         }
 
         // Anti NudgeSpam
-        subscribeAlways<NudgeEvent>(priority = EventPriority.HIGHEST) { e -> AntiNudgeSpam.onNudge(e) }
+        subscribeAlways<NudgeEvent>(priority = EventPriority.HIGHEST) { e ->
+            AntiNudgeSpam.onNudge(e)
+            NudgeMute.onNudge(e)
+        }
 
         registerListenerHost(BakaListener)
         registerListenerHost(AutoQuit)
