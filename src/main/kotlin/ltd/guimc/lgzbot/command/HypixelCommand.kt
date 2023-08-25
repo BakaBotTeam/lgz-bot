@@ -328,6 +328,7 @@ object HypixelCommand: SimpleCommand(
                 }
             }
 
+            outputMessage.add(bot!!, PlainText("Skyblock信息: https://sky.shiiyu.moe/stats/"+name))
             outputMessage.add(bot!!, PlainText("本数据仅供参考"))
             sendMessage(outputMessage.build())
         } catch (e: FileNotFoundException) {
