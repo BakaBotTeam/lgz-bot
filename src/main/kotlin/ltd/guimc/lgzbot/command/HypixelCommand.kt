@@ -124,7 +124,8 @@ object HypixelCommand: SimpleCommand(
 
             if (playerInfo.has("stats")) {
                 val playerStats = playerInfo.getJSONObject("stats")
-                try {
+
+                /*try {
                     if (playerInfo.has("giftingMeta")) {
                         val giftMeta = playerInfo.getJSONObject("giftingMeta")
                         outputMessage.add(
@@ -132,8 +133,9 @@ object HypixelCommand: SimpleCommand(
                             PlainText("这个玩家一共送出了 ${giftMeta.getInt("giftsGiven")} 份礼物!")
                         )
                     }
-                } catch (_: Throwable) {
-                }
+                } catch (_: Throwable) {}*/
+
+                // Bedwars
                 try {
                     if (playerStats.has("Bedwars")) {
                         val bwStats = playerStats.getJSONObject("Bedwars")
@@ -173,8 +175,9 @@ object HypixelCommand: SimpleCommand(
                             )
                         )
                     }
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) {}
+
+                // Skywars
                 try {
                     if (playerStats.has("SkyWars")) {
                         val swStats = playerStats.getJSONObject("SkyWars")
@@ -215,8 +218,9 @@ object HypixelCommand: SimpleCommand(
                             )
                         )
                     }
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) {}
+
+                // Duels
                 try {
                     if (playerStats.has("Duels")) {
                         val duelStats = playerStats.getJSONObject("Duels")
@@ -260,8 +264,9 @@ object HypixelCommand: SimpleCommand(
                             )
                         )
                     }
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) {}
+
+                // Mega Walls
                 try {
                     if (playerStats.has("Walls3")) {
                         val mwStats = playerStats.getJSONObject("Walls3")
@@ -295,8 +300,9 @@ object HypixelCommand: SimpleCommand(
                             )
                         )
                     }
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) {}
+
+                // UHC
                 try {
                     if (playerStats.has("UHC")) {
                         val uhcStats = playerStats.getJSONObject("UHC")
@@ -324,11 +330,64 @@ object HypixelCommand: SimpleCommand(
                             )
                         )
                     }
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) {}
+
+                // Arcade Games
+                try {
+                    if (playerStats.has("Arcade")) {
+                        val arcadeStats = playerStats.getJSONObject("Arcade")
+                        outputMessage.add(bot!!, PlainText(
+                            "街机游戏 信息:\n" +
+                                "硬币: ${arcadeStats.getIntOrNull("coins")}" +
+                                "以下为街机游戏:"
+                        ))
+                        outputMessage.add(bot!!, PlainText(
+                            "Mini Walls:\n" +
+                                "胜利: ${arcadeStats.getIntOrNull("wins_mini_walls")}\n" +
+                                "击杀/死亡: ${arcadeStats.getIntOrNull("kills_mini_walls")+arcadeStats.getIntOrNull("final_kills_mini_walls")}/${arcadeStats.getIntOrNull("deaths_mini_walls")} " +
+                                "KDR: ${calculatorR(arcadeStats.getIntOrNull("kills_mini_walls")+arcadeStats.getIntOrNull("final_kills_mini_walls"), arcadeStats.getIntOrNull("deaths_mini_walls"))}\n" +
+                                "最终击杀: ${arcadeStats.getIntOrNull("final_kills_mini_walls")}\n" +
+                                "凋零击杀数: ${arcadeStats.getIntOrNull("wither_kills_mini_walls")}\n" +
+                                "弓箭命中率: ${calculatorR(arcadeStats.getIntOrNull("arrows_hit_mini_walls"), arcadeStats.getIntOrNull("arrows_shot_mini_walls"))}"
+                        ))
+                        outputMessage.add(bot!!, PlainText(
+                            "派对游戏 胜场: ${arcadeStats.getIntOrNull("wins_party")}"
+                        ))
+                        outputMessage.add(bot!!, PlainText(
+                            "僵尸末日: \n" +
+                                "最高坚持了 ${arcadeStats.getIntOrNull("best_round_zombies")} 轮\n" +
+                                "死亡次数: ${arcadeStats.getIntOrNull("deaths_zombies")}\n" +
+                                "命中头部率: ${calculatorR(arcadeStats.getIntOrNull("headshots_zombies"), arcadeStats.getIntOrNull("bullets_shot_zombies"))}\n" +
+                                "打开门数量: ${arcadeStats.getIntOrNull("doors_opened_zombies")}\n" +
+                                "救起其他玩家次数: ${arcadeStats.getIntOrNull("players_revived_zombies")}"
+                        ))
+                        outputMessage.add(bot!!, PlainText("以上为街机游戏"))
+                    }
+                } catch (_: Exception) {}
+
+                // The Pit
+                try {
+                    if (playerStats.has("Pit")) {
+                        val pitProfile = playerStats.getJSONObject("Pit")
+                        pitProfile.keys().forEach {
+                            val pitStats = pitProfile.getJSONObject(it)
+                            if (it != "profile") {
+                                outputMessage.add(bot!!, PlainText(
+                                    "天坑 ($it): \n" +
+                                        "进入次数: ${pitStats.getIntOrNull("joins")} 跳入天坑次数: ${pitStats.getIntOrNull("jumped_into_pit")}\n" +
+                                        "击杀/助攻/死亡: ${pitStats.getIntOrNull("kills")}/${pitStats.getIntOrNull("assists")}/${pitStats.getIntOrNull("deaths")} " +
+                                        "KDR: ${calculatorR(pitStats.getIntOrNull("kills"), pitStats.getIntOrNull("deaths"))}\n" +
+                                        "近战命中率: ${calculatorR(pitStats.getIntOrNull("sword_hits"), pitStats.getIntOrNull("left_clicks"))}\n" +
+                                        "最高连杀: ${pitStats.getIntOrNull("max_streak")}\n" +
+                                        "总游玩时长: ${pitStats.getIntOrNull("playtime_minutes")} 分钟"
+                                ))
+                            }
+                        }
+                    }
+                } catch (_: Exception) {}
             }
 
-            outputMessage.add(bot!!, PlainText("Skyblock信息: https://sky.shiiyu.moe/stats/"+name))
+            outputMessage.add(bot!!, PlainText("Skyblock信息: https://sky.shiiyu.moe/stats/$name"))
             outputMessage.add(bot!!, PlainText("本数据仅供参考"))
             sendMessage(outputMessage.build())
         } catch (e: FileNotFoundException) {
