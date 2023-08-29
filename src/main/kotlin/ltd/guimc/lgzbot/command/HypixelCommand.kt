@@ -118,6 +118,7 @@ object HypixelCommand: SimpleCommand(
                         "首次登入: $firstLogin\n" +
                         "上次登入: $lastLogin\n" +
                         "上次登出: $lastLogout\n" +
+                        "最近常玩: ${playerInfo.getStringOrNull("mostRecentGameType")}" +
                         "当前状态: $stringOnlineStatus"
                 )
             )
@@ -160,7 +161,7 @@ object HypixelCommand: SimpleCommand(
                                             bwStats.getIntOrNull("losses_bedwars")
                                         )
                                     }\n" +
-                                    "Kill/Death: ${bwStats.getIntOrNull("kills_bedwars") + bwStats.getIntOrNull("final_kills_bedwars")}/${
+                                    "击杀/死亡: ${bwStats.getIntOrNull("kills_bedwars") + bwStats.getIntOrNull("final_kills_bedwars")}/${
                                         bwStats.getIntOrNull(
                                             "deaths_bedwars"
                                         )
@@ -202,7 +203,7 @@ object HypixelCommand: SimpleCommand(
                                             swStats.getIntOrNull("losses")
                                         )
                                     }\n" +
-                                    "Kill/Death: ${swStats.getIntOrNull("kills")}/${swStats.getIntOrNull("deaths")} " +
+                                    "击杀/助攻/死亡: ${swStats.getIntOrNull("kills")}/${swStats.getIntOrNull("assists")}/${swStats.getIntOrNull("deaths")} " +
                                     "KDR: ${
                                         calculatorR(
                                             swStats.getIntOrNull("kills"),
@@ -236,7 +237,7 @@ object HypixelCommand: SimpleCommand(
                                             duelStats.getIntOrNull("losses")
                                         )
                                     }\n" +
-                                    "Kill/Death: ${duelStats.getIntOrNull("kills")}/${duelStats.getIntOrNull("deaths")} " +
+                                    "击杀/死亡: ${duelStats.getIntOrNull("kills")}/${duelStats.getIntOrNull("deaths")} " +
                                     "KDR: ${
                                         calculatorR(
                                             duelStats.getIntOrNull("kills"),
@@ -281,7 +282,7 @@ object HypixelCommand: SimpleCommand(
                                             mwStats.getIntOrNull("losses")
                                         )
                                     }\n" +
-                                    "Kill/Death: ${mwStats.getIntOrNull("kills") + mwStats.getIntOrNull("final_deaths")}/${
+                                    "击杀/助攻/死亡: ${mwStats.getIntOrNull("kills") + mwStats.getIntOrNull("final_kills")}/${mwStats.getIntOrNull("assists")}/${
                                         mwStats.getIntOrNull(
                                             "deaths"
                                         ) + mwStats.getIntOrNull("final_deaths")
@@ -318,7 +319,7 @@ object HypixelCommand: SimpleCommand(
                                             uhcStats.getIntOrNull("deaths")
                                         )
                                     }\n" +
-                                    "Kill/Death: ${uhcStats.getIntOrNull("kills")}/${uhcStats.getIntOrNull("deaths")} " +
+                                    "击杀/死亡: ${uhcStats.getIntOrNull("kills")}/${uhcStats.getIntOrNull("deaths")} " +
                                     "KDR: ${
                                         calculatorR(
                                             uhcStats.getIntOrNull("kills"),
@@ -338,7 +339,7 @@ object HypixelCommand: SimpleCommand(
                         val arcadeStats = playerStats.getJSONObject("Arcade")
                         outputMessage.add(bot!!, PlainText(
                             "街机游戏 信息:\n" +
-                                "硬币: ${arcadeStats.getIntOrNull("coins")}" +
+                                "硬币: ${arcadeStats.getIntOrNull("coins")}\n\n" +
                                 "以下为街机游戏:"
                         ))
                         outputMessage.add(bot!!, PlainText(
