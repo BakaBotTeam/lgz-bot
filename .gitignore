@@ -7,3 +7,4 @@
 /run/
 /src/test/kotlin/RunMiraiConsole.kt
 /.fleet/
+/pytest/
