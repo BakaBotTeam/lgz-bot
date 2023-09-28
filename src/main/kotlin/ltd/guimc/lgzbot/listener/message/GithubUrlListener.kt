@@ -27,14 +27,14 @@ object GithubUrlListener {
 
             val info = GithubUtils.getGithubRepo(GithubUtils.convert(gitLink))
             val s = """[GitHub] (Preview Version)
-                Repo: ${info.repo}
-                Descriptor: ${info.descriptor}
-                Owner: ${info.author.name}
-                Default Branch: ${info.defaultBranch}
-                Language: ${info.language}
-                Last Commit: ${info.lastCommitInfo.commitMessage} (${info.lastCommitInfo.commitId})
-                Create Time: ${info.createdTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))}
-                Update Time: ${info.updateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))}""".trimIndent()
+Repo: ${info.repo}
+Descriptor: ${info.descriptor}
+Owner: ${info.author.name}
+Default Branch: ${info.defaultBranch}
+Language: ${info.language}
+Last Commit: ${info.lastCommitInfo.commitMessage} (${info.lastCommitInfo.commitId})
+Create Time: ${info.createdTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))}
+Update Time: ${info.updateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))}"""
 
             if (RegexUtils.matchRegex(adRegex, s)) return
             event.group.sendMessage(s)
