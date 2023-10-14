@@ -10,6 +10,7 @@
 package ltd.guimc.lgzbot.command
 
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.message.MessageFilter
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
@@ -39,6 +40,7 @@ object LGZBotCommand: CompositeCommand (
             val second: Long = Duration.parse(time).inWholeSeconds
 
             user.mute(second.toInt())
+            if (ModuleStateConfig.silentmute) return
             user.group.sendMessage(
                 PlainText("[滥权小助手] ")+
                     At(user)+
@@ -56,6 +58,7 @@ object LGZBotCommand: CompositeCommand (
     suspend fun CommandSender.unmute(user: Member) {
         try {
             (user as NormalMember).unmute()
+            if (ModuleStateConfig.silentmute) return
             user.group.sendMessage(
                 PlainText("[滥权小助手] ")+
                     At(user)+

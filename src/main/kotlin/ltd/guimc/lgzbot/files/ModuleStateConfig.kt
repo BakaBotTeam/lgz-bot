@@ -28,4 +28,7 @@ object ModuleStateConfig : ReadOnlyPluginConfig("modulestate") {
 
     @ValueDescription("GitHub仓库信息自动查询")
     val githubquery by value(true)
+
+    @ValueDescription("静默[滥权小助手]")
+    val silentmute by value(true)
 }
