@@ -86,4 +86,13 @@ object RegexUtils {
         // logger.info("匹配成功")
         return Regex(regex).find(message)?.groups?.get(0)?.value
     }
+
+    // 检测内容是否异常
+    fun checkRisk(content: String): String {
+        return if (matchRegex(getDefaultRegex(), content)) {
+            "<Hidden Message>"
+        } else {
+            content
+        }
+    }
 }

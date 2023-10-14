@@ -21,4 +21,8 @@ object Config : ReadOnlyPluginConfig("config") {
     val historyMessageLimit by value(8)
 
     val hypixelApiKey by value("00000000-0000-0000-0000-00000000")
+
+    val githubWebhookPort by value(39988)
+
+    val githubWebhookSecret by value("_UVCM1v6HY_i8JkRybLdSEshCVa_KCB2PlZD53BHn0LA-cyqbdXMTo9Sy_DlvjJB4dZ0NJxA3BjEZ37K83mU0Q")
 }

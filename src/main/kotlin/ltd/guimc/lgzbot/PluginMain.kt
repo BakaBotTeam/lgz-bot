@@ -10,7 +10,6 @@
 package ltd.guimc.lgzbot
 
 
-import com.sun.nio.file.SensitivityWatchEventModifier
 import ltd.guimc.lgzbot.command.*
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
@@ -24,7 +23,6 @@ import ltd.guimc.lgzbot.utils.FbUtils.getFbValue
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import ltd.guimc.lgzbot.utils.RequestUtils
-import ltd.guimc.lgzbot.utils.timer.MSTimer
 import net.mamoe.mirai.console.command.CommandManager
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionId
@@ -35,21 +33,21 @@ import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
 import net.mamoe.mirai.event.EventPriority
-import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.event.events.NudgeEvent
 import net.mamoe.mirai.event.globalEventChannel
-import java.io.File
 import kotlin.concurrent.thread
 import java.io.IOException
 import java.nio.file.*
-import java.util.WeakHashMap
 import kotlin.io.path.*
 import kotlinx.coroutines.*
+import ltd.guimc.lgzbot.files.GithubWebhookSubData
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.nudge.NudgeMute
+import ltd.guimc.lgzbot.webhook.GithubWebHookReciver
+import ltd.guimc.lgzbot.webhook.WebHookService
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
@@ -70,6 +68,7 @@ object PluginMain : KotlinPlugin(
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
     lateinit var fbValue: Array<String>
+    lateinit var webHookService: WebHookService
     var isRunning = false
 
     override fun onEnable() {
@@ -77,10 +76,12 @@ object PluginMain : KotlinPlugin(
         Config.reload()
         GithubSubConfig.reload()
         ModuleStateConfig.reload()
+        GithubWebhookSubData.reload()
 
         adRegex = getDefaultRegex()
         adPinyinRegex = getDefaultPinyinRegex()
         fbValue = getFbValue()
+        webHookService = WebHookService(GithubWebHookReciver())
 
         registerPerms()
         registerCommands()
@@ -136,10 +137,13 @@ object PluginMain : KotlinPlugin(
             }
             logger.warning("文件监听器已退出")
         }
+        webHookService.start()
         logger.info("$name v$version by $author Loaded")
     }
 
     override fun onDisable() {
+        GithubWebhookSubData.save()
+        webHookService.stop()
         logger.info("$name v$version by $author Disabling")
         isRunning = false
     }
@@ -163,6 +167,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(ReviewCommand)
         registerCommand(HypixelCommand)
         registerCommand(FbCommand)
+        registerCommand(GithubWebhookSubCommand)
     }
 
     private fun registerEvents() = PluginMain.globalEventChannel().run {
