@@ -41,7 +41,7 @@ class GithubWebHookReciver {
                                 || Branch: $ref
                                 || ++$addedLength --$removedLength **$modifiedLength
                                 || Commit Message: ${RegexUtils.checkRisk(commit.getString("message"))}
-                                || Details: https://github.com/$repo/${commit.getString("id")}""".trimMargin()
+                                || Details: https://github.com/$repo/commit/${commit.getString("id")}""".trimMargin()
                             )
                         } catch (_: BotIsBeingMutedException) {}
                     }
