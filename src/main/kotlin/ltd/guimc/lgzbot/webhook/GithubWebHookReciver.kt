@@ -21,13 +21,15 @@ class GithubWebHookReciver {
 
     suspend fun onPush(event: JSONObject) {
         val repo = event.getJSONObject("repository").getString("full_name")
-        event.getJSONArray("commits").forEach {
-            val commit = it as JSONObject
+        event.getJSONArray("commits").forEach { rawcommit ->
+            val commit = rawcommit as JSONObject
             val author = commit.getJSONObject("author")
             val ref = event.getString("ref")
             val addedLength = try { commit.getJSONArray("added").length() } catch (_: Throwable) { 0 }
             val removedLength = try { commit.getJSONArray("removed").length() } catch (_: Throwable) { 0 }
             val modifiedLength = try { commit.getJSONArray("modified").length() } catch (_: Throwable) { 0 }
+
+            if (ref.startsWith("refs/tags")) return@forEach
 
             GithubWebhookSubData.sub.keys.forEach { botid ->
                 try {
