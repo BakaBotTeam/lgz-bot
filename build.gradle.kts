@@ -8,6 +8,11 @@ plugins {
 }
 
 dependencies {
+    val ktor_version = "2.3.5"
+    implementation(kotlin("stdlib"))
+    implementation("io.ktor:ktor-server-core:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("com.github.promeg:tinypinyin:2.0.3")
     implementation("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
     implementation("org.json:json:20230227")
@@ -20,6 +25,5 @@ version = "0.3.1"
 repositories {
     maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     maven { url = uri("https://repo.repsy.io/mvn/chrynan/public") }
-    maven { url = uri("https://repo.hypixel.net/repository/Hypixel/") } // Hypixel
     mavenCentral()
 }
