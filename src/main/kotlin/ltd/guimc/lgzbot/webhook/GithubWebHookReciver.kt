@@ -38,14 +38,15 @@ class GithubWebHookReciver {
                         try {
                             bot.getGroup(it)!!.sendMessage(
                                 """[GitHub WebHook]
-                                || New Commit to repo $repo
-                                || Author: ${author.getString("name")} (${author.getString("email")})
-                                || Branch: $ref
-                                || ++$addedLength --$removedLength **$modifiedLength
-                                || Commit Message: ${RegexUtils.checkRisk(commit.getString("message"))}
-                                || Details: https://github.com/$repo/commit/${commit.getString("id")}""".trimMargin()
+                            || New Commit to repo $repo
+                            || Author: ${if (GithubWebhookSubData.ignore[bot.id]?.get(repo)?.indexOf(author.getString("username")) == -1) "${author.getString("name")} (${author.getString("email")})" else "<Ignored Author>"}
+                            || Branch: $ref
+                            || ++$addedLength --$removedLength **$modifiedLength
+                            || Commit Message: ${RegexUtils.checkRisk(commit.getString("message"))}
+                            || Details: ${commit.getString("url")}""".trimMargin()
                             )
-                        } catch (_: BotIsBeingMutedException) {}
+                        } catch (_: BotIsBeingMutedException) {
+                        }
                     }
                 } catch (_: Throwable) {}
             }

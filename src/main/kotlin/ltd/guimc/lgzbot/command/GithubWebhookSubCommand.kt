@@ -50,4 +50,35 @@ object GithubWebhookSubCommand: CompositeCommand(
         GithubWebhookSubData.sub[bot!!.id]!![repo]!!.remove(subject!!.id)
         sendMessage("OK")
     }
+
+    @SubCommand("ignore")
+    @Description("Add/Remove a committer")
+    suspend fun CommandSender.i1I1I1I1Ii1I1II1I1i1I1i1I1I1(sub: String, repo: String, target: String) {
+        requireNotNull(bot)
+        require(subject is Group)
+
+        if (GithubWebhookSubData.ignore[bot!!.id] == null)
+            GithubWebhookSubData.ignore[bot!!.id] = mutableMapOf()
+
+        if (GithubWebhookSubData.ignore[bot!!.id]!![repo] == null)
+            GithubWebhookSubData.ignore[bot!!.id]!![repo] = mutableListOf()
+
+        if (sub == "add") {
+            if (GithubWebhookSubData.ignore[bot!!.id]!![repo]!!.indexOf(target) != -1) {
+                sendMessage("You have already added this repo!")
+                return
+            }
+
+            GithubWebhookSubData.ignore[bot!!.id]!![repo]!!.add(target)
+            sendMessage("OK")
+        } else if (sub == "remove") {
+            if (GithubWebhookSubData.ignore[bot!!.id]!![repo]!!.indexOf(target) == -1) {
+                sendMessage("You have already removed this repo!")
+                return
+            }
+
+            GithubWebhookSubData.ignore[bot!!.id]!![repo]!!.remove(target)
+            sendMessage("OK")
+        }
+    }
 }
