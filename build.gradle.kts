@@ -20,7 +20,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.15.3")
 }
 
-version = "0.3.1"
+version = "0.3.2"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
