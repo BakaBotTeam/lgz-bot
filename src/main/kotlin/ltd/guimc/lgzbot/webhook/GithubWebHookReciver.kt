@@ -45,7 +45,7 @@ class GithubWebHookReciver {
                             || Commit Message: ${RegexUtils.checkRisk(commit.getString("message"))}
                             || Details: ${commit.getString("url")}""".trimMargin()
                             )
-                        } catch (_: BotIsBeingMutedException) {
+                        } catch (_: Throwable) {
                         }
                     }
                 } catch (_: Throwable) {}
