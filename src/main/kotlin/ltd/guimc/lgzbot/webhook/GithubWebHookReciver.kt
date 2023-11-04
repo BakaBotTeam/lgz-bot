@@ -30,6 +30,7 @@ class GithubWebHookReciver {
             val modifiedLength = try { commit.getJSONArray("modified").length() } catch (_: Throwable) { 0 }
 
             if (ref.startsWith("refs/tags")) return@forEach // Filter Releases
+            if (RegexUtils.matchRegex("Merge remote-tracking branch '.*'", commit.getString("message")) != null) return@forEach
 
             GithubWebhookSubData.sub.keys.forEach { botid ->
                 try {
