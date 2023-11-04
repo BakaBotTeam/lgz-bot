@@ -45,12 +45,10 @@ class WebHookService(githubWebHookReciver: GithubWebHookReciver) {
                     when(headers["X-GitHub-Event"]) {
                         "push" -> {
                             githubWebHookReciver.onPush(jsonObject)
-                            return@post call.respondText("Accepted", status = HttpStatusCode.Accepted)
-                        }
-                        else -> {
-                            return@post call.respondText("Accepted", status = HttpStatusCode.Accepted)
                         }
                     }
+
+                    return@post call.respondText("Accepted", status = HttpStatusCode.Accepted)
                 }
             }
         }
