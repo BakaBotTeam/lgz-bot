@@ -29,7 +29,7 @@ class GithubWebHookReciver {
             val removedLength = try { commit.getJSONArray("removed").length() } catch (_: Throwable) { 0 }
             val modifiedLength = try { commit.getJSONArray("modified").length() } catch (_: Throwable) { 0 }
 
-            if (ref.startsWith("refs/tags")) return@forEach
+            if (ref.startsWith("refs/tags")) return@forEach // Filter Releases
 
             GithubWebhookSubData.sub.keys.forEach { botid ->
                 try {
@@ -40,7 +40,7 @@ class GithubWebHookReciver {
                                 """[GitHub WebHook]
                             || New Commit to repo $repo
                             || Author: ${if (GithubWebhookSubData.ignore[bot.id]?.get(repo)?.indexOf(author.getString("username")) == -1) "${author.getString("name")} (${author.getString("email")})" else "<Ignored Author>"}
-                            || Branch: $ref
+                            || Branch: ${RegexUtils.checkRisk(ref)}
                             || ++$addedLength --$removedLength **$modifiedLength
                             || Commit Message: ${RegexUtils.checkRisk(commit.getString("message"))}
                             || Details: ${commit.getString("url")}""".trimMargin()
