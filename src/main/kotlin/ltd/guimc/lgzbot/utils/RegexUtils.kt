@@ -90,7 +90,7 @@ object RegexUtils {
     // 检测内容是否异常
     fun checkRisk(content: String): String {
         return if (matchRegex(getDefaultRegex(), content)) {
-            "<Hidden Message>"
+            "<Blocked due to security check>"
         } else {
             content
         }
