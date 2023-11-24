@@ -30,5 +30,5 @@ object ModuleStateConfig : ReadOnlyPluginConfig("modulestate") {
     val githubquery by value(true)
 
     @ValueDescription("静默[滥权小助手]")
-    val silentmute by value(true)
+    val slientmute by value(false)
 }
