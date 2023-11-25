@@ -40,7 +40,7 @@ object LGZBotCommand: CompositeCommand (
             val second: Long = Duration.parse(time).inWholeSeconds
 
             user.mute(second.toInt())
-            if (ModuleStateConfig.silentmute) return
+            if (ModuleStateConfig.slientmute) return
             user.group.sendMessage(
                 PlainText("[滥权小助手] ")+
                     At(user)+
@@ -58,7 +58,7 @@ object LGZBotCommand: CompositeCommand (
     suspend fun CommandSender.unmute(user: Member) {
         try {
             (user as NormalMember).unmute()
-            if (ModuleStateConfig.silentmute) return
+            if (ModuleStateConfig.slientmute) return
             user.group.sendMessage(
                 PlainText("[滥权小助手] ")+
                     At(user)+
