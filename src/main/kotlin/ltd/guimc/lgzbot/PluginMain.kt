@@ -52,7 +52,7 @@ import ltd.guimc.lgzbot.webhook.WebHookService
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         "ltd.guimc.lgzbot",
-        "0.3.1",
+        "0.3.3",
         "LgzBot",
     ){
         author("BakaBotTeam")
