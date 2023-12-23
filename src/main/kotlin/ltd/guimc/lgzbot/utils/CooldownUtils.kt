@@ -33,7 +33,7 @@ class CooldownUtils(val cooldown: Long) {
 
     fun getLeftTime(target: Any, time: Long): Long {
         if (cooldownMap.keys.indexOf(target) == -1) return -1
-        return System.currentTimeMillis() - cooldownMap[target]!! - time
+        return time - (System.currentTimeMillis() - cooldownMap[target]!!)
     }
 
     fun addLeftTime(target: Any, time: Long) {

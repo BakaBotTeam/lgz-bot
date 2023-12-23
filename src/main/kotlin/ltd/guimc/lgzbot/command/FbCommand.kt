@@ -31,7 +31,7 @@ object FbCommand: SimpleCommand(
 
     fun CommandSender.ltd_guimc_lgzbot_fb() = launch {
         requireNotNull(user) { "请在聊天环境中使用该指令" }
-        if (cooldown.isTimePassed(user!!)) {
+        if (!cooldown.isTimePassed(user!!)) {
             if (cooldown.shouldSendCooldownNotice(user!!)) sendMessage("你可以在 ${cooldown.getLeftTime(user!!) / 1000} 秒后继续使用该指令")
             return@launch
         }

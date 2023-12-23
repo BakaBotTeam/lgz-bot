@@ -28,7 +28,7 @@ object ACGCommand: SimpleCommand (
 
     fun CommandSender.ltd_guimc_command_acg() = launch {
         requireNotNull(user) { "请在聊天环境中使用该指令" }
-        if (cooldown.isTimePassed(user!!)) {
+        if (!cooldown.isTimePassed(user!!)) {
             if (cooldown.shouldSendCooldownNotice(user!!)) sendMessage("你可以在 ${ACGCommand.cooldown.getLeftTime(user!!) / 1000} 秒后继续使用该指令")
             return@launch
         }

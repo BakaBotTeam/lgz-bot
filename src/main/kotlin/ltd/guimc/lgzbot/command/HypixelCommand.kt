@@ -43,7 +43,7 @@ object HypixelCommand: SimpleCommand(
             requireNotNull(bot) { "Must have bot to use it" }
             requireNotNull(user) { "Must have user to use it" }
 
-            if (cooldown.isTimePassed(user!!)) {
+            if (!cooldown.isTimePassed(user!!)) {
                 if (cooldown.shouldSendCooldownNotice(user!!)) sendMessage("你可以在 ${cooldown.getLeftTime(user!!) / 1000} 秒后继续使用该指令")
                 return@launch
             }
