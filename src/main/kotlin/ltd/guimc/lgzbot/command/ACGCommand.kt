@@ -11,6 +11,7 @@ package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.utils.CooldownUtils
 import ltd.guimc.lgzbot.utils.ImageUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -20,14 +21,23 @@ object ACGCommand: SimpleCommand (
     primaryName = "acg",
     description = "二次元图片"
 ) {
+    val cooldown = CooldownUtils(10000)
+
     @Handler
     fun CommandSender.onHandler() = ltd_guimc_command_acg()
 
     fun CommandSender.ltd_guimc_command_acg() = launch {
+        requireNotNull(user) { "请在聊天环境中使用该指令" }
+        if (cooldown.isTimePassed(user!!)) {
+            if (cooldown.shouldSendCooldownNotice(user!!)) sendMessage("你可以在 ${ACGCommand.cooldown.getLeftTime(user!!) / 1000} 秒后继续使用该指令")
+            return@launch
+        }
+        cooldown.flag(user!!)
         try {
             sendMessage(ImageUtils.url2imageMessage("https://www.dmoe.cc/random.php", bot!!, subject!!))
         } catch (ignore: Throwable) {
             sendMessage("Oops, something went wrong.")
+            cooldown.addLeftTime(user!!, -10000L)
         }
     }
 }

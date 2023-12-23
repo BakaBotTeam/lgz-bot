@@ -11,6 +11,7 @@ package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.utils.CooldownUtils
 import ltd.guimc.lgzbot.utils.hypixel.HypixelApiUtils
 import ltd.guimc.lgzbot.utils.hypixel.ExpCalculator
 import ltd.guimc.lgzbot.utils.MojangAPIUtils
@@ -32,7 +33,7 @@ object HypixelCommand: SimpleCommand(
     secondaryNames = arrayOf("hyp"),
     description = "Hypixel Player Information"
 ) {
-    val cooldownMember = mutableMapOf<User, MSTimer>()
+    val cooldown = CooldownUtils(30000)
 
     @Handler
     fun CommandSender.onHandler(name: String) = ltd_guimc_command_hypixel(name)
@@ -42,16 +43,14 @@ object HypixelCommand: SimpleCommand(
             requireNotNull(bot) { "Must have bot to use it" }
             requireNotNull(user) { "Must have user to use it" }
 
+            if (cooldown.isTimePassed(user!!)) {
+                if (cooldown.shouldSendCooldownNotice(user!!)) sendMessage("你可以在 ${cooldown.getLeftTime(user!!) / 1000} 秒后继续使用该指令")
+                return@launch
+            }
+
             val uuid = MojangAPIUtils.getUUIDByName(name)
 
-            if (user!! !in cooldownMember.keys) {
-                cooldownMember[user!!] = MSTimer()
-            } else if (!cooldownMember[user!!]!!.isTimePressed(60000)) {
-                sendMessage("你的冷却时间未过, 还需要等待 ${(60000 - cooldownMember[user!!]!!.hasTimePassed()) / 1000} 秒")
-                return@launch
-            } else {
-                cooldownMember[user!!]!!.reset()
-            }
+            cooldown.flag(user!!)
 
             val outputMessage = ForwardMessageBuilder(bot!!.asFriend)
 
