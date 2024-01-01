@@ -9,9 +9,12 @@
 * Sponsor @ [Afdian](https://afdian.net/a/lgz-bot)
 
 ## About LGZ bot
-* 这是[Mirai](https://github.com/mamoe/mirai)框架的插件,依赖于[Mirai Console](https://github.com/mamoe/mirai-console)运行.
+* 这是[Shamrock]([https://github.com/mamoe/mirai](https://github.com/whitechi73/OpenShamrock))框架的插件
 * 本插件可以为使用者提供群消息合规性检查,并作出相应的处罚.
 * 还有一些有趣的小东西 \>_\<
+
+## Next Gen
+* 由于mirai框架持续遭受封堵 我们决定放弃mirai框架 转而使用Shamrock
 
 ## License
 This project is subject to the [GNU Affero General Public License v3.0](LICENSE). This does only apply for source code located directly in this clean repository. During the development and compilation process, additional source code may be used to which we have obtained no rights. Such code is not covered by the GPL license.
