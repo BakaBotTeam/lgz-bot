@@ -9,7 +9,7 @@
 * Sponsor @ [Afdian](https://afdian.net/a/lgz-bot)
 
 ## About LGZ bot
-* 这是[Shamrock]([https://github.com/mamoe/mirai](https://github.com/whitechi73/OpenShamrock))框架的插件
+* 这是[Shamrock](https://github.com/whitechi73/OpenShamrock)框架的插件
 * 本插件可以为使用者提供群消息合规性检查,并作出相应的处罚.
 * 还有一些有趣的小东西 \>_\<
 
