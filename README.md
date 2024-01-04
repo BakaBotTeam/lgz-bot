@@ -34,3 +34,8 @@ this project entirely or partially for free and even commercially. However, plea
 Do the above and share your source code with everyone, just like we do.
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fguimc233%2Flgz-bot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fguimc233%2Flgz-bot?ref=badge_large)
+
+## JetBrains
+* We are using JetBrains Intellij IDEA.
+![IntelliJ IDEA logo](https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA.svg)
+* *Copyright © 2000-2024 JetBrains s.r.o. JetBrains and the JetBrains logo are registered trademarks of JetBrains s.r.o.*
