@@ -1,0 +1,5 @@
+server:
+  port: 5000
+shiro:
+  plugin-list:
+    - ltd.guimc.nextgen.lgzbot.PluginMain
