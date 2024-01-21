@@ -58,7 +58,7 @@ object FunListener {
 
     private fun getHistoryToday(contact: Contact): ForwardMessage {
         val msg = ForwardMessageBuilder(contact)
-        msg.add(contact.bot, PlainText(HttpUtils.getResponse("http://www.ipip5.com/today/api.php?type=txt")))
+        msg.add(contact.bot, PlainText(HttpUtils.getResponse("https://www.ipip5.com/today/api.php?type=txt")))
         return msg.build()
     }
 
