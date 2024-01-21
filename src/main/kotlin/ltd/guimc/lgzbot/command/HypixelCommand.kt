@@ -186,7 +186,7 @@ object HypixelCommand: SimpleCommand(
                                 "Skywars 信息:\n" +
                                     "等级: ${
                                         try {
-                                            (ExpCalculator.getSkyWarsLevel(swStats.getIntOrNull("Experience")) * 100).roundToInt()
+                                            (ExpCalculator.getSkyWarsLevel(swStats.getIntOrNull("experience")) * 100).roundToInt()
                                                 .toDouble() / 100.0
                                         } catch (_: Exception) {
                                             1.0
