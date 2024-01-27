@@ -55,7 +55,7 @@ import kotlin.io.path.name
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         "ltd.guimc.lgzbot",
-        "0.3.3",
+        "0.3.4",
         "LgzBot",
     ){
         author("BakaBotTeam")
