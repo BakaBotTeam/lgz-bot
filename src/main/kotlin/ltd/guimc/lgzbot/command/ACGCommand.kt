@@ -17,7 +17,7 @@ import ltd.guimc.lgzbot.utils.OverflowUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.getGroupOrNull
-import top.mrxiaom.overflow.contact.RemoteBot
+import top.mrxiaom.overflow.OverflowAPI
 
 object ACGCommand: SimpleCommand (
     owner = PluginMain,
@@ -41,9 +41,7 @@ object ACGCommand: SimpleCommand (
             if (!OverflowUtils.checkOverflowCore()) {
                 sendMessage(ImageUtils.url2imageMessage("https://www.dmoe.cc/random.php", bot!!, subject!!))
             } else {
-                if (group != null) {
-                    (bot as RemoteBot).executeAction("send_group_msg", "{\"group_id\": ${group.id}, \"message\": \"[CQ:image,url=https://www.dmoe.cc/random.php]\n\"}")
-                }
+                sendMessage(OverflowAPI.get().imageFromFile("https://www.dmoe.cc/random.php"))
             }
         } catch (ignore: Throwable) {
             sendMessage("Oops, something went wrong.")
