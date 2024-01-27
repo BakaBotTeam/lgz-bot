@@ -15,12 +15,14 @@ import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.utils.OverflowUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
+import net.mamoe.mirai.console.command.getGroupOrNull
 import net.mamoe.mirai.console.command.isConsole
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
+import top.mrxiaom.overflow.contact.Updatable
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 
@@ -97,5 +99,17 @@ object LGZBotCommand: CompositeCommand (
         if (OverflowUtils.checkOverflowCore())
             messageChain.add(", on=${OverflowUtils.getOnebotServiceProviderName()}, ov=${OverflowUtils.getOnebotServiceProviderVersion()}, oc=${OverflowUtils.getOnebotConnection()}")
         sendMessage(messageChain.build())
+    }
+
+    @SubCommand("update")
+    @Description("清理本群群成员缓存")
+    suspend fun CommandSender.iI1Ii1I1i1I1i1I1() {
+        if (!OverflowUtils.checkOverflowCore()) {
+            sendMessage("该指令仅Overflow adaption可用")
+            return
+        }
+        requireNotNull(getGroupOrNull())
+        (getGroupOrNull()!! as Updatable).queryUpdate()
+        sendMessage("ok.")
     }
 }
