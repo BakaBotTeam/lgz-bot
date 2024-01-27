@@ -16,6 +16,8 @@ import ltd.guimc.lgzbot.utils.ImageUtils
 import ltd.guimc.lgzbot.utils.OverflowUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
+import net.mamoe.mirai.console.command.getGroupOrNull
+import top.mrxiaom.overflow.contact.RemoteBot
 
 object ACGCommand: SimpleCommand (
     owner = PluginMain,
@@ -29,6 +31,7 @@ object ACGCommand: SimpleCommand (
 
     fun CommandSender.ltd_guimc_command_acg() = launch {
         requireNotNull(user) { "请在聊天环境中使用该指令" }
+        val group = getGroupOrNull()
         if (!cooldown.isTimePassed(user!!)) {
             if (cooldown.shouldSendCooldownNotice(user!!)) sendMessage("你可以在 ${ACGCommand.cooldown.getLeftTime(user!!) / 1000} 秒后继续使用该指令")
             return@launch
@@ -38,7 +41,9 @@ object ACGCommand: SimpleCommand (
             if (!OverflowUtils.checkOverflowCore()) {
                 sendMessage(ImageUtils.url2imageMessage("https://www.dmoe.cc/random.php", bot!!, subject!!))
             } else {
-                sendMessage("由于一些原因 无法发送图片")
+                if (group != null) {
+                    (bot as RemoteBot).executeAction("send_group_msg", "{\"group_id\": ${group.id}, \"message\": \"[CQ:image,url=https://www.dmoe.cc/random.php]\n\"}")
+                }
             }
         } catch (ignore: Throwable) {
             sendMessage("Oops, something went wrong.")
