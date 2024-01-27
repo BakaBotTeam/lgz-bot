@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.utils.CooldownUtils
 import ltd.guimc.lgzbot.utils.ImageUtils
+import ltd.guimc.lgzbot.utils.OverflowUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 
@@ -34,7 +35,11 @@ object ACGCommand: SimpleCommand (
         }
         cooldown.flag(user!!)
         try {
-            sendMessage(ImageUtils.url2imageMessage("https://www.dmoe.cc/random.php", bot!!, subject!!))
+            if (!OverflowUtils.checkOverflowCore()) {
+                sendMessage(ImageUtils.url2imageMessage("https://www.dmoe.cc/random.php", bot!!, subject!!))
+            } else {
+                sendMessage("由于一些原因 无法发送图片")
+            }
         } catch (ignore: Throwable) {
             sendMessage("Oops, something went wrong.")
             cooldown.addLeftTime(user!!, -10000L)
