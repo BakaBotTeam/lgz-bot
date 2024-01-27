@@ -12,12 +12,14 @@ package ltd.guimc.lgzbot.command
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.message.MessageFilter
+import ltd.guimc.lgzbot.utils.OverflowUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.isConsole
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
 import kotlin.math.roundToInt
 import kotlin.time.Duration
@@ -84,5 +86,16 @@ object LGZBotCommand: CompositeCommand (
             sendMessage("Oops! 在尝试执行操作的时候发生了一些错误!")
             e.printStackTrace()
         }
+    }
+
+    @SubCommand("debug")
+    @Description("获取Debug信息")
+    suspend fun CommandSender.i1I1i1II1i1I1i() {
+        val messageChain = MessageChainBuilder()
+        messageChain.add("c=${MessageFilter.allCheckedMessage}, d=${MessageFilter.recalledMessage}, r=${(MessageFilter.recalledMessage/(MessageFilter.allCheckedMessage*10000)).toDouble() / 100.0}\n")
+        messageChain.add("o=${if (OverflowUtils.checkOverflowCore()) "true" else "false"}")
+        if (OverflowUtils.checkOverflowCore())
+            messageChain.add(", on=${OverflowUtils.getOnebotServiceProviderName()}, ov=${OverflowUtils.getOnebotServiceProviderVersion()}")
+        sendMessage(messageChain.build())
     }
 }

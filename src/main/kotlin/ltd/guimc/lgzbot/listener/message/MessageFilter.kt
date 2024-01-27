@@ -19,7 +19,6 @@ import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.utils.MemberUtils.mute
-import ltd.guimc.lgzbot.utils.MessageUtils.getFullText
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RegexUtils
 import ltd.guimc.lgzbot.utils.TextUtils.findSimilarity
@@ -37,6 +36,8 @@ import java.lang.Thread.sleep
 import java.time.Instant
 
 object MessageFilter {
+    var allCheckedMessage = 0
+    var recalledMessage = 0
     private var spammerFucker = mutableMapOf<Long, Int>()
     private var spammerFucker2 = mutableMapOf<Long, Long>()
     private var repeaterFucker = mutableMapOf<Long, String>()
@@ -62,9 +63,11 @@ object MessageFilter {
 
         if (e.sender.permission.level >= e.group.botPermission.level) return
 
+        allCheckedMessage++
         if (!e.group.permitteeId.hasPermission(disableADCheck)) {
             if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) {
                 try {
+                    recalledMessage++
                     e.message.recall()
                     e.group.mute(e.sender, "非法发言内容")
                     muted = true
@@ -88,6 +91,7 @@ object MessageFilter {
                     val forwardMessageItemString = it.messageChain.getPlainText()
                     if (!muted && RegexUtils.matchRegex(adRegex, forwardMessageItemString) && forwardMessageItemString.length >= stringLength) {
                         try {
+                            recalledMessage++
                             e.message.recall()
                             e.group.mute(e.sender, "非法发言内容 (在合并转发消息内)")
                             muted = true
@@ -102,6 +106,7 @@ object MessageFilter {
             // 拼音检查发言
             if (!muted && riskList.indexOf(e.sender) != -1 && RegexUtils.matchRegexPinyin(adPinyinRegex, textMessage)) {
                 try {
+                    recalledMessage++
                     e.message.recall()
                     e.group.mute(e.sender, "非法发言内容")
                     muted = true
@@ -166,9 +171,11 @@ object MessageFilter {
                 if (e.sender.id == 1242788764L) return
                 e.group.mute(e.sender, "不允许的速度/发言内容重复")
                 muted = true
+                recalledMessage++
                 e.message.recall()
                 try {
                     historyMessage[e.sender.id]?.forEach {
+                        recalledMessage++
                         it.recall()
                         sleep(100)
                     }

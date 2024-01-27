@@ -18,4 +18,24 @@ object OverflowUtils {
             return false
         }
     }
+
+    fun getOnebotServiceProviderName(): String {
+        if (!checkOverflowCore()) return "null"
+        val clazz = Class.forName("top.mrxiaom.overflow.internal.message.OnebotMessages")
+        val instance = clazz.getDeclaredField("INSTANCE").get(null)
+        val method = clazz.getDeclaredMethod("getAppName\$overflow_core")
+        method.trySetAccessible()
+        val appName = method.invoke(instance)
+        return appName as String
+    }
+
+    fun getOnebotServiceProviderVersion(): String {
+        if (!checkOverflowCore()) return "null"
+        val clazz = Class.forName("top.mrxiaom.overflow.internal.message.OnebotMessages")
+        val instance = clazz.getDeclaredField("INSTANCE").get(null)
+        val method = clazz.getDeclaredMethod("getAppVersion\$overflow_core")
+        method.trySetAccessible()
+        val appVersion = method.invoke(instance)
+        return appVersion as String
+    }
 }
