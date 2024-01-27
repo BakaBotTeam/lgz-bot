@@ -95,7 +95,7 @@ object LGZBotCommand: CompositeCommand (
         messageChain.add("c=${MessageFilter.allCheckedMessage}, d=${MessageFilter.recalledMessage}, r=${(MessageFilter.recalledMessage/(MessageFilter.allCheckedMessage*10000)).toDouble() / 100.0}\n")
         messageChain.add("o=${if (OverflowUtils.checkOverflowCore()) "true" else "false"}")
         if (OverflowUtils.checkOverflowCore())
-            messageChain.add(", on=${OverflowUtils.getOnebotServiceProviderName()}, ov=${OverflowUtils.getOnebotServiceProviderVersion()}")
+            messageChain.add(", on=${OverflowUtils.getOnebotServiceProviderName()}, ov=${OverflowUtils.getOnebotServiceProviderVersion()}, oc=${OverflowUtils.getOnebotConnection()}")
         sendMessage(messageChain.build())
     }
 }

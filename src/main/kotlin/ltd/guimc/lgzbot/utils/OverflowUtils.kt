@@ -38,4 +38,18 @@ object OverflowUtils {
         val appVersion = method.invoke(instance)
         return appVersion as String
     }
+
+    fun getOnebotConnection(): String {
+        if (!checkOverflowCore()) return "null"
+        val oclazz = Class.forName("top.mrxiaom.overflow.internal.Overflow")
+        val instance = oclazz.getDeclaredMethod("getInstance").invoke(null)
+        val method = oclazz.getDeclaredMethod("getConfig")
+        method.trySetAccessible()
+        val configInstance = method.invoke(instance)
+        val cclazz = Class.forName("top.mrxiaom.overflow.internal.Config")
+        val rPortMethod = cclazz.getDeclaredMethod("getReversedWSPort")
+        rPortMethod.trySetAccessible()
+        val rPort = rPortMethod.invoke(configInstance) as Int
+        return if (rPort in 1..65535) "rws" else "ws"
+    }
 }
