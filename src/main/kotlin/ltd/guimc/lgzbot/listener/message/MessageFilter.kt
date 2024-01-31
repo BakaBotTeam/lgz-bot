@@ -61,7 +61,7 @@ object MessageFilter {
 
         if (textMessage.isEmpty() && e.message.content.isEmpty()) return
 
-        if (e.sender.permission.level >= e.group.botPermission.level) return
+        if (!(e.sender.permission.level < e.group.botPermission.level || ModuleStateConfig.slientmute)) return
 
         allCheckedMessage++
         if (!e.group.permitteeId.hasPermission(disableADCheck)) {
