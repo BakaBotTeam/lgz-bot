@@ -7,9 +7,11 @@
  * Copyright (c) 2022 - now Guimc Team.
  */
 
-package ltd.guimc.lgzbot.events
+package ltd.guimc.lgzbot.utils.hypixel
 
-import ltd.guimc.lgzbot.github.CommitInfo
-import net.mamoe.mirai.event.AbstractEvent
-
-class GithubRepoCommitEvent(repo: String, commitInfo: CommitInfo) : AbstractEvent()
+class ApiFailedException : Throwable {
+    constructor() : super()
+    constructor(message: String) : super(message)
+    constructor(message: String, cause: Throwable) : super(message, cause)
+    constructor(cause: Throwable) : super(cause)
+}

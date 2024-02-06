@@ -16,7 +16,7 @@ import net.mamoe.mirai.contact.Member
 
 object MemberUtils {
     suspend fun Member.mute(durationSeconds: Int, reason: String) {
-        ConsoleCommandSender.mute(this, durationSeconds, reason)
+        ConsoleCommandSender.mute(this, "${durationSeconds}s", reason)
     }
 
     suspend fun Member.unmute() {

@@ -11,39 +11,41 @@ package ltd.guimc.lgzbot.command
 
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.utils.CooldownUtils
+import ltd.guimc.lgzbot.utils.ImageUtils
+import ltd.guimc.lgzbot.utils.OverflowUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
-import net.mamoe.mirai.message.data.Image.Key.isUploaded
-import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.HttpClients
+import net.mamoe.mirai.console.command.getGroupOrNull
+import top.mrxiaom.overflow.OverflowAPI
 
 object ACGCommand: SimpleCommand (
     owner = PluginMain,
     primaryName = "acg",
     description = "二次元图片"
 ) {
+    val cooldown = CooldownUtils(10000)
+
     @Handler
     fun CommandSender.onHandler() = ltd_guimc_command_acg()
 
-    fun CommandSender.ltd_guimc_command_acg() = launch{
-        require(!(subject == null || bot == null)) { "Subject or Bot cannot be null" }
-        val httpclients = HttpClients.createDefault()
-        val httpget = HttpGet("https://www.dmoe.cc/random.php")
-        val response = httpclients.execute(httpget)
-        if (response.statusLine.statusCode == 200) {
-            val entity = response.entity
-            if (entity != null) {
-                val inputstream = entity.content
-                if (inputstream != null) {
-                    val image = subject!!.uploadImage(inputstream.toExternalResource())
-                    if (image.isUploaded(bot!!)) {
-                        subject?.sendMessage(image)
-                        return@launch
-                    }
-                }
-            }
+    fun CommandSender.ltd_guimc_command_acg() = launch {
+        requireNotNull(user) { "请在聊天环境中使用该指令" }
+        val group = getGroupOrNull()
+        if (!cooldown.isTimePassed(user!!)) {
+            if (cooldown.shouldSendCooldownNotice(user!!)) sendMessage("你可以在 ${ACGCommand.cooldown.getLeftTime(user!!) / 1000} 秒后继续使用该指令")
+            return@launch
         }
-        subject?.sendMessage("Oops, something went wrong.")
+        cooldown.flag(user!!)
+        try {
+            if (!OverflowUtils.checkOverflowCore()) {
+                sendMessage(ImageUtils.url2imageMessage("https://www.dmoe.cc/random.php", bot!!, subject!!))
+            } else {
+                sendMessage(OverflowAPI.get().imageFromFile("https://www.dmoe.cc/random.php"))
+            }
+        } catch (ignore: Throwable) {
+            sendMessage("Oops, something went wrong.")
+            cooldown.addLeftTime(user!!, -10000L)
+        }
     }
 }

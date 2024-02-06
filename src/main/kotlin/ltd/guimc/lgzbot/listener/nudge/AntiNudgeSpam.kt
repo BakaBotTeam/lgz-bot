@@ -38,7 +38,7 @@ object AntiNudgeSpam {
 
         // 检查次数
         if (nudgeTimes[from]!! >= 3) {
-            blockedUser[from] = timestamp + 3600L // 3600s == 1h!
+            blockedUser[from] = timestamp + 3600L
             try {
                 e.subject.sendMessage(
                     At(from) + PlainText(" 你...你怎么能戳这么快！\n我生气了！免疫你的戳一戳1小时！")

@@ -10,15 +10,21 @@
 package ltd.guimc.lgzbot.command
 
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.message.MessageFilter
+import ltd.guimc.lgzbot.utils.OverflowUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
+import net.mamoe.mirai.console.command.getGroupOrNull
 import net.mamoe.mirai.console.command.isConsole
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
+import top.mrxiaom.overflow.contact.Updatable
 import kotlin.math.roundToInt
+import kotlin.time.Duration
 
 object LGZBotCommand: CompositeCommand (
     owner = PluginMain,
@@ -33,9 +39,12 @@ object LGZBotCommand: CompositeCommand (
 
     @SubCommand("mute")
     @Description("把某人的嘴巴用胶布粘上")
-    suspend fun CommandSender.mute(user: Member, second: Int, reason: String) {
+    suspend fun CommandSender.mute(user: Member, time: String, reason: String) {
         try {
-            user.mute(second)
+            val second: Long = Duration.parse(time).inWholeSeconds
+
+            user.mute(second.toInt())
+            if (ModuleStateConfig.slientmute) return
             user.group.sendMessage(
                 PlainText("[滥权小助手] ")+
                     At(user)+
@@ -53,6 +62,7 @@ object LGZBotCommand: CompositeCommand (
     suspend fun CommandSender.unmute(user: Member) {
         try {
             (user as NormalMember).unmute()
+            if (ModuleStateConfig.slientmute) return
             user.group.sendMessage(
                 PlainText("[滥权小助手] ")+
                     At(user)+
@@ -78,5 +88,28 @@ object LGZBotCommand: CompositeCommand (
             sendMessage("Oops! 在尝试执行操作的时候发生了一些错误!")
             e.printStackTrace()
         }
+    }
+
+    @SubCommand("debug")
+    @Description("获取Debug信息")
+    suspend fun CommandSender.i1I1i1II1i1I1i() {
+        val messageChain = MessageChainBuilder()
+        messageChain.add("c=${MessageFilter.allCheckedMessage}, d=${MessageFilter.recalledMessage}, r=${(MessageFilter.recalledMessage/(MessageFilter.allCheckedMessage*10000)).toDouble() / 100.0}\n")
+        messageChain.add("o=${if (OverflowUtils.checkOverflowCore()) "true" else "false"}")
+        if (OverflowUtils.checkOverflowCore())
+            messageChain.add(", on=${OverflowUtils.getOnebotServiceProviderName()}, ov=${OverflowUtils.getOnebotServiceProviderVersion()}, oc=${OverflowUtils.getOnebotConnection()}")
+        sendMessage(messageChain.build())
+    }
+
+    @SubCommand("update")
+    @Description("清理本群群成员缓存")
+    suspend fun CommandSender.iI1Ii1I1i1I1i1I1() {
+        if (!OverflowUtils.checkOverflowCore()) {
+            sendMessage("该指令仅Overflow adaption可用")
+            return
+        }
+        requireNotNull(getGroupOrNull())
+        (getGroupOrNull()!! as Updatable).queryUpdate()
+        sendMessage("ok.")
     }
 }

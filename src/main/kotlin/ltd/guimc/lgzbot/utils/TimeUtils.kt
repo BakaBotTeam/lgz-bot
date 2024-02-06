@@ -9,19 +9,19 @@
 
 package ltd.guimc.lgzbot.utils
 
-object RandomUtils {
-    fun randomText(length: Int): String {
-        val charset = "QWERTYUIOPASDDFGHJKKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567980"
-        return (1..length)
-            .map { charset.random() }
-            .joinToString("")
-    }
+import java.text.DateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
-    fun randomLong(): Long {
-        val charset = "1234567980"
-        return (1..15)
-            .map { charset.random() }
-            .joinToString("")
-            .toLong()
+
+object TimeUtils {
+    fun convertDate(dateInMilliseconds: Long): String {
+        return Instant.ofEpochMilli(dateInMilliseconds)
+            .atZone(ZoneId.of("Asia/Shanghai"))
+            .toLocalDateTime()
+            .format(
+                DateTimeFormatter.ISO_LOCAL_DATE_TIME
+            )
     }
 }

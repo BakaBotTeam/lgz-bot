@@ -16,13 +16,13 @@ import net.mamoe.mirai.message.data.PlainText
 
 object MessageUtils {
     fun MessageChain.getPlainText(): String {
-        var pt: String = ""
+        var pt = ""
         for (i in listIterator()) if (i is PlainText) pt += i.content
         return pt
     }
 
     fun MessageChain.getFullText(): String {
-        var pt: String = ""
+        var pt = ""
         for (i in listIterator()) {
             if (i is PlainText) {
                 pt += i.content
