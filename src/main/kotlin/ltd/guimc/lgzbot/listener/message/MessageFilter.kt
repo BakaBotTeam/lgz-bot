@@ -16,6 +16,7 @@ import ltd.guimc.lgzbot.PluginMain.bypassMute
 import ltd.guimc.lgzbot.PluginMain.disableADCheck
 import ltd.guimc.lgzbot.PluginMain.disableSpamCheck
 import ltd.guimc.lgzbot.PluginMain.logger
+import ltd.guimc.lgzbot.counter.VLManager
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.utils.MemberUtils.mute
@@ -23,6 +24,7 @@ import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RegexUtils
 import ltd.guimc.lgzbot.utils.TextUtils.findSimilarity
 import ltd.guimc.lgzbot.utils.TextUtils.removeNonVisible
+import ltd.guimc.lgzbot.word.WordUtils
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.Group
@@ -51,8 +53,7 @@ object MessageFilter {
         var muted = false
         // 检查权限
 
-        val textMessage = e.message.getPlainText()
-            .removeNonVisible()
+        val textMessage = e.message.getPlainText().removeNonVisible()
         val stringLength = if (e.sender in riskList) {
             10
         } else {
@@ -71,7 +72,8 @@ object MessageFilter {
                     e.message.recall()
                     e.group.mute(e.sender, "非法发言内容")
                     muted = true
-                } catch (_: Exception) {}
+                } catch (_: Exception) {
+                }
                 riskList.add(e.sender)
                 setVl(e.sender.id, 99.0)
                 messagesHandled++
@@ -81,7 +83,7 @@ object MessageFilter {
             var forwardMessage: ForwardMessage? = null
             e.message.iterator().forEach {
                 if (it is ForwardMessage) {
-                    forwardMessage = it as ForwardMessage
+                    forwardMessage = it
                 }
             }
 
@@ -89,13 +91,18 @@ object MessageFilter {
             if (!muted && forwardMessage != null) {
                 forwardMessage!!.nodeList.forEach {
                     val forwardMessageItemString = it.messageChain.getPlainText()
-                    if (!muted && RegexUtils.matchRegex(adRegex, forwardMessageItemString) && forwardMessageItemString.length >= stringLength) {
+                    if (!muted && RegexUtils.matchRegex(
+                            adRegex,
+                            forwardMessageItemString
+                        ) && forwardMessageItemString.length >= stringLength
+                    ) {
                         try {
                             recalledMessage++
                             e.message.recall()
                             e.group.mute(e.sender, "非法发言内容 (在合并转发消息内)")
                             muted = true
-                        } catch (_: Exception) {}
+                        } catch (_: Exception) {
+                        }
                         riskList.add(e.sender)
                         setVl(e.sender.id, 99.0)
                         messagesHandled++
@@ -192,9 +199,18 @@ object MessageFilter {
             }
         }
 
+        val counter = VLManager.getCounter(e.sender)
+        WordUtils.filter(e.message.content).forEach {
+            if (counter.wordFrequency[it] != null) {
+                counter.wordFrequency[it] = counter.wordFrequency[it]!! + 1
+            } else {
+                counter.wordFrequency[it] = 0
+            }
+        }
         // Permission block
-        if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) ||
-            (e.group.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute))
+        if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) || (e.group.permitteeId.hasPermission(
+                PluginMain.blocked
+            ) && !e.sender.permitteeId.hasPermission(bypassMute))
         ) {
             muted = true
         }
@@ -228,8 +244,7 @@ object MessageFilter {
         mem.mute(
             if (mem.permitteeId.hasPermission(bypassMute)) 1
             else if (riskList.indexOf(mem) != -1) 1200
-            else 600,
-            "Message Filter: $reason"
+            else 600, "Message Filter: $reason"
         )
     }
 }

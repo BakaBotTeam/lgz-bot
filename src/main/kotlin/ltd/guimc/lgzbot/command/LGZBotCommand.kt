@@ -10,9 +10,11 @@
 package ltd.guimc.lgzbot.command
 
 import ltd.guimc.lgzbot.PluginMain
+import ltd.guimc.lgzbot.counter.VLManager
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.utils.OverflowUtils
+import ltd.guimc.lgzbot.word.WordUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.getGroupOrNull
@@ -26,15 +28,23 @@ import top.mrxiaom.overflow.contact.Updatable
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 
-object LGZBotCommand: CompositeCommand (
-    owner = PluginMain,
-    primaryName = "lgzbot",
-    description = "LGZBot插件的主命令"
+object LGZBotCommand : CompositeCommand(
+    owner = PluginMain, primaryName = "lgzbot", description = "LGZBot插件的主命令"
 ) {
     @SubCommand("ping")
     @Description("看看机器人是否在线吧")
     suspend fun CommandSender.ping() {
         sendMessage("Pong!")
+    }
+
+    @SubCommand("word")
+    @Description("词频统计")
+    suspend fun CommandSender.word(user: Member,time: String) {
+        try {
+            sendMessage("他的词频信息:\n${WordUtils.hashMapToString(WordUtils.sortAndTrim(VLManager.getCounter(user).wordFrequency,Integer.parseInt(time)))}")
+        } catch (e: Exception) {
+            sendMessage("Oops! Something went wrong! ${e.message}")
+        }
     }
 
     @SubCommand("mute")
@@ -46,11 +56,9 @@ object LGZBotCommand: CompositeCommand (
             user.mute(second.toInt())
             if (ModuleStateConfig.slientmute) return
             user.group.sendMessage(
-                PlainText("[滥权小助手] ")+
-                    At(user)+
-                    PlainText(" 获得了来自 ${if (isConsole()) "CONSOLE" else name} 的禁言\n")+
-                    PlainText("时长: ${(second/60.0*100.0).roundToInt().toDouble()/100.0} 分钟\n")+
-                    PlainText("理由: $reason")
+                PlainText("[滥权小助手] ") + At(user) + PlainText(" 获得了来自 ${if (isConsole()) "CONSOLE" else name} 的禁言\n") + PlainText(
+                    "时长: ${(second / 60.0 * 100.0).roundToInt().toDouble() / 100.0} 分钟\n"
+                ) + PlainText("理由: $reason")
             )
         } catch (e: Exception) {
             sendMessage("Oops! Something went wrong! ${e.message}")
@@ -64,9 +72,7 @@ object LGZBotCommand: CompositeCommand (
             (user as NormalMember).unmute()
             if (ModuleStateConfig.slientmute) return
             user.group.sendMessage(
-                PlainText("[滥权小助手] ")+
-                    At(user)+
-                    PlainText(" 获得了来自 ${if (isConsole()) "CONSOLE" else name} 的解除禁言")
+                PlainText("[滥权小助手] ") + At(user) + PlainText(" 获得了来自 ${if (isConsole()) "CONSOLE" else name} 的解除禁言")
             )
         } catch (e: Exception) {
             sendMessage("Oops! Something went wrong! ${e.message}")
@@ -80,9 +86,7 @@ object LGZBotCommand: CompositeCommand (
             MessageFilter.riskList.remove(member)
             MessageFilter.clearVl(member.id)
             sendMessage(
-                PlainText("清除了")+
-                    At(member)+
-                    PlainText("的VL, 并移出在本群的风险管控")
+                PlainText("清除了") + At(member) + PlainText("的VL, 并移出在本群的风险管控")
             )
         } catch (e: Exception) {
             sendMessage("Oops! 在尝试执行操作的时候发生了一些错误!")
@@ -94,10 +98,9 @@ object LGZBotCommand: CompositeCommand (
     @Description("获取Debug信息")
     suspend fun CommandSender.i1I1i1II1i1I1i() {
         val messageChain = MessageChainBuilder()
-        messageChain.add("c=${MessageFilter.allCheckedMessage}, d=${MessageFilter.recalledMessage}, r=${(MessageFilter.recalledMessage/(MessageFilter.allCheckedMessage*10000)).toDouble() / 100.0}\n")
+        messageChain.add("c=${MessageFilter.allCheckedMessage}, d=${MessageFilter.recalledMessage}, r=${(MessageFilter.recalledMessage / (MessageFilter.allCheckedMessage * 10000)).toDouble() / 100.0}\n")
         messageChain.add("o=${if (OverflowUtils.checkOverflowCore()) "true" else "false"}")
-        if (OverflowUtils.checkOverflowCore())
-            messageChain.add(", on=${OverflowUtils.getOnebotServiceProviderName()}, ov=${OverflowUtils.getOnebotServiceProviderVersion()}, oc=${OverflowUtils.getOnebotConnection()}")
+        if (OverflowUtils.checkOverflowCore()) messageChain.add(", on=${OverflowUtils.getOnebotServiceProviderName()}, ov=${OverflowUtils.getOnebotServiceProviderVersion()}, oc=${OverflowUtils.getOnebotConnection()}")
         sendMessage(messageChain.build())
     }
 
