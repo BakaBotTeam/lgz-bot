@@ -1056,7 +1056,7 @@ object HomoIntUtils {
         )
 
         if (num < 0) {
-            sum = "(${getInt(-1)})*(${getInt((-1) * num)})"
+            return "(${getInt(-1)})*(${getInt((-1) * num)})"
         }
 
         var temp: Long
