@@ -1,8 +1,7 @@
-import ltd.guimc.lgzbot.utils.LL4JUtils;
+import ltd.guimc.lgzbot.utils.HomoIntUtils;
 
 public class Test {
     public static void main(String[] args) {
-        LL4JUtils.INSTANCE.init();
-        System.out.println(LL4JUtils.INSTANCE.predict("我测你的吗"));
+        System.out.println(HomoIntUtils.INSTANCE.getInt(71264112319847L));
     }
 }
