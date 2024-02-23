@@ -178,6 +178,7 @@ object PluginMain : KotlinPlugin(
         registerCommand(HypixelCommand)
         registerCommand(FbCommand)
         registerCommand(GithubWebhookSubCommand)
+        registerCommand(HomoIntCommand)
     }
 
     private fun registerEvents() = PluginMain.globalEventChannel().run {
