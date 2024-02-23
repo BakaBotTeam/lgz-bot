@@ -1068,8 +1068,8 @@ object HomoIntUtils {
             var flag = 0
             var temp1 = 0
             for (i in 1..<num) {
-                for (j in 0..a.size - 1) {
-                    if (a[j] == temp1) {
+                for (j in 0..<a.size) {
+                    if (a[j].toLong() == i) {
                         flag = 1
                         temp1 = i.toInt()
                         break
