@@ -47,4 +47,8 @@ public class JudgeLayer extends AbstractLayer {
     public void serialize(StringBuilder sb) {
         sb.append("J ").append(input_size).append("\n");
     }
+
+    public static JudgeLayer judgeLayer(int size) {
+        return new JudgeLayer(size);
+    }
 }

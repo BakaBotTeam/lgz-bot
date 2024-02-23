@@ -12,7 +12,7 @@
 * 这是[Mirai](https://github.com/mamoe/mirai)框架的插件,依赖于[Mirai Console](https://github.com/mamoe/mirai-console)运行.
 * 本插件可以为使用者提供群消息合规性检查,并作出相应的处罚.
 * 还有一些有趣的小东西 \>_\<
-* Thanks to [LL4J](https://github.com/LL4J/)
+* Thanks to [LL4J](https://github.com/LL4J/) and [ADDetector4J](https://github.com/siuank/ADDetector4J)
 
 ## License
 This project is subject to the [GNU Affero General Public License v3.0](LICENSE). This does only apply for source code located directly in this clean repository. During the development and compilation process, additional source code may be used to which we have obtained no rights. Such code is not covered by the GPL license.

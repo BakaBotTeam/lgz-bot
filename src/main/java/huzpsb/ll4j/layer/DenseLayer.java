@@ -50,6 +50,20 @@ public class DenseLayer extends AbstractLayer {
     }
 
     @Override
+    public AbstractLayer mergeWith(AbstractLayer layer) {
+        super.mergeWith(layer);
+        DenseLayer denseLayer = (DenseLayer) layer;
+        DenseLayer output = new DenseLayer(input_size, output_size);
+        double[][] weights = output.weights;
+        for (int i = 0; i < input_size; i++) {
+            for (int j = 0; j < output_size; j++) {
+                weights[i][j] = (this.weights[i][j] + denseLayer.weights[i][j]) / 2.0;
+            }
+        }
+        return output;
+    }
+
+    @Override
     public void initialize() {
         for (int i = 0; i < input_size; i++) {
             for (int j = 0; j < output_size; j++) {

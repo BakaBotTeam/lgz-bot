@@ -1,13 +1,14 @@
 package huzpsb.ll4j.data;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class CsvLoader {
     public static DataSet load(String path, int labelIndex) {
         try {
             DataSet data = new DataSet();
-            Scanner sc = new Scanner(new File(path), "UTF-8");
+            Scanner sc = new Scanner(new File(path), StandardCharsets.UTF_8);
             String[] header = sc.nextLine().split(",");
             int n = header.length;
             while (sc.hasNextLine()) {

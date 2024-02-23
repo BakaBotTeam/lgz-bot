@@ -3,6 +3,8 @@ package huzpsb.ll4j.nlp.token;
 import huzpsb.ll4j.data.DataEntry;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
@@ -13,18 +15,25 @@ public class Tokenizer {
         this.vocab = vocab;
     }
 
-    public static Tokenizer loadFromFile(String filename) {
-        try {
-            Scanner scanner = new Scanner(new File(filename));
-            int size = Integer.parseInt(scanner.nextLine());
-            String[] vocab = new String[size];
-            for (int i = 0; i < size; i++) {
-                vocab[i] = scanner.nextLine();
-            }
-            return new Tokenizer(vocab);
-        } catch (Exception ignored) {
+    public static Tokenizer loadFromFile(File file) throws FileNotFoundException {
+        Scanner scanner = new Scanner(file);
+        int size = Integer.parseInt(scanner.nextLine());
+        String[] vocab = new String[size];
+        for (int i = 0; i < size; i++) {
+            vocab[i] = scanner.nextLine();
         }
-        return null;
+        return new Tokenizer(vocab);
+    }
+
+
+    public static Tokenizer loadFromFile(InputStream inputStream) {
+        Scanner scanner = new Scanner(inputStream);
+        int size = Integer.parseInt(scanner.nextLine());
+        String[] vocab = new String[size];
+        for (int i = 0; i < size; i++) {
+            vocab[i] = scanner.nextLine();
+        }
+        return new Tokenizer(vocab);
     }
 
     public DataEntry tokenize(int type, String text) {

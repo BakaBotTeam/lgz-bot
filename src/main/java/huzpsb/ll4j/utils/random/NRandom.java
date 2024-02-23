@@ -1,4 +1,4 @@
-package huzpsb.ll4j.utils;
+package huzpsb.ll4j.utils.random;
 
 public class NRandom {
     private long seed;

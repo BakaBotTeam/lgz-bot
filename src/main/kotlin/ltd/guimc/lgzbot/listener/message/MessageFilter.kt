@@ -19,6 +19,7 @@ import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.counter.VLManager
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.ModuleStateConfig
+import ltd.guimc.lgzbot.utils.LL4JUtils
 import ltd.guimc.lgzbot.utils.MemberUtils.mute
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RegexUtils
@@ -31,6 +32,7 @@ import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.ForwardMessage
+import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
 import net.mamoe.mirai.message.data.content
@@ -70,12 +72,16 @@ object MessageFilter {
                 try {
                     recalledMessage++
                     e.message.recall()
-                    e.group.mute(e.sender, "非法发言内容")
+                    if (LL4JUtils.predict(textMessage)) {
+                        e.group.mute(e.sender, "非法发言内容 (模型证实)")
+                        riskList.add(e.sender)
+                        setVl(e.sender.id, 99.0)
+                    } else {
+                        e.sender.mute(60, "非法发言内容")
+                    }
                     muted = true
                 } catch (_: Exception) {
                 }
-                riskList.add(e.sender)
-                setVl(e.sender.id, 99.0)
                 messagesHandled++
             }
 
@@ -99,12 +105,16 @@ object MessageFilter {
                         try {
                             recalledMessage++
                             e.message.recall()
-                            e.group.mute(e.sender, "非法发言内容 (在合并转发消息内)")
+                            if (LL4JUtils.predict(textMessage)) {
+                                e.group.mute(e.sender, "非法发言内容 (在合并转发消息内) (模型证实)")
+                                riskList.add(e.sender)
+                                setVl(e.sender.id, 99.0)
+                            } else {
+                                e.sender.mute(60, "非法发言内容 (在合并转发消息内)")
+                            }
                             muted = true
                         } catch (_: Exception) {
                         }
-                        riskList.add(e.sender)
-                        setVl(e.sender.id, 99.0)
                         messagesHandled++
                     }
                 }
@@ -121,6 +131,17 @@ object MessageFilter {
                 }
                 setVl(e.sender.id, 99.0)
                 messagesHandled++
+            }
+
+            if (!muted && textMessage.length >= stringLength) {
+                if (LL4JUtils.predict(textMessage)) {
+                    val botOwner = e.bot.getFriend(Config.BotOwner)
+                    requireNotNull(botOwner)
+                    botOwner.sendMessage("发现一条模型认为违规的消息, 但正则匹配失败, 请检查.")
+                    val outputMessage = ForwardMessageBuilder(e.group)
+                    outputMessage.add(e)
+                    botOwner.sendMessage(outputMessage.build())
+                }
             }
         }
 

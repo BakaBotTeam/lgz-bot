@@ -27,6 +27,7 @@ import ltd.guimc.lgzbot.listener.mute.AutoQuit
 import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
 import ltd.guimc.lgzbot.listener.nudge.NudgeMute
 import ltd.guimc.lgzbot.utils.FbUtils.getFbValue
+import ltd.guimc.lgzbot.utils.LL4JUtils
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import ltd.guimc.lgzbot.utils.RequestUtils
@@ -143,6 +144,8 @@ object PluginMain : KotlinPlugin(
             logger.warning("文件监听器已退出")
         }
         webHookService.start()
+        logger.info("正在初始化 LL4J")
+        LL4JUtils.init()
         logger.info("$name v$version 加载好了喵")
     }
 

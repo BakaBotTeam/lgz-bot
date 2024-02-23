@@ -7,11 +7,7 @@
 package huzpsb.ll4j.minrt;
 
 public class MinRt {
-    public MinRt() {
-        throw new UnsupportedOperationException("This is a static class");
-    }
-
-    public static int doAi(double[] input, String[] script) {
+    public static int predict(double[] input, String[] script) {
         double[] current = new double[input.length];
         System.arraycopy(input, 0, current, 0, input.length);
         for (String str : script) {
@@ -36,7 +32,7 @@ public class MinRt {
                     }
                     current = tmp;
                     break;
-                case "L":
+                case "L": {
                     int n = Integer.parseInt(tokens[1]);
                     if (current.length != n) {
                         throw new RuntimeException("Wrong input size for LeakyRelu layer (expected " + n + ", got " + current.length + ")");
@@ -45,6 +41,41 @@ public class MinRt {
                         current[i] = current[i] > 0 ? current[i] : current[i] * 0.01;
                     }
                     break;
+                }
+                case "S": {
+                    int n = Integer.parseInt(tokens[1]);
+                    if (current.length != n) {
+                        throw new RuntimeException("Wrong input size for Sigmoid layer (expected " + n + ", got " + current.length + ")");
+                    }
+                    for (int i = 0; i < n; i++) {
+                        current[i] = 1 / (1 + Math.exp(-current[i]));
+                    }
+                    break;
+                }
+                case "Th": {
+                    int n = Integer.parseInt(tokens[1]);
+                    if (current.length != n) {
+                        throw new RuntimeException("Wrong input size for Tanh layer (expected " + n + ", got " + current.length + ")");
+                    }
+                    for (int i = 0; i < n; i++) {
+                        current[i] = Math.tanh(current[i]);
+                    }
+                    break;
+                }
+                case "Softmax": {
+                    int n = Integer.parseInt(tokens[1]);
+                    if (current.length != n) {
+                        throw new RuntimeException("Wrong input size for Softmax layer (expected " + n + ", got " + current.length + ")");
+                    }
+                    double sum = 0;
+                    for (int i = 0; i < n; i++) {
+                        sum += Math.exp(current[i]);
+                    }
+                    for (int i = 0; i < n; i++) {
+                        current[i] = Math.exp(current[i]) / sum;
+                    }
+                    break;
+                }
                 case "J":
                     int m = Integer.parseInt(tokens[1]);
                     if (current.length != m) {
@@ -57,8 +88,10 @@ public class MinRt {
                         }
                     }
                     return idx;
+                case "Dropout":
+                    break;
                 default:
-                    throw new RuntimeException("Unknown layer type");
+                    throw new RuntimeException("Unknown layer[minRt] type");
             }
         }
         throw new RuntimeException("No output layer");

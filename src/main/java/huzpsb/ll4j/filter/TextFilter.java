@@ -6,18 +6,18 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TextFilter {
-    private static final String[] script;
-    private static final Tokenizer tokenizer;
+    public static final String[] script;
+    public static final Tokenizer tokenizer;
 
     static {
         try {
             List<String> scriptList = new ArrayList<>();
-            Scanner sc = new Scanner(new File("judge.model"));
+            Scanner sc = new Scanner(new File(Thread.currentThread().getContextClassLoader().getResource("gen.model").toURI()));
             while (sc.hasNextLine()) {
                 scriptList.add(sc.nextLine());
             }
             script = scriptList.toArray(new String[0]);
-            tokenizer = Tokenizer.loadFromFile("tokenize.model");
+            tokenizer = Tokenizer.loadFromFile(Thread.currentThread().getContextClassLoader().getResourceAsStream("ts.model"));
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(ex);
         }

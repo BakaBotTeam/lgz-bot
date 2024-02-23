@@ -13,6 +13,7 @@ import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.counter.VLManager
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.message.MessageFilter
+import ltd.guimc.lgzbot.utils.LL4JUtils
 import ltd.guimc.lgzbot.utils.OverflowUtils
 import ltd.guimc.lgzbot.word.WordUtils
 import net.mamoe.mirai.console.command.CommandSender
@@ -114,5 +115,22 @@ object LGZBotCommand : CompositeCommand(
         requireNotNull(getGroupOrNull())
         (getGroupOrNull()!! as Updatable).queryUpdate()
         sendMessage("ok.")
+    }
+
+    @SubCommand("check")
+    @Description("使用模型检测一段文本是否合规")
+    suspend fun CommandSender.iI1I1i1I1i1I(string: String) {
+        if (LL4JUtils.predict(string)) {
+            sendMessage("不合规")
+        } else {
+            sendMessage("合规")
+        }
+    }
+
+    @SubCommand("learn")
+    @Description("让模型学习一段文本")
+    suspend fun CommandSender.iI1I1i1iIi1I(type: Int, string: String) {
+        LL4JUtils.learn(type, string)
+        sendMessage("Done.")
     }
 }
