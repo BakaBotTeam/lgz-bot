@@ -1069,14 +1069,14 @@ object HomoIntUtils {
             var temp1 = 0
             for (i in 1..<num) {
                 for (j in 0..<a.size) {
-                    if (a[j].toLong() == i) {
+                    if (a[j].toLong() == num - i) {
                         flag = 1
                         temp1 = i.toInt()
                         break
                     }
                 }
                 if (flag == 1) {
-                    temp1 = i.toInt()
+                    temp1 = (num - i).toInt()
                     break
                 }
             }
