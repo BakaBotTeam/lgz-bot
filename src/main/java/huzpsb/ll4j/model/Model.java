@@ -6,6 +6,7 @@ import huzpsb.ll4j.layer.*;
 import huzpsb.ll4j.utils.pair.Pair;
 import huzpsb.ll4j.utils.random.NRandom;
 import huzpsb.ll4j.utils.random.RandomSeedGenerator;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,6 +15,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 @SuppressWarnings({"unused", "PatternVariableCanBeUsed"})
@@ -139,7 +141,7 @@ public class Model {
         return entries;
     }
 
-    public int predict(double[] input) {
+    public @NotNull Map<Integer, Double> predict(double[] input) {
         AbstractLayer[] layers = this.layers;
         if (!(layers[layers.length - 1] instanceof JudgeLayer)) {
             throw new RuntimeException("Last layer is not output layer");
@@ -150,7 +152,7 @@ public class Model {
             layer.forward();
             input = layer.output;
         }
-        return ((JudgeLayer) layers[layers.length - 1]).result;
+        return Map.of(((JudgeLayer) layers[layers.length - 1]).result, layers[layers.length - 1].input[((JudgeLayer) layers[layers.length - 1]).result]);
     }
 
     public int predict(DataEntry de) {

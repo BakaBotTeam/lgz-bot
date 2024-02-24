@@ -16,7 +16,11 @@ object LL4JUtils {
         model = HsmLoader.load(modelFile)
     }
 
-    fun predict(string: String): Boolean = model.predict(tokenizer.tokenize(0, string.replace("\n", "")).values) == 1
+    fun predict(string: String): Boolean =
+        model.predict(tokenizer.tokenize(0, string.replace("\n", "")).values).keys.iterator().next() == 1
+
+    fun predictMap(string: String): MutableMap<Int, Double> =
+        model.predict(tokenizer.tokenize(0, string.replace("\n", "")).values)
 
     fun learn(type: Int, string: String) {
         val dataSet = DataSet()
