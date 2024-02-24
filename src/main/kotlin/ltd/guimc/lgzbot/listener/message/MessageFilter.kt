@@ -201,7 +201,8 @@ object MessageFilter {
 
             // VL处罚
             if (memberVl[e.sender.id]!! >= Config.vlPunish && !muted) {
-                if (e.sender.id == 1242788764L) return
+                // 对线完了吧大概
+//                if (e.sender.id == 1242788764L) return
                 e.group.mute(e.sender, "不允许的速度/发言内容重复")
                 muted = true
                 recalledMessage++
