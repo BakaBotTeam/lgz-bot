@@ -32,7 +32,6 @@ import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.ForwardMessage
-import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
 import net.mamoe.mirai.message.data.content
@@ -145,10 +144,10 @@ object MessageFilter {
                     } else {
                         val botOwner = e.bot.getFriend(Config.BotOwner)
                         requireNotNull(botOwner)
-                        botOwner.sendMessage("发现一条模型认为违规的消息, 但正则匹配失败, 请检查.")
-                        val outputMessage = ForwardMessageBuilder(e.group)
-                        outputMessage.add(e)
-                        botOwner.sendMessage(outputMessage.build())
+                        // botOwner.sendMessage("发现一条模型认为违规的消息, 但正则匹配失败, 请检查.")
+                        // val outputMessage = ForwardMessageBuilder(e.group)
+                        // outputMessage.add(e)
+                        // botOwner.sendMessage(outputMessage.build())
                     }
                 }
             }
