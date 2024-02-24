@@ -1,7 +1,10 @@
-import ltd.guimc.lgzbot.utils.HomoIntUtils;
+import ltd.guimc.lgzbot.utils.LL4JUtils;
+
+import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) {
-        System.out.println(HomoIntUtils.INSTANCE.getInt(8965));
+        LL4JUtils.INSTANCE.init();
+        System.out.println(Arrays.toString(LL4JUtils.INSTANCE.predictAllResult("")));
     }
 }

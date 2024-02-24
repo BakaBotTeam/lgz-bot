@@ -22,6 +22,9 @@ object LL4JUtils {
     fun predictMap(string: String): MutableMap<Int, Double> =
         model.predict(tokenizer.tokenize(0, string.replace("\n", "")).values)
 
+    fun predictAllResult(string: String): DoubleArray =
+        model.predictAllResult(tokenizer.tokenize(0, string.replace("\n", "")).values)
+
     fun learn(type: Int, string: String) {
         val dataSet = DataSet()
         dataSet.split.add(tokenizer.tokenize(type, string.replace("\n", "")))

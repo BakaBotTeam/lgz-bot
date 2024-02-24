@@ -140,7 +140,7 @@ object MessageFilter {
                         riskList.add(e.sender)
                         setVl(e.sender.id, 99.0)
                         muted = true
-                    } else if (LL4JUtils.predictMap(textMessage)[1]!! >= 0.9) {
+                    } else if (LL4JUtils.predictMap(textMessage)[1]!! >= 0.22) {
                         e.sender.mute(120, "非法发言内容 (模型预测认为可能性较高)")
                         riskList.add(e.sender)
                         setVl(e.sender.id, 99.0)
