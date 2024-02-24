@@ -8,7 +8,6 @@ public class MutablePair<K, V> extends PairBase<K, V> {
         this.first = first;
         this.second = second;
     }
-
     @Override
     public K first() {
         return first;

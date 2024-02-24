@@ -1,8 +1,8 @@
 package huzpsb.ll4j.model;
 
-import huzpsb.ll4j.data.DataEntry;
-import huzpsb.ll4j.data.DataSet;
 import huzpsb.ll4j.layer.*;
+import huzpsb.ll4j.utils.data.DataEntry;
+import huzpsb.ll4j.utils.data.DataSet;
 import huzpsb.ll4j.utils.pair.Pair;
 import huzpsb.ll4j.utils.random.NRandom;
 import huzpsb.ll4j.utils.random.RandomSeedGenerator;
@@ -15,10 +15,9 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
-@SuppressWarnings({"unused", "PatternVariableCanBeUsed"})
+@SuppressWarnings({"unused"})
 public class Model {
     public AbstractLayer[] layers;
 
@@ -141,7 +140,7 @@ public class Model {
         return entries;
     }
 
-    public @NotNull Map<Integer, Double> predict(double[] input) {
+    public int predict(double[] input) {
         AbstractLayer[] layers = this.layers;
         if (!(layers[layers.length - 1] instanceof JudgeLayer)) {
             throw new RuntimeException("Last layer is not output layer");
@@ -152,7 +151,21 @@ public class Model {
             layer.forward();
             input = layer.output;
         }
-        return Map.of(((JudgeLayer) layers[layers.length - 1]).result, layers[layers.length - 1].input[((JudgeLayer) layers[layers.length - 1]).result]);
+        return ((JudgeLayer) layers[layers.length - 1]).result;
+    }
+    public kotlin.Pair<Integer, Double> predictDebug(double[] input) {
+        AbstractLayer[] layers = this.layers;
+        if (!(layers[layers.length - 1] instanceof JudgeLayer)) {
+            throw new RuntimeException("Last layer is not output layer");
+        }
+        for (AbstractLayer layer : layers) {
+            layer.training = false;
+            layer.input = input;
+            layer.forward();
+            input = layer.output;
+        }
+        JudgeLayer judgeLayer = (JudgeLayer) layers[layers.length - 1];
+        return new kotlin.Pair<>(judgeLayer.result, layers[layers.length - 1].input[judgeLayer.result]);
     }
 
     public double @NotNull [] predictAllResult(double[] input) {
@@ -270,8 +283,7 @@ public class Model {
         private List<AbstractLayer> layers = new LinkedList<>();
         private RandomSeedGenerator randomGenerator = RandomSeedGenerator.Builtin.CONSTANT;
 
-        public Builder() {
-        }
+        public Builder() {}
 
         public Builder layer(AbstractLayer layer) {
             if (layer != null) {

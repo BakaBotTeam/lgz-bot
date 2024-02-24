@@ -2,10 +2,9 @@ package huzpsb.ll4j.utils.pair;
 
 public interface Pair<K, V> {
     K first();
-
     V second();
 
-    static <K, V> Pair<K, V> create(K key, V value) {
+    static <K, V> Pair<K,V> create(K key, V value) {
         return new ImmutablePair<>(key, value);
     }
 

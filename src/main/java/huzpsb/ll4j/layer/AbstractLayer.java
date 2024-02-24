@@ -71,6 +71,5 @@ public abstract class AbstractLayer {
 
     public abstract void serialize(StringBuilder sb);
 
-    public interface TrainOnlyLayer {
-    }
+    public interface TrainOnlyLayer { }
 }

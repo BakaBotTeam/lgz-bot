@@ -1,5 +1,4 @@
 package huzpsb.ll4j.utils.pair;
-
 public class ImmutablePair<K, V> extends PairBase<K, V> {
     private final K first;
     private final V second;

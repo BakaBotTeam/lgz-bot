@@ -1,4 +1,4 @@
-package huzpsb.ll4j.data;
+package huzpsb.ll4j.utils.data;
 
 public class DataEntry {
     public final int type;

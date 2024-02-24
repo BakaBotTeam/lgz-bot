@@ -36,8 +36,7 @@ public class DropoutLayer extends AbstractLayer implements AbstractLayer.TrainOn
     }
 
     @Override
-    public void randomize(double rv) {
-    }
+    public void randomize(double rv) {}
 
     @Override
     public void initialize() {

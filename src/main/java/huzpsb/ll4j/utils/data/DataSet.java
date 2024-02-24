@@ -1,4 +1,4 @@
-package huzpsb.ll4j.data;
+package huzpsb.ll4j.utils.data;
 
 import java.util.ArrayList;
 import java.util.List;

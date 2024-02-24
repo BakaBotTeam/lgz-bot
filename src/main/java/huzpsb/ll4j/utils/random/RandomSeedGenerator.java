@@ -15,7 +15,6 @@ public abstract class RandomSeedGenerator {
         public ConstantRandomGenerator(long seed) {
             this.seed = seed;
         }
-
         @Override
         public long generateSeed() {
             return seed;
