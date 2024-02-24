@@ -26,6 +26,8 @@ dependencies {
     compileOnly("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
     testConsoleRuntime("top.mrxiaom:overflow-core:$overflow_version")
     testImplementation("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
+
+    compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
 mirai {
