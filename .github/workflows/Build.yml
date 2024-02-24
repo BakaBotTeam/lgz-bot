@@ -27,12 +27,3 @@ jobs:
         with:
           name: lgz-bot
           path: build/mirai/lgz-bot-*.jar
-      - name: Release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            build/mirai/lgz-bot-*.jar
