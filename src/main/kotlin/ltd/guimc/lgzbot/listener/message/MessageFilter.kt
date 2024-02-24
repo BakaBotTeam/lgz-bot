@@ -64,6 +64,7 @@ object MessageFilter {
         if (textMessage.isEmpty() && e.message.content.isEmpty()) return
 
         if (!(e.sender.permission.level < e.group.botPermission.level || ModuleStateConfig.slientmute)) return
+        if (textMessage.startsWith("/lgzbot") && e.sender.permitteeId.hasPermission(bypassMute)) return
 
         allCheckedMessage++
         if (!e.group.permitteeId.hasPermission(disableADCheck)) {
@@ -134,10 +135,18 @@ object MessageFilter {
 
             if (!muted && textMessage.length >= stringLength) {
                 if (LL4JUtils.predict(textMessage)) {
-                    val botOwner = e.bot.getFriend(Config.BotOwner)
-                    requireNotNull(botOwner)
-                    botOwner.sendMessage("发现一条模型认为违规的消息, 但正则匹配失败, 请检查.")
-                    botOwner.sendMessage(e.message)
+
+                    if (RegexUtils.matchRegexPinyin(adPinyinRegex, textMessage)) {
+                        e.group.mute(e.sender, "非法发言内容 (模型预测, 强检查证实)")
+                        riskList.add(e.sender)
+                        setVl(e.sender.id, 99.0)
+                        muted = true
+                    } else {
+                        val botOwner = e.bot.getFriend(Config.BotOwner)
+                        requireNotNull(botOwner)
+                        botOwner.sendMessage("发现一条模型认为违规的消息, 但正则匹配失败, 请检查.")
+                        botOwner.sendMessage(e.message)
+                    }
                 }
             }
         }
