@@ -14,6 +14,7 @@ import ltd.guimc.lgzbot.counter.VLManager
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.utils.LL4JUtils
+import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.OverflowUtils
 import ltd.guimc.lgzbot.word.WordUtils
 import net.mamoe.mirai.console.command.CommandSender
@@ -25,6 +26,7 @@ import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.QuoteReply
 import top.mrxiaom.overflow.contact.Updatable
 import kotlin.math.roundToInt
 import kotlin.time.Duration
@@ -132,5 +134,15 @@ object LGZBotCommand : CompositeCommand(
     suspend fun CommandSender.iI1I1i1iIi1I(type: Int, string: String) {
         LL4JUtils.learn(type, string)
         sendMessage("Done.")
+    }
+
+    @SubCommand("check")
+    @Description("使用模型检测一段文本是否合规")
+    suspend fun CommandSender.iI1I1i1I1i1I(string: QuoteReply) {
+        if (LL4JUtils.predict(string.source.originalMessage.getPlainText())) {
+            sendMessage("不合规")
+        } else {
+            sendMessage("合规")
+        }
     }
 }
