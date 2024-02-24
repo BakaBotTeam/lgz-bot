@@ -23,6 +23,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.15.3")
 
     compileOnly("top.mrxiaom:overflow-core-api:$overflow_version")
+    compileOnly("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
     testConsoleRuntime("top.mrxiaom:overflow-core:$overflow_version")
 }
 
