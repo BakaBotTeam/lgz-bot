@@ -135,19 +135,16 @@ object MessageFilter {
 
             if (!muted && textMessage.length >= stringLength) {
                 if (LL4JUtils.predict(textMessage)) {
-
                     if (RegexUtils.matchRegexPinyin(adPinyinRegex, textMessage)) {
                         e.group.mute(e.sender, "非法发言内容 (模型预测, 强检查证实)")
                         riskList.add(e.sender)
                         setVl(e.sender.id, 99.0)
                         muted = true
-                    } else {
-                        val botOwner = e.bot.getFriend(Config.BotOwner)
-                        requireNotNull(botOwner)
-                        // botOwner.sendMessage("发现一条模型认为违规的消息, 但正则匹配失败, 请检查.")
-                        // val outputMessage = ForwardMessageBuilder(e.group)
-                        // outputMessage.add(e)
-                        // botOwner.sendMessage(outputMessage.build())
+                    } else if (LL4JUtils.predictMap(textMessage)[1]!! >= 0.9) {
+                        e.sender.mute(120, "非法发言内容 (模型预测认为可能性较高)")
+                        riskList.add(e.sender)
+                        setVl(e.sender.id, 99.0)
+                        muted = true
                     }
                 }
             }
