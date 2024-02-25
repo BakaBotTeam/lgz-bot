@@ -1,20 +1,23 @@
 package ltd.guimc.lgzbot.utils
 
-import huzpsb.ll4j.utils.data.DataSet
 import huzpsb.ll4j.model.Model
 import huzpsb.ll4j.nlp.token.Tokenizer
+import huzpsb.ll4j.utils.data.DataSet
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 object LL4JUtils {
     lateinit var model: Model
     lateinit var tokenizer: Tokenizer
+    var version = "FEB25"
 
     fun init() {
         val tokenizerFile = LL4JUtils.javaClass.getResourceAsStream("/ts.model")!!
         val modelFile = LL4JUtils.javaClass.getResourceAsStream("/anti-ad.model")!!
-        tokenizer = Tokenizer.load(tokenizerFile)
-        model = Model.read(BufferedReader(InputStreamReader(modelFile)))
+        tokenizer = Tokenizer.load(tokenizerFile.bufferedReader(Charsets.UTF_8))
+        modelFile.bufferedReader(Charsets.UTF_8).use {
+            model = Model.read(it)
+        }
     }
 
     fun predict(string: String): Boolean =
@@ -30,5 +33,14 @@ object LL4JUtils {
         val dataSet = DataSet()
         dataSet.split.add(tokenizer.tokenize(type, string.replace("\n", "")))
         model.trainOn(dataSet)
+    }
+
+    fun downloadModel() {
+        try {
+            model = Model.read(HttpUtils.getResponse("https://raw.githubusercontent.com/siuank/ADDetector4J/main/anti-ad.model"))
+            tokenizer = Tokenizer.load(HttpUtils.getResponse("https://raw.githubusercontent.com/siuank/ADDetector4J/main/t1.tokenized.txt").reader())
+            val time = GithubUtils.getLastCommit("siuank/ADDetector4J").commitTime
+            version = "${time.month.name.substring(0..3)}${time.dayOfMonth}"
+        } catch (_: Exception) {}
     }
 }

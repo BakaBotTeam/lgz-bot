@@ -136,4 +136,11 @@ object LGZBotCommand : CompositeCommand(
         LL4JUtils.learn(type, string)
         sendMessage("Done.")
     }
+
+    @SubCommand("downloadModel")
+    @Description("从ADDetector仓库下载模型")
+    suspend fun CommandSender.llIIllIIllI() {
+        sendMessage("Downloading (current: ${LL4JUtils.version})")
+        LL4JUtils.downloadModel()
+    }
 }
