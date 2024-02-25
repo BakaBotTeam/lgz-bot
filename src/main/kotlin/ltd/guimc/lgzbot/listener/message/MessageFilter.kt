@@ -150,8 +150,15 @@ object MessageFilter {
                             muted = true
                         } else if (abs(result[1] / result[0]) >= 2.5) {
                             e.sender.mute(60, "非法发言内容 (启发式猜测)")
+                            setVl(e.sender.id, 60.0)
+                            muted = true
                         } else {
-                            addVl(e.sender.id, 20.0, "模型长期试弱预测")
+                            // 误判了?总不可能一直误判下去吧
+                            addVl(e.sender.id, 15.0, "模型长期式检查")
+                            val vl = memberVl[e.sender.id] ?: 0.0
+                            if (vl >= 50.0) {
+                                riskList.add(e.sender)
+                            }
                         }
                     }
                 }
