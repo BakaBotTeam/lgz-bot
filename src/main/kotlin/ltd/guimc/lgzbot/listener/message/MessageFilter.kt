@@ -37,6 +37,7 @@ import net.mamoe.mirai.message.data.MessageSource.Key.recall
 import net.mamoe.mirai.message.data.content
 import java.lang.Thread.sleep
 import java.time.Instant
+import kotlin.math.abs
 
 object MessageFilter {
     var allCheckedMessage = 0
@@ -140,11 +141,18 @@ object MessageFilter {
                         riskList.add(e.sender)
                         setVl(e.sender.id, 99.0)
                         muted = true
-                    } else if (LL4JUtils.predictDebug(textMessage).second >= 0.22) {
-                        e.sender.mute(120, "非法发言内容 (模型预测认为可能性较高)")
-                        riskList.add(e.sender)
-                        setVl(e.sender.id, 99.0)
-                        muted = true
+                    } else {
+                        val result = LL4JUtils.predictAllResult(textMessage)
+                        if (result[1] - result[0] >= 0.22) {
+                            e.sender.mute(120, "非法发言内容 (启发式检查)")
+                            riskList.add(e.sender)
+                            setVl(e.sender.id, 99.0)
+                            muted = true
+                        } else if (abs(result[1] / result[0]) >= 2.5) {
+                            e.sender.mute(60, "非法发言内容 (启发式猜测)")
+                        } else {
+                            addVl(e.sender.id, 20.0, "模型长期试弱预测")
+                        }
                     }
                 }
             }
@@ -246,14 +254,15 @@ object MessageFilter {
         if (muted) e.intercept()
     }
 
-    fun addVl(id: Long, vl: Double) {
+    fun addVl(id: Long, vl: Double, info: String? = null) {
         if (memberVl[id] == null) {
             memberVl[id] = .0
         }
         val tempValue = memberVl[id]!!
         memberVl[id] = memberVl[id]!! + vl
         if (memberVl[id]!! >= 0.0 || tempValue > 0.0) {
-            logger.info("$id 的VL增加了 $vl, 现在是 ${memberVl[id]}")
+            val infoStr = info?.let { "因为$it" } ?: ""
+            logger.info("$id 的VL${infoStr}增加了 $vl, 现在是 ${memberVl[id]}")
         }
     }
 
