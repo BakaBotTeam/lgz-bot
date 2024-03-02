@@ -34,10 +34,12 @@ import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.ForwardMessage
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
+import net.mamoe.mirai.message.data.MessageSource.Key.recallIn
 import net.mamoe.mirai.message.data.content
 import java.lang.Thread.sleep
 import java.time.Instant
 import kotlin.math.abs
+import kotlin.math.min
 
 object MessageFilter {
     var allCheckedMessage = 0
@@ -69,11 +71,13 @@ object MessageFilter {
 
         allCheckedMessage++
         if (!e.group.permitteeId.hasPermission(disableADCheck)) {
+            val predictedResult = LL4JUtils.predictAllResult(textMessage)
+            val predicted = predictedResult[1] > predictedResult[0]
             if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) {
                 try {
                     recalledMessage++
                     e.message.recall()
-                    if (LL4JUtils.predict(textMessage)) {
+                    if (predicted) {
                         e.group.mute(e.sender, "非法发言内容 (模型证实)")
                         riskList.add(e.sender)
                         setVl(e.sender.id, 99.0)
@@ -106,7 +110,7 @@ object MessageFilter {
                         try {
                             recalledMessage++
                             e.message.recall()
-                            if (LL4JUtils.predict(textMessage)) {
+                            if (predicted) {
                                 e.group.mute(e.sender, "非法发言内容 (在合并转发消息内) (模型证实)")
                                 riskList.add(e.sender)
                                 setVl(e.sender.id, 99.0)
@@ -134,33 +138,37 @@ object MessageFilter {
                 messagesHandled++
             }
 
-            if (!muted && textMessage.length >= stringLength) {
-                if (LL4JUtils.predict(textMessage)) {
+            if (!muted && predicted) {
+                if (textMessage.length >= stringLength) {
                     if (RegexUtils.matchRegexPinyin(adPinyinRegex, textMessage)) {
                         e.group.mute(e.sender, "非法发言内容 (模型预测, 强检查证实)")
                         riskList.add(e.sender)
+                        e.message.recall()
                         setVl(e.sender.id, 99.0)
                         muted = true
+                    } else if (predictedResult[1] - predictedResult[0] >= 0.22) {
+                        e.sender.mute(120, "非法发言内容 (启发式检查)")
+                        e.message.recallIn(500L)
+                        riskList.add(e.sender)
+                        setVl(e.sender.id, 99.0)
+                        muted = true
+                    } else if (abs(predictedResult[1] / predictedResult[0]) >= 2.5) {
+                        e.message.recallIn(500L)
+                        e.sender.mute(60, "非法发言内容 (启发式猜测)")
+                        setVl(e.sender.id, 60.0)
+                        muted = true
                     } else {
-                        val result = LL4JUtils.predictAllResult(textMessage)
-                        if (result[1] - result[0] >= 0.22) {
-                            e.sender.mute(120, "非法发言内容 (启发式检查)")
-                            riskList.add(e.sender)
-                            setVl(e.sender.id, 99.0)
-                            muted = true
-                        } else if (abs(result[1] / result[0]) >= 2.5) {
-                            e.sender.mute(60, "非法发言内容 (启发式猜测)")
-                            setVl(e.sender.id, 60.0)
-                            muted = true
-                        } else {
-                            // 误判了?总不可能一直误判下去吧
-                            addVl(e.sender.id, 15.0, "模型长期式检查")
-                            val vl = memberVl[e.sender.id] ?: 0.0
-                            if (vl >= 50.0) {
-                                riskList.add(e.sender)
-                            }
-                        }
+                        // 长消息误判率较低，除非过长
+                        addVl(e.sender.id, 49.0, "启发式长期分析")
+                        riskList.add(e.sender)
                     }
+                } else {
+                    if (predictedResult[1] - predictedResult[0] > 0.25) {
+                        setVl(e.sender.id, 99.0)
+                        e.message.recallIn(450L)
+                        e.sender.mute(90, "非法发言内容 (启发式分析)")
+                        muted = true
+                    } else addVl(e.sender.id, min(predictedResult[1] - predictedResult[0] * 100.0, 75.0), "启发式短消息分析")
                 }
             }
         }
@@ -205,9 +213,9 @@ object MessageFilter {
             if (repeaterFucker[e.sender.id] == null) {
                 repeaterFucker[e.sender.id] = textMessage
             } else {
-                val slimer = findSimilarity(repeaterFucker[e.sender.id]!!, textMessage)
-                if (slimer >= 0.75) {
-                    addVl(e.sender.id, slimer * 25)
+                val similar = findSimilarity(repeaterFucker[e.sender.id]!!, textMessage)
+                if (similar >= 0.75) {
+                    addVl(e.sender.id, similar * 25)
                 } else {
                     addVl(e.sender.id, -20.0)
                 }
