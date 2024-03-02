@@ -123,7 +123,7 @@ object LGZBotCommand : CompositeCommand(
             val raw = MiraiHibernateRecorder[quote.source] as MessageChain
             str = raw.getPlainText()
         }
-        if (LL4JUtils.predict(str)) {
+        if (LL4JUtils.predictAllResult(str).let { it[1] > it[0] }) {
             sendMessage("不合规")
         } else {
             sendMessage("合规")
