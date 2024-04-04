@@ -39,7 +39,6 @@ import net.mamoe.mirai.message.data.content
 import java.lang.Thread.sleep
 import java.time.Instant
 import kotlin.math.abs
-import kotlin.math.min
 
 object MessageFilter {
     var allCheckedMessage = 0
@@ -159,16 +158,9 @@ object MessageFilter {
                         muted = true
                     } else {
                         // 长消息误判率较低，除非过长
-                        addVl(e.sender.id, 49.0, "启发式长期分析")
+                        addVl(e.sender.id, 49.0 * (predictedResult[1] - predictedResult[0]), "启发式长期分析")
                         riskList.add(e.sender)
                     }
-                } else {
-                    if (predictedResult[1] - predictedResult[0] > 0.25) {
-                        setVl(e.sender.id, 99.0)
-                        e.message.recallIn(450L)
-                        e.sender.mute(90, "非法发言内容 (启发式分析)")
-                        muted = true
-                    } else addVl(e.sender.id, min(predictedResult[1] - predictedResult[0] * 100.0, 75.0), "启发式短消息分析")
                 }
             }
         }
