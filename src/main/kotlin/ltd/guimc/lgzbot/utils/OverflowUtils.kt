@@ -9,6 +9,9 @@
 
 package ltd.guimc.lgzbot.utils
 
+import net.mamoe.mirai.Bot
+import top.mrxiaom.overflow.contact.RemoteBot.Companion.asRemoteBot
+
 object OverflowUtils {
     fun checkOverflowCore(): Boolean {
         try {
@@ -19,24 +22,14 @@ object OverflowUtils {
         }
     }
 
-    fun getOnebotServiceProviderName(): String {
+    fun getOnebotServiceProviderName(bot: Bot): String {
         if (!checkOverflowCore()) return "null"
-        val clazz = Class.forName("top.mrxiaom.overflow.internal.message.OnebotMessages")
-        val instance = clazz.getDeclaredField("INSTANCE").get(null)
-        val method = clazz.getDeclaredMethod("getAppName\$overflow_core")
-        method.trySetAccessible()
-        val appName = method.invoke(instance)
-        return appName as String
+        return bot.asRemoteBot.appName
     }
 
-    fun getOnebotServiceProviderVersion(): String {
+    fun getOnebotServiceProviderVersion(bot: Bot): String {
         if (!checkOverflowCore()) return "null"
-        val clazz = Class.forName("top.mrxiaom.overflow.internal.message.OnebotMessages")
-        val instance = clazz.getDeclaredField("INSTANCE").get(null)
-        val method = clazz.getDeclaredMethod("getAppVersion\$overflow_core")
-        method.trySetAccessible()
-        val appVersion = method.invoke(instance)
-        return appVersion as String
+        return bot.asRemoteBot.appVersion
     }
 
     fun getOnebotConnection(): String {
@@ -50,6 +43,12 @@ object OverflowUtils {
         val rPortMethod = cclazz.getDeclaredMethod("getReversedWSPort")
         rPortMethod.trySetAccessible()
         val rPort = rPortMethod.invoke(configInstance) as Int
-        return if (rPort in 1..65535) "rws" else "ws"
+        if (rPort in 1..65536) {
+            return "rws: $rPort"
+        }
+        val wsHostMethod = cclazz.getDeclaredMethod("getWsHost")
+        wsHostMethod.trySetAccessible()
+        val wsHost = wsHostMethod.invoke(configInstance) as String
+        return "ws: $wsHost"
     }
 }

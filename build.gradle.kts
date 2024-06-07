@@ -10,7 +10,7 @@ plugins {
 
 dependencies {
     val ktor_version = "2.3.5"
-    val overflow_version = "2.16.0-eb376cc-SNAPSHOT"
+    val overflow_version = "2.16.0-db61867-SNAPSHOT"
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
@@ -24,7 +24,7 @@ dependencies {
 
     compileOnly("top.mrxiaom:overflow-core-api:$overflow_version")
     compileOnly("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
-    testConsoleRuntime("top.mrxiaom:overflow-core:$overflow_version")
+    compileOnly("top.mrxiaom:overflow-core:$overflow_version")
     testImplementation("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
 
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
@@ -35,12 +35,13 @@ mirai {
     setupConsoleTestRuntime {
         // 移除 mirai-core 依赖
         classpath = classpath.filter {
-            !it.nameWithoutExtension.startsWith("mirai-core-jvm")
+            !it.nameWithoutExtension.startsWith("mirai-core-jvm") ||
+                    !it.nameWithoutExtension.startsWith("overflow-api")
         }
     }
 }
 
-version = "0.3.4"
+version = "0.3.5"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库

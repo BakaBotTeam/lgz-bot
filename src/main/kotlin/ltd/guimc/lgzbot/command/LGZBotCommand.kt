@@ -17,6 +17,7 @@ import ltd.guimc.lgzbot.utils.LL4JUtils
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.OverflowUtils
 import ltd.guimc.lgzbot.word.WordUtils
+import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.command.*
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.NormalMember
@@ -96,9 +97,15 @@ object LGZBotCommand : CompositeCommand(
     @Description("获取Debug信息")
     suspend fun CommandSender.i1I1i1II1i1I1i() {
         val messageChain = MessageChainBuilder()
-        messageChain.add("c=${MessageFilter.allCheckedMessage}, d=${MessageFilter.recalledMessage}, r=${(MessageFilter.recalledMessage / (MessageFilter.allCheckedMessage * 10000)).toDouble() / 100.0}\n")
+        messageChain.add("c=${MessageFilter.allCheckedMessage}, d=${MessageFilter.recalledMessage}, r=${(MessageFilter.recalledMessage / (if (MessageFilter.allCheckedMessage == 0) 1 else MessageFilter.allCheckedMessage * 10000)).toDouble() / 100.0}\n")
         messageChain.add("o=${if (OverflowUtils.checkOverflowCore()) "true" else "false"}")
-        if (OverflowUtils.checkOverflowCore()) messageChain.add(", on=${OverflowUtils.getOnebotServiceProviderName()}, ov=${OverflowUtils.getOnebotServiceProviderVersion()}, oc=${OverflowUtils.getOnebotConnection()}")
+        if (OverflowUtils.checkOverflowCore()) messageChain.add(
+            ", on=${OverflowUtils.getOnebotServiceProviderName(bot ?: Bot.instances[0])}, ov=${
+                OverflowUtils.getOnebotServiceProviderVersion(
+                    bot ?: Bot.instances[0]
+                )
+            }, oc=${OverflowUtils.getOnebotConnection()}"
+        )
         sendMessage(messageChain.build())
     }
 
