@@ -19,6 +19,7 @@ import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.files.GithubWebhookSubData
 import ltd.guimc.lgzbot.files.ModuleStateConfig
+import ltd.guimc.lgzbot.listener.message.AntiMappLinkListener
 import ltd.guimc.lgzbot.listener.message.FunListener
 import ltd.guimc.lgzbot.listener.message.GithubUrlListener
 import ltd.guimc.lgzbot.listener.message.MessageFilter
@@ -186,6 +187,11 @@ object PluginMain : KotlinPlugin(
 
     private fun registerEvents() = PluginMain.globalEventChannel().run {
         subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
+        subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event ->
+            AntiMappLinkListener.filter(
+                event
+            )
+        }
 
         subscribeAlways<GroupMessageEvent> { event -> GithubUrlListener.onMessage(event); FunListener.onMessage(event) }
 
