@@ -48,6 +48,7 @@ object MessageFilter {
     private var repeaterFucker = mutableMapOf<Long, String>()
     private var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
     private var memberVl = mutableMapOf<Long, Double>()
+    private var memberReviewing = mutableMapOf<Long, String>()
 
     private var messagesHandled = 0
     var riskList = ArrayList<Member>()
@@ -87,6 +88,37 @@ object MessageFilter {
                 } catch (_: Exception) {
                 }
                 messagesHandled++
+            }
+
+            if (memberReviewing.containsKey(e.sender.id)) {
+                memberReviewing.put(
+                    e.sender.id,
+                    memberReviewing.get(e.sender.id) + "\n" + textMessage.replace("\n", "")
+                )
+                if (memberReviewing.get(e.sender.id)?.let { RegexUtils.countLines(it) }!! >= 5) {
+                    if (memberReviewing.get(e.sender.id)!!.length <= stringLength) {
+                        memberReviewing.remove(e.sender.id)
+                        return
+                    }
+                    if (RegexUtils.matchRegex(adRegex, memberReviewing.get(e.sender.id)!!)) {
+                        e.group.mute(e.sender, "追溯检查")
+                        muted = true
+                        recalledMessage++
+                        e.message.recall()
+                        try {
+                            historyMessage[e.sender.id]?.forEach {
+                                recalledMessage++
+                                it.recall()
+                                sleep(100)
+                            }
+                        } catch (_: Exception) {
+                        }
+                        historyMessage[e.sender.id]?.clear()
+                        memberVl[e.sender.id] = .0
+                        messagesHandled++
+                    }
+                    memberReviewing.remove(e.sender.id)
+                }
             }
 
             // 合并转发消息提取
@@ -152,10 +184,7 @@ object MessageFilter {
                         setVl(e.sender.id, 99.0)
                         muted = true
                     } else if (abs(predictedResult[1] / predictedResult[0]) >= 2.5) {
-                        e.message.recallIn(500L)
-                        e.sender.mute(60, "非法发言内容 (启发式猜测)")
-                        setVl(e.sender.id, 60.0)
-                        muted = true
+                        memberReviewing.put(e.sender.id, textMessage.replace("\n", ""))
                     } else {
                         // 长消息误判率较低，除非过长
                         addVl(e.sender.id, 49.0 * (predictedResult[1] - predictedResult[0]), "启发式长期分析")

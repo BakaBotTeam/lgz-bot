@@ -95,4 +95,10 @@ object RegexUtils {
             content
         }
     }
+
+    fun countLines(str: String): Int {
+        val lines = str.split("\r\n|\r|\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+
+        return lines.size
+    }
 }
