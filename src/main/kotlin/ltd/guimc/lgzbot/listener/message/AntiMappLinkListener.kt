@@ -1,7 +1,10 @@
 package ltd.guimc.lgzbot.listener.message
 
 import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.message.data.ForwardMessage
+import net.mamoe.mirai.message.data.MessageChain
+import net.mamoe.mirai.message.data.QuoteReply
+import net.mamoe.mirai.message.data.RichMessage
 
 object AntiMappLinkListener {
     suspend fun filter(e: GroupMessageEvent) {
@@ -10,13 +13,23 @@ object AntiMappLinkListener {
 
     fun check(m: MessageChain): Boolean {
         for (singleMessage in m) {
-            if (singleMessage is RichMessage && singleMessage.content.contains("mqqapi:\\/\\/")) {
+            if (singleMessage is RichMessage && (singleMessage.content.contains("mqqapi:\\/\\/") || singleMessage.content.contains(
+                    "mqqapi://"
+                ))
+            ) {
                 return true
             }
 
             if (singleMessage is ForwardMessage) {
-                return check(singleMessage.toMessageChain())
+                return checkForwarded(singleMessage)
             }
+        }
+        return false
+    }
+
+    fun checkForwarded(m: ForwardMessage): Boolean {
+        for (singleNode in m.nodeList) {
+            if (check(singleNode.messageChain)) return true
         }
         return false
     }
