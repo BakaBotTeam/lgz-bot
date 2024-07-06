@@ -9,17 +9,20 @@
 
 package ltd.guimc.lgzbot.listener.message
 
-import ltd.guimc.lgzbot.PluginMain.adRegex
+import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.utils.GithubUtils
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RegexUtils
+import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
+import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 object GithubUrlListener {
     suspend fun onMessage(event: GroupMessageEvent) {
+        if (event.group.permitteeId.hasPermission(PluginMain.quiet)) return
         if (ModuleStateConfig.githubquery) {
             val plain = event.message.getPlainText()
             val gitLink = GithubUtils.findGitLink(plain) ?: return

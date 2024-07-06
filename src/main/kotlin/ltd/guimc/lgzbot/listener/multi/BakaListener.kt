@@ -60,6 +60,7 @@ object BakaListener : ListenerHost {
     suspend fun MemberLeaveEvent.kick() {
         if (!ModuleStateConfig.grouplistener) return
         if (this.member == this.bot) return
+        if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         if (this !is MemberLeaveEvent.Kick) {
             this.group.sendMessage(format(QUIT.random(), this.member.id))
             return
@@ -71,6 +72,7 @@ object BakaListener : ListenerHost {
     @EventHandler
     suspend fun MemberMuteEvent.mute() {
         if (!ModuleStateConfig.grouplistener) return
+        if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         if (this.operator == null) return
         this.group.sendMessage(format(MUTE.random(), this.member.id, this.operator!!.id))
     }
@@ -78,6 +80,7 @@ object BakaListener : ListenerHost {
     @EventHandler
     suspend fun MemberUnmuteEvent.unmute() {
         if (!ModuleStateConfig.grouplistener) return
+        if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         if (this.operator == null) return
         this.group.sendMessage(format(UNMUTE.random(), this.member.id, this.operator!!.id))
     }
@@ -85,6 +88,7 @@ object BakaListener : ListenerHost {
     @EventHandler
     suspend fun MemberJoinEvent.newMember() {
         if (!ModuleStateConfig.grouplistener) return
+        if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         this.group.sendMessage(format(NEW_MEMBER.random(), this.member.id))
         if (this.member.permitteeId.hasPermission(Permission.getRootPermission())) {
             this.group.sendMessage("挖欧！这是一个拥有机器人根权限的人！")
@@ -94,12 +98,14 @@ object BakaListener : ListenerHost {
     @EventHandler
     suspend fun BotMuteEvent.muteBot() {
         if (!ModuleStateConfig.grouplistener) return
+        if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         this.operator.sendMessage(format(MUTE_TO_BOT.random()))
     }
 
     @EventHandler
     suspend fun BotUnmuteEvent.unmuteBot() {
         if (!ModuleStateConfig.grouplistener) return
+        if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         this.group.sendMessage(format(UNMUTE_TO_BOT.random(), this.operator.id))
     }
 

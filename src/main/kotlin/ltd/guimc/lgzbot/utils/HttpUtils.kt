@@ -21,6 +21,7 @@ object HttpUtils {
             val basicAuth = "Basic : " + String(Base64.getEncoder().encode(auth.toByteArray()))
             connection.setRequestProperty("Authorization", basicAuth)
         }
+        connection.instanceFollowRedirects = true
         connection.connect()
         // 转换到json对象
         val raw = connection.inputStream.bufferedReader().readText()
@@ -35,6 +36,7 @@ object HttpUtils {
             connection.setRequestProperty("Authorization", basicAuth)
         }
         connection.connect()
+        connection.instanceFollowRedirects = true
         // 转换到json对象
         val raw = connection.inputStream.bufferedReader().readText()
         return JSONArray(raw)
@@ -43,8 +45,17 @@ object HttpUtils {
     fun getResponse(url: String): String {
         val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
         connection.requestMethod = "GET"
+        connection.instanceFollowRedirects = true
         connection.connect()
         return connection.inputStream.bufferedReader().readText()
+    }
+
+    fun getBytesResponse(url: String): ByteArray? {
+        val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.instanceFollowRedirects = true
+        connection.connect()
+        return connection.inputStream.readAllBytes()
     }
 
     fun pushJson(url: String, json: String): String {
@@ -52,6 +63,7 @@ object HttpUtils {
         connection.requestMethod = "POST"
         connection.setRequestProperty("Content-Type", "application/json")
         connection.setRequestProperty("Content-Length", json.length.toString())
+        connection.instanceFollowRedirects = true
         connection.doOutput = true
         connection.connect()
         connection.outputStream.write(json.toByteArray())

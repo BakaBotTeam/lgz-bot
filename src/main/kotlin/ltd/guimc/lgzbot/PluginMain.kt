@@ -65,6 +65,7 @@ object PluginMain : KotlinPlugin(
 ) {
     lateinit var bypassMute: Permission
     lateinit var blocked: Permission
+    lateinit var quiet: Permission
     lateinit var nudgeMute: Permission
     lateinit var disableSpamCheck: Permission
     lateinit var disableADCheck: Permission
@@ -164,6 +165,7 @@ object PluginMain : KotlinPlugin(
         bypassMute = register(PermissionId("lgzbot", "bypassmute"), "消息过滤器禁言豁免", root)
         blocked = register(PermissionId("lgzbot", "blocked"), "完全屏蔽", root)
         nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言", root)
+        quiet = register(PermissionId("lgzbot", "quiet"), "安静一些", root)
 
         disableRoot = register(PermissionId("lgzbot.disable", "*"), "The root permission", root)
         disableSpamCheck = register(PermissionId("lgzbot.disable", "spamcheck"), "关闭群聊刷屏检查", disableRoot)
