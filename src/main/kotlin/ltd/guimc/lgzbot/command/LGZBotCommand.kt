@@ -127,7 +127,7 @@ object LGZBotCommand : CompositeCommand(
         var str = string
         if (string == "reply") {
             val quote = fromEvent.message.findIsInstance<QuoteReply>() ?: return
-            val raw = MiraiHibernateRecorder[quote.source] as MessageChain
+            val raw = MiraiHibernateRecorder[quote.source][0].toMessageChain()
             str = raw.getPlainText()
         }
         if (LL4JUtils.predictAllResult(str).let { it[1] > it[0] }) {
