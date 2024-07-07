@@ -13,7 +13,7 @@ import net.mamoe.mirai.event.ListeningStatus
 import net.mamoe.mirai.event.events.BotEvent
 import net.mamoe.mirai.event.events.MessageEvent
 
-@Deprecated("This command is deprecated and will be removed in a future release.", level = DeprecationLevel.HIDDEN)
+/*@Deprecated("This command is deprecated and will be removed in a future release.", level = DeprecationLevel.HIDDEN)*/
 object ReviewCommand : SimpleCommand(
     owner = PluginMain,
     primaryName = "review",
