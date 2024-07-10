@@ -96,6 +96,8 @@ object MessageFilter {
                     memberReviewing.get(e.sender.id) + "\n" + textMessage.replace("\n", "")
                 )
                 if (memberReviewing.get(e.sender.id)?.let { RegexUtils.countLines(it) }!! >= 5) {
+                    logger.info("结束 ${e.sender.id} 的追溯检查")
+                    memberReviewing.remove(e.sender.id)
                     if (memberReviewing.get(e.sender.id)!!.length <= stringLength) {
                         memberReviewing.remove(e.sender.id)
                         return
@@ -116,8 +118,23 @@ object MessageFilter {
                         historyMessage[e.sender.id]?.clear()
                         memberVl[e.sender.id] = .0
                         messagesHandled++
+                    } else if (predictedResult[1] - predictedResult[0] >= 0.22) {
+                        e.group.mute(e.sender, "追溯检查 (模型)")
+                        muted = true
+                        recalledMessage++
+                        e.message.recall()
+                        try {
+                            historyMessage[e.sender.id]?.forEach {
+                                recalledMessage++
+                                it.recall()
+                                sleep(100)
+                            }
+                        } catch (_: Exception) {
+                        }
+                        historyMessage[e.sender.id]?.clear()
+                        memberVl[e.sender.id] = .0
+                        messagesHandled++
                     }
-                    memberReviewing.remove(e.sender.id)
                 }
             }
 
@@ -184,6 +201,7 @@ object MessageFilter {
                         setVl(e.sender.id, 99.0)
                         muted = true
                     } else if (abs(predictedResult[1] / predictedResult[0]) >= 2.5) {
+                        logger.info("开始 ${e.sender.id} 的追溯检查")
                         memberReviewing.put(e.sender.id, textMessage.replace("\n", ""))
                     } else {
                         // 长消息误判率较低，除非过长
