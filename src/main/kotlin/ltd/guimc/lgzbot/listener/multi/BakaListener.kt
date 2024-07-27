@@ -10,7 +10,6 @@ package ltd.guimc.lgzbot.listener.multi
 
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.files.ModuleStateConfig
-import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.event.EventHandler
@@ -90,9 +89,6 @@ object BakaListener : ListenerHost {
         if (!ModuleStateConfig.grouplistener) return
         if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         this.group.sendMessage(format(NEW_MEMBER.random(), this.member.id))
-        if (this.member.permitteeId.hasPermission(Permission.getRootPermission())) {
-            this.group.sendMessage("挖欧！这是一个拥有机器人根权限的人！")
-        }
     }
 
     @EventHandler

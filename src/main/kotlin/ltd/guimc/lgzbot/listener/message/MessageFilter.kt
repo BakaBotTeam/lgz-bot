@@ -26,6 +26,7 @@ import ltd.guimc.lgzbot.utils.RegexUtils
 import ltd.guimc.lgzbot.utils.TextUtils.findSimilarity
 import ltd.guimc.lgzbot.utils.TextUtils.removeNonVisible
 import ltd.guimc.lgzbot.word.WordUtils
+import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.contact.Group
@@ -62,6 +63,11 @@ object MessageFilter {
             10
         } else {
             35
+        }
+
+        if (e.group.permitteeId.hasPermission(Permission.getRootPermission())) {
+            logger.warning("警告: 您似乎给群聊 ${e.bot.id}.${e.group.id} 上了 *:* 权限. 我们强烈不建议给群聊上 *:* 权限, 这会导致本插件工作异常. 例如: 无法处理任何群消息, 无法正常运行任何检查等... 为了避免接下来的插件无法正常处理事件, MessageFilter 将不会工作")
+            return
         }
 
         if (textMessage.isEmpty() && e.message.content.isEmpty()) return
@@ -296,12 +302,13 @@ object MessageFilter {
                 counter.wordFrequency[it] = 0
             }
         }
-        // Permission block
+
         if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) || (e.group.permitteeId.hasPermission(
                 PluginMain.blocked
             ) && !e.sender.permitteeId.hasPermission(bypassMute))
         ) {
-            muted = true
+            e.intercept()
+            return
         }
 
         // Cancel Event
