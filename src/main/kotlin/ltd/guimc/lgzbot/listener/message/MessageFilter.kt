@@ -66,7 +66,7 @@ object MessageFilter {
         }
 
         if (e.group.permitteeId.hasPermission(Permission.getRootPermission())) {
-            logger.warning("警告: 您似乎给群聊 ${e.bot.id}.${e.group.id} 上了 *:* 权限. 我们强烈不建议给群聊上 *:* 权限, 这会导致本插件工作异常. 例如: 无法处理任何群消息, 无法正常运行任何检查等... 为了避免接下来的插件无法正常处理事件, MessageFilter 将不会工作")
+            logger.warning("警告: 您似乎给群聊 ${e.bot.id}.${e.group.id} 添加了 *:* 权限. 我们强烈不建议给群聊添加 *:* 权限, 这会导致本插件工作异常. 例如: 无法处理任何群消息, 无法正常运行任何检查等... 为了避免接下来的插件无法正常处理事件, MessageFilter 将不会工作")
             return
         }
 
