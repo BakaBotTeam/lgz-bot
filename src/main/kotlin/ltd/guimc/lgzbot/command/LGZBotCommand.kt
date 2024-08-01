@@ -155,10 +155,10 @@ object LGZBotCommand : CompositeCommand(
     @SubCommand("broadcast")
     @Description("广播")
     suspend fun CommandSenderOnMessage<*>.iI1I1i1iIi1i(content: String) {
-        for (group in (getBotOrNull() ?: return).groups) {
-            if (group.botPermission.level >= 1) {
+        for (groups in (getBotOrNull() ?: return).groups) {
+            if (groups.botPermission.level >= 1) {
                 try {
-                    sendMessage(content)
+                    groups.sendMessage(content)
                 } catch (_: Exception) {
                 }
                 Thread.sleep(RandomUtils.nextLong(1500, 2000))
