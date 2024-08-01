@@ -125,6 +125,7 @@ object ImageOCRFilter {
                 // 如果哈希不存在，进行OCR处理并存储
                 val imageData = ByteArrayInputStream(imageRaw.clone())
                 val imageType = ImageUtils.imgType(imageData)
+                if (imageType.equals("gif") || imageType.equals("webp") || imageType.equals("tif")) return ""
                 val tempFile = File.createTempFile("temp", ".$imageType")
                 tempFile.writeBytes(imageRaw)
 
