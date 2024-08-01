@@ -47,11 +47,11 @@ object MessageFilter {
     private var spammerFucker = mutableMapOf<Long, Int>()
     private var spammerFucker2 = mutableMapOf<Long, Long>()
     private var repeaterFucker = mutableMapOf<Long, String>()
-    private var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
+    var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
     private var memberVl = mutableMapOf<Long, Double>()
     private var memberReviewing = mutableMapOf<Long, String>()
 
-    private var messagesHandled = 0
+    var messagesHandled = 0
     var riskList = ArrayList<Member>()
     suspend fun filter(e: GroupMessageEvent) {
         if (!ModuleStateConfig.messageFilter) return
@@ -337,7 +337,7 @@ object MessageFilter {
         logger.info("$id 的VL设置为 $vl")
     }
 
-    private suspend fun Group.mute(mem: Member, reason: String) {
+    suspend fun Group.mute(mem: Member, reason: String) {
         mem.mute(
             if (mem.permitteeId.hasPermission(bypassMute)) 1
             else if (riskList.indexOf(mem) != -1) 1200

@@ -3,8 +3,9 @@ package ltd.guimc.lgzbot.utils
 import huzpsb.ll4j.model.Model
 import huzpsb.ll4j.nlp.token.Tokenizer
 import huzpsb.ll4j.utils.data.DataSet
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import ltd.guimc.lgzbot.utils.AsciiUtil.sbc2dbcCase
+import ltd.guimc.lgzbot.utils.TextUtils.removeInterference
+import ltd.guimc.lgzbot.utils.TextUtils.removeNonVisible
 
 object LL4JUtils {
     lateinit var model: Model
@@ -27,7 +28,14 @@ object LL4JUtils {
         model.predictDebug(tokenizer.tokenize(0, string.replace("\n", "")).values)
 
     fun predictAllResult(string: String): DoubleArray =
-        model.predictAllResult(tokenizer.tokenize(0, string.replace("\n", "")).values)
+        model.predictAllResult(
+            tokenizer.tokenize(
+                0, sbc2dbcCase(string.replace("\n", ""))
+                    .lowercase()
+                    .removeInterference()
+                    .removeNonVisible()
+            ).values
+        )
 
     fun learn(type: Int, string: String) {
         val dataSet = DataSet()

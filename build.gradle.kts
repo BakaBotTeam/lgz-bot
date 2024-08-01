@@ -5,6 +5,7 @@ plugins {
     id("net.mamoe.mirai-console") version "2.16.0"
     id("org.jetbrains.kotlin.jvm") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "8.0.0"
+    id("io.freefair.lombok") version "8.6"
     id("maven-publish")
 }
 
@@ -14,17 +15,21 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("ch.qos.logback:logback-classic:1.4.12")
     implementation("com.github.promeg:tinypinyin:2.0.3")
     implementation("com.huaban:jieba-analysis:+")
     implementation("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
-    implementation("org.json:json:20230227")
+    implementation("org.json:json:20231013")
     implementation("org.apache.httpcomponents:httpclient:4.5.14")
     implementation("org.jsoup:jsoup:1.15.3")
+    implementation("io.github.mymonstercat:rapidocr-onnx-windows-x86_64:1.2.2")
+    implementation("io.github.mymonstercat:rapidocr-onnx-linux-x86_64:1.2.2")
+    implementation("org.xerial:sqlite-jdbc:3.46.0.0")
 
     compileOnly("top.mrxiaom:overflow-core-api:$overflow_version")
     compileOnly("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
     compileOnly("top.mrxiaom:overflow-core:$overflow_version")
+    compileOnly("org.projectlombok:lombok:1.18.34")
     testImplementation("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
 
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))

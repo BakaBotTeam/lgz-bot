@@ -19,10 +19,7 @@ import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
 import ltd.guimc.lgzbot.files.GithubWebhookSubData
 import ltd.guimc.lgzbot.files.ModuleStateConfig
-import ltd.guimc.lgzbot.listener.message.AntiMappLinkListener
-import ltd.guimc.lgzbot.listener.message.FunListener
-import ltd.guimc.lgzbot.listener.message.GithubUrlListener
-import ltd.guimc.lgzbot.listener.message.MessageFilter
+import ltd.guimc.lgzbot.listener.message.*
 import ltd.guimc.lgzbot.listener.multi.BakaListener
 import ltd.guimc.lgzbot.listener.mute.AutoQuit
 import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
@@ -70,6 +67,7 @@ object PluginMain : KotlinPlugin(
     lateinit var nudgeMute: Permission
     lateinit var disableSpamCheck: Permission
     lateinit var disableADCheck: Permission
+    lateinit var disableImageCheck: Permission
     lateinit var root: Permission
     lateinit var disableRoot: Permission
     lateinit var adRegex: Array<Regex>
@@ -82,10 +80,12 @@ object PluginMain : KotlinPlugin(
 
     override fun onEnable() {
         logger.info("$name v$version 正在加载喵")
+        Class.forName("org.sqlite.JDBC")
         Config.reload()
         GithubSubConfig.reload()
         ModuleStateConfig.reload()
         GithubWebhookSubData.reload()
+        ImageOCRFilter.init()
 
         adRegex = getDefaultRegex()
         adPinyinRegex = getDefaultPinyinRegex()
@@ -158,6 +158,7 @@ object PluginMain : KotlinPlugin(
         webHookService.stop()
         isRunning = false
         configReloadThread.join()
+        ImageOCRFilter.connection.close()
         logger.info("$name v$version 卸载好了喵")
     }
 
@@ -171,6 +172,7 @@ object PluginMain : KotlinPlugin(
         disableRoot = register(PermissionId("lgzbot.disable", "*"), "The root permission", root)
         disableSpamCheck = register(PermissionId("lgzbot.disable", "spamcheck"), "关闭群聊刷屏检查", disableRoot)
         disableADCheck = register(PermissionId("lgzbot.disable", "adcheck"), "关闭群聊广告检查", disableRoot)
+        disableImageCheck = register(PermissionId("lgzbot.disable", "imagecheck"), "关闭群聊图片检查", disableRoot)
     }
 
     private fun registerCommands() = CommandManager.run {
@@ -187,6 +189,7 @@ object PluginMain : KotlinPlugin(
 
     private fun registerEvents() = PluginMain.globalEventChannel().run {
         subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event -> MessageFilter.filter(event) }
+        subscribeAlways<GroupMessageEvent> { event -> ImageOCRFilter.filter(event) }
         subscribeAlways<GroupMessageEvent>(priority = EventPriority.HIGHEST) { event ->
             AntiMappLinkListener.filter(
                 event

@@ -61,4 +61,27 @@ object ToggleCheckCommand : CompositeCommand(
             sendMessage("只有管理才能使用这个指令的说...")
         }
     }
+
+    @SubCommand("image")
+    @Description("开/关图片检测")
+    suspend fun CommandSender.iiI11i1I1i1II1i1I1i11I1i1I1() {
+        if (getGroupOrNull() == null) {
+            sendMessage("请在群聊中执行该命令")
+        }
+
+        val group = getGroupOrNull()!!
+        val member = group.getMemberOrFail(user!!.id)
+
+        if (member.permission.isOperator()) {
+            if (group.permitteeId.hasPermission(PluginMain.disableImageCheck)) {
+                group.permitteeId.cancel(PluginMain.disableImageCheck, false)
+                sendMessage("已重新开启本群的图片检测")
+            } else {
+                group.permitteeId.permit(PluginMain.disableImageCheck)
+                sendMessage("已关闭本群的图片检测")
+            }
+        } else {
+            sendMessage("只有管理才能使用这个指令的说...")
+        }
+    }
 }

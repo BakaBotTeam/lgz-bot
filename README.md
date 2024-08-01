@@ -7,12 +7,15 @@
 * **Thanks for everyone!!**
 * Online demo: `1324248744` (QQ)
 * Sponsor @ [Afdian](https://afdian.net/a/lgz-bot)
+* Due to some reason, this project only support windows/linux x86_64 now.
 
 ## About LGZ bot
 * 这是[Mirai](https://github.com/mamoe/mirai)框架的插件,依赖于[Mirai Console](https://github.com/mamoe/mirai-console)运行.
-* 本插件可以为使用者提供群消息合规性检查,并作出相应的处罚.
+* 目前建议在[Overflow](https://github.com/MrXiaoM/Overflow/)下继续运行此插件, 本插件已经完成了一些对Overflow的兼容
+* 本插件可以为使用者提供群消息合规性检查功能.
 * 还有一些有趣的小东西 \>_\<
-* Thanks to [LL4J](https://github.com/LL4J/), [ADDetector4J](https://github.com/siuank/ADDetector4J)
+* Thanks to [LL4J](https://github.com/LL4J/), [ADDetector4J](https://github.com/siuank/ADDetector4J),
+  [RapidOCR-Java](https://github.com/MyMonsterCat/RapidOcr-Java)
   and [恶臭数字论证器](https://github.com/itorr/homo)
 
 ## License

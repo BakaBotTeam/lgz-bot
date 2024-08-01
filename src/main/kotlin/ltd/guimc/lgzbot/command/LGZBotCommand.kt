@@ -22,6 +22,7 @@ import net.mamoe.mirai.console.command.*
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.message.data.*
+import org.apache.commons.lang3.RandomUtils
 import top.mrxiaom.overflow.contact.Updatable
 import xyz.cssxsh.mirai.hibernate.MiraiHibernateRecorder
 import kotlin.math.roundToInt
@@ -149,5 +150,20 @@ object LGZBotCommand : CompositeCommand(
     suspend fun CommandSender.llIIllIIllI() {
         sendMessage("Downloading (current: ${LL4JUtils.version})")
         LL4JUtils.downloadModel()
+    }
+
+    @SubCommand("broadcast")
+    @Description("广播")
+    suspend fun CommandSenderOnMessage<*>.iI1I1i1iIi1i(content: String, onlyAdmin: Boolean = true) {
+        for (group in (getBotOrNull() ?: return).groups) {
+            if (group.botPermission.level >= 1 || !onlyAdmin) {
+                try {
+                    sendMessage(content)
+                } catch (_: Exception) {
+                }
+                Thread.sleep(RandomUtils.nextLong(1500, 2000))
+            }
+        }
+        sendMessage("完成.")
     }
 }
