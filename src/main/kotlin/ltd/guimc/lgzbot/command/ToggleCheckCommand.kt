@@ -14,6 +14,7 @@ import net.mamoe.mirai.contact.isOperator
 object ToggleCheckCommand : CompositeCommand(
     owner = PluginMain,
     primaryName = "togglecheck",
+    secondaryNames = arrayOf("disablecheck"),
     description = "开关检测"
 ) {
     @SubCommand("spam")
