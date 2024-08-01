@@ -154,9 +154,9 @@ object LGZBotCommand : CompositeCommand(
 
     @SubCommand("broadcast")
     @Description("广播")
-    suspend fun CommandSenderOnMessage<*>.iI1I1i1iIi1i(content: String, onlyAdmin: Boolean = true) {
+    suspend fun CommandSenderOnMessage<*>.iI1I1i1iIi1i(content: String) {
         for (group in (getBotOrNull() ?: return).groups) {
-            if (group.botPermission.level >= 1 || !onlyAdmin) {
+            if (group.botPermission.level >= 1) {
                 try {
                     sendMessage(content)
                 } catch (_: Exception) {
