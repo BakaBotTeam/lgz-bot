@@ -58,11 +58,11 @@ object ImageOCRFilter {
                 if (filterImage(e, message)) {
                     return true
                 }
-            } else if (message is ForwardMessage) {
+            }/* else if (message is ForwardMessage) {
                 if (findImageToFilter(e, message.nodeList)) {
                     return true
                 }
-            }
+            }*/
         }
         return false
     }
