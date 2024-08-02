@@ -25,9 +25,12 @@ import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermiss
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
 import net.mamoe.mirai.console.util.cast
 import net.mamoe.mirai.event.events.GroupMessageEvent
+import net.mamoe.mirai.message.data.ForwardMessage
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
+import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
+import net.mamoe.mirai.message.data.toMessageChain
 import org.apache.commons.lang3.time.StopWatch
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -47,51 +50,69 @@ object ImageOCRFilter {
 
     suspend fun filter(e: GroupMessageEvent) {
         if (!supported) return
-        if (!(e.sender.permission.level < e.group.botPermission.level || ModuleStateConfig.slientmute)) return
-        if (e.group.permitteeId.hasPermission(disableImageCheck)) return
-        var muted = false
-        e.message.filter { m -> m is Image }.forEach {
-            try {
-                var content = sbc2dbcCase(recognizeAndStoreImage(it.cast<Image>().queryUrl()))
-                    .lowercase()
-                    .removeInterference()
-                    .removeNonVisible()
+        findImageToFilter(e, e.message)
+    }
 
-                val predictedResult = LL4JUtils.predictAllResult(content)
-                val predicted = predictedResult[1] > predictedResult[0]
-                if (RegexUtils.matchRegex(adRegex, content) && content.length >= 30) {
-                    try {
-                        recalledMessage++
-                        e.message.recall()
-                        if (predicted) {
-                            e.group.mute(e.sender, "非法发言内容 (图片OCR识别) (模型证实)")
-                            riskList.add(e.sender)
-                            setVl(e.sender.id, 99.0)
-                        } else {
-                            e.sender.mute(60, "非法发言内容 (图片OCR识别)")
-                        }
-                        muted = true
-                    } catch (_: Exception) {
-                    }
-                    messagesHandled++
+    suspend fun findImageToFilter(e: GroupMessageEvent, m: MessageChain): Boolean {
+        for (message in m) {
+            if (message is Image) {
+                if (filterImage(e, message)) {
+                    return true
                 }
-
-                // 拼音检查发言
-                if (!muted && riskList.indexOf(e.sender) != -1 && RegexUtils.matchRegexPinyin(adPinyinRegex, content)) {
-                    try {
-                        recalledMessage++
-                        e.message.recall()
-                        e.group.mute(e.sender, "非法发言内容 (图片OCR识别)")
-                        muted = true
-                    } catch (_: Exception) {
-                    }
-                    setVl(e.sender.id, 99.0)
-                    messagesHandled++
+            } else if (message is ForwardMessage) {
+                if (findImageToFilter(e, message.toMessageChain())) {
+                    return true
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
+        return false
+    }
+
+    suspend fun filterImage(e: GroupMessageEvent, m: Image): Boolean {
+        var muted = false
+        try {
+            var content = sbc2dbcCase(recognizeAndStoreImage(m.cast<Image>().queryUrl()))
+                .lowercase()
+                .removeInterference()
+                .removeNonVisible()
+            if (!(e.sender.permission.level < e.group.botPermission.level || ModuleStateConfig.slientmute)) return false
+            if (e.group.permitteeId.hasPermission(disableImageCheck)) return false
+
+            val predictedResult = LL4JUtils.predictAllResult(content)
+            val predicted = predictedResult[1] > predictedResult[0]
+            if (RegexUtils.matchRegex(adRegex, content) && content.length >= 30) {
+                try {
+                    recalledMessage++
+                    e.message.recall()
+                    if (predicted) {
+                        e.group.mute(e.sender, "非法发言内容 (图片OCR识别) (模型证实)")
+                        riskList.add(e.sender)
+                        setVl(e.sender.id, 99.0)
+                    } else {
+                        e.sender.mute(60, "非法发言内容 (图片OCR识别)")
+                    }
+                    muted = true
+                } catch (_: Exception) {
+                }
+                messagesHandled++
+            }
+
+            // 拼音检查发言
+            if (!muted && riskList.indexOf(e.sender) != -1 && RegexUtils.matchRegexPinyin(adPinyinRegex, content)) {
+                try {
+                    recalledMessage++
+                    e.message.recall()
+                    e.group.mute(e.sender, "非法发言内容 (图片OCR识别)")
+                    muted = true
+                } catch (_: Exception) {
+                }
+                setVl(e.sender.id, 99.0)
+                messagesHandled++
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return muted
     }
 
     fun calculateSha256(fileData: ByteArray): String {
@@ -130,12 +151,11 @@ object ImageOCRFilter {
                 tempFile.writeBytes(imageRaw)
 
                 // OCR 识别
-                logger.info("新图像 开始OCR识别")
                 val stopWatch = StopWatch()
                 stopWatch.start()
                 content = engine.runOcr(tempFile.path).strRes.trim()
                 stopWatch.stop()
-                logger.info("已完成 耗时: ${stopWatch.time} ms")
+                logger.info("OCR已完成 耗时: ${stopWatch.time} ms")
 
                 // 删除临时文件
                 tempFile.delete()
@@ -156,7 +176,7 @@ object ImageOCRFilter {
             return content
         } finally {
             // 确保锁被释放
-
+            lock.unlock()
         }
     }
 
