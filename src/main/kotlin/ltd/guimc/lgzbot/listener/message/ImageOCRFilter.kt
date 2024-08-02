@@ -30,7 +30,6 @@ import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
-import net.mamoe.mirai.message.data.toMessageChain
 import org.apache.commons.lang3.time.StopWatch
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -60,9 +59,18 @@ object ImageOCRFilter {
                     return true
                 }
             } else if (message is ForwardMessage) {
-                if (findImageToFilter(e, message.toMessageChain())) {
+                if (findImageToFilter(e, message.nodeList)) {
                     return true
                 }
+            }
+        }
+        return false
+    }
+
+    suspend fun findImageToFilter(e: GroupMessageEvent, m: List<ForwardMessage.Node>): Boolean {
+        for (fm in m) {
+            if (findImageToFilter(e, fm.messageChain)) {
+                return true
             }
         }
         return false
@@ -176,7 +184,9 @@ object ImageOCRFilter {
             return content
         } finally {
             // 确保锁被释放
-            lock.unlock()
+            if (lock.isLocked) {
+                lock.unlock()
+            }
         }
     }
 
