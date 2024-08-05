@@ -8,6 +8,7 @@ import ltd.guimc.lgzbot.PluginMain.adRegex
 import ltd.guimc.lgzbot.PluginMain.disableImageCheck
 import ltd.guimc.lgzbot.PluginMain.logger
 import ltd.guimc.lgzbot.files.ModuleStateConfig
+import ltd.guimc.lgzbot.listener.message.MessageFilter.historyMessage
 import ltd.guimc.lgzbot.listener.message.MessageFilter.messagesHandled
 import ltd.guimc.lgzbot.listener.message.MessageFilter.mute
 import ltd.guimc.lgzbot.listener.message.MessageFilter.recalledMessage
@@ -33,6 +34,7 @@ import net.mamoe.mirai.message.data.MessageSource.Key.recall
 import org.apache.commons.lang3.time.StopWatch
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.lang.Thread.sleep
 import java.security.MessageDigest
 import java.sql.Connection
 import java.sql.DriverManager
@@ -45,6 +47,7 @@ object ImageOCRFilter {
     lateinit var engine: InferenceEngine
     lateinit var connection: Connection
     private val lock = ReentrantLock()
+    var memberReviewing = mutableMapOf<Long, String>()
     var supported: Boolean = false
 
     suspend fun filter(e: GroupMessageEvent) {
@@ -76,7 +79,7 @@ object ImageOCRFilter {
         return false
     }
 
-    suspend fun filterImage(e: GroupMessageEvent, m: Image): Boolean {
+    private suspend fun filterImage(e: GroupMessageEvent, m: Image): Boolean {
         var muted = false
         try {
             var content = sbc2dbcCase(recognizeAndStoreImage(m.cast<Image>().queryUrl()))
@@ -92,12 +95,15 @@ object ImageOCRFilter {
                 try {
                     recalledMessage++
                     e.message.recall()
-                    if (predicted) {
+                    if (predictedResult[1] - predictedResult[0] >= 0.22) {
                         e.group.mute(e.sender, "非法发言内容 (图片OCR识别) (模型证实)")
                         riskList.add(e.sender)
                         setVl(e.sender.id, 99.0)
+                    } else if (predictedResult[1] - predictedResult[0] >= 0.12) {
+                        e.sender.mute(120, "非法发言内容 (图片OCR识别) (模型猜测)")
                     } else {
-                        e.sender.mute(60, "非法发言内容 (图片OCR识别)")
+                        logger.info("开始 ${e.sender.id} 的追溯检查")
+                        memberReviewing.put(e.sender.id, content)
                     }
                     muted = true
                 } catch (_: Exception) {
@@ -105,12 +111,44 @@ object ImageOCRFilter {
                 messagesHandled++
             }
 
+            if (memberReviewing.containsKey(e.sender.id)) {
+                memberReviewing.put(
+                    e.sender.id,
+                    memberReviewing.get(e.sender.id) + "\n" + content.replace("\n", "")
+                )
+                if (memberReviewing.get(e.sender.id)?.let { RegexUtils.countLines(it) }!! >= 5) {
+                    logger.info("结束 ${e.sender.id} 的追溯检查")
+                    memberReviewing.remove(e.sender.id)
+                    if (memberReviewing.get(e.sender.id)!!.length <= 50) {
+                        memberReviewing.remove(e.sender.id)
+                        return true
+                    }
+                    if (predictedResult[1] - predictedResult[0] >= 0.22) {
+                        e.group.mute(e.sender, "追溯检查 (图片OCR) (模型复查)")
+                        muted = true
+                        recalledMessage++
+                        e.message.recall()
+                        try {
+                            historyMessage[e.sender.id]?.forEach {
+                                recalledMessage++
+                                it.recall()
+                                sleep(100)
+                            }
+                        } catch (_: Exception) {
+                        }
+                        historyMessage[e.sender.id]?.clear()
+                        setVl(e.sender.id, .0)
+                        messagesHandled++
+                    }
+                }
+            }
+
             // 拼音检查发言
             if (!muted && riskList.indexOf(e.sender) != -1 && RegexUtils.matchRegexPinyin(adPinyinRegex, content)) {
                 try {
                     recalledMessage++
                     e.message.recall()
-                    e.group.mute(e.sender, "非法发言内容 (图片OCR识别)")
+                    e.group.mute(e.sender, "非法发言内容 (Risk) (图片OCR识别)")
                     muted = true
                 } catch (_: Exception) {
                 }

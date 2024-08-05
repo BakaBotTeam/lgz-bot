@@ -49,7 +49,7 @@ object MessageFilter {
     private var repeaterFucker = mutableMapOf<Long, String>()
     var historyMessage = mutableMapOf<Long, MutableList<MessageChain>>()
     private var memberVl = mutableMapOf<Long, Double>()
-    private var memberReviewing = mutableMapOf<Long, String>()
+    var memberReviewing = mutableMapOf<Long, String>()
 
     var messagesHandled = 0
     var riskList = ArrayList<Member>()
