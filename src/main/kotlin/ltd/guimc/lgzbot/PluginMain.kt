@@ -26,6 +26,8 @@ import ltd.guimc.lgzbot.listener.nudge.AntiNudgeSpam
 import ltd.guimc.lgzbot.listener.nudge.NudgeMute
 import ltd.guimc.lgzbot.utils.FbUtils.getFbValue
 import ltd.guimc.lgzbot.utils.LL4JUtils
+import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
+import ltd.guimc.lgzbot.utils.RegexUtils
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getSeriousRegex
@@ -41,11 +43,9 @@ import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.console.plugin.version
 import net.mamoe.mirai.event.EventPriority
-import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
-import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.event.events.NewFriendRequestEvent
-import net.mamoe.mirai.event.events.NudgeEvent
+import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.event.globalEventChannel
+import net.mamoe.mirai.message.data.toMessageChain
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.StandardWatchEventKinds
@@ -222,6 +222,13 @@ object PluginMain : KotlinPlugin(
 
         subscribeAlways<NewFriendRequestEvent> {
             it.accept()
+        }
+
+        subscribeAlways<MessagePreSendEvent>(priority = EventPriority.LOW) { e ->
+            if (RegexUtils.matchRegex(seriousRegex, e.message.toMessageChain().getPlainText())) {
+                e.cancel()
+                e.target.sendMessage("Send message cancelled due to security check")
+            }
         }
 
         // Anti NudgeSpam
