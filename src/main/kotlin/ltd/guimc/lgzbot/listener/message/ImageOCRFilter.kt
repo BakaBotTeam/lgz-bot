@@ -7,6 +7,7 @@ import ltd.guimc.lgzbot.PluginMain.adPinyinRegex
 import ltd.guimc.lgzbot.PluginMain.adRegex
 import ltd.guimc.lgzbot.PluginMain.disableImageCheck
 import ltd.guimc.lgzbot.PluginMain.logger
+import ltd.guimc.lgzbot.PluginMain.seriousRegex
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.message.MessageFilter.historyMessage
 import ltd.guimc.lgzbot.listener.message.MessageFilter.messagesHandled
@@ -91,7 +92,13 @@ object ImageOCRFilter {
 
             val predictedResult = LL4JUtils.predictAllResult(content)
             val predicted = predictedResult[1] > predictedResult[0]
-            if (RegexUtils.matchRegex(adRegex, content) && content.length >= 30) {
+            if (RegexUtils.matchRegex(seriousRegex, content)) {
+                recalledMessage++
+                e.message.recall()
+                e.sender.mute(7 * 24 * 60 * 60, "非法发言内容 (图片OCR识别) (敏感内容)")
+                muted = true
+            }
+            if (!muted && RegexUtils.matchRegex(adRegex, content) && content.length >= 30) {
                 try {
                     recalledMessage++
                     e.message.recall()

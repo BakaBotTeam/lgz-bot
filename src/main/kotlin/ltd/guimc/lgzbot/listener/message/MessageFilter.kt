@@ -16,6 +16,7 @@ import ltd.guimc.lgzbot.PluginMain.bypassMute
 import ltd.guimc.lgzbot.PluginMain.disableADCheck
 import ltd.guimc.lgzbot.PluginMain.disableSpamCheck
 import ltd.guimc.lgzbot.PluginMain.logger
+import ltd.guimc.lgzbot.PluginMain.seriousRegex
 import ltd.guimc.lgzbot.counter.VLManager
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.ModuleStateConfig
@@ -77,9 +78,15 @@ object MessageFilter {
 
         allCheckedMessage++
         if (!e.group.permitteeId.hasPermission(disableADCheck)) {
+            if (RegexUtils.matchRegex(seriousRegex, textMessage)) {
+                recalledMessage++
+                e.message.recall()
+                e.sender.mute(14 * 24 * 60 * 60, "非法发言内容 (敏感内容)")
+                muted = true
+            }
             val predictedResult = LL4JUtils.predictAllResult(textMessage)
             val predicted = predictedResult[1] > predictedResult[0]
-            if (RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) {
+            if (!muted && RegexUtils.matchRegex(adRegex, textMessage) && textMessage.length >= stringLength) {
                 try {
                     recalledMessage++
                     e.message.recall()
@@ -156,6 +163,12 @@ object MessageFilter {
             if (!muted && forwardMessage != null) {
                 forwardMessage!!.nodeList.forEach {
                     val forwardMessageItemString = it.messageChain.getPlainText()
+                    if (RegexUtils.matchRegex(seriousRegex, forwardMessageItemString)) {
+                        recalledMessage++
+                        e.message.recall()
+                        e.sender.mute(14 * 24 * 60 * 60, "非法发言内容 (在合并转发消息内) (敏感内容)")
+                        muted = true
+                    }
                     if (!muted && RegexUtils.matchRegex(
                             adRegex,
                             forwardMessageItemString
