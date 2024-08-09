@@ -26,7 +26,6 @@ import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.RegexUtils
 import ltd.guimc.lgzbot.utils.TextUtils.findSimilarity
 import ltd.guimc.lgzbot.utils.TextUtils.removeNonVisible
-import ltd.guimc.lgzbot.word.WordUtils
 import net.mamoe.mirai.console.permission.Permission
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
@@ -308,13 +307,6 @@ object MessageFilter {
         }
 
         val counter = VLManager.getCounter(e.sender)
-        WordUtils.filter(e.message.content).forEach {
-            if (counter.wordFrequency[it] != null) {
-                counter.wordFrequency[it] = counter.wordFrequency[it]!! + 1
-            } else {
-                counter.wordFrequency[it] = 0
-            }
-        }
 
         if ((e.sender.permitteeId.hasPermission(PluginMain.blocked) && !e.sender.permitteeId.hasPermission(bypassMute)) || (e.group.permitteeId.hasPermission(
                 PluginMain.blocked

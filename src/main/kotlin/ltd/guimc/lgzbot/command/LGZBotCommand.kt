@@ -10,13 +10,11 @@
 package ltd.guimc.lgzbot.command
 
 import ltd.guimc.lgzbot.PluginMain
-import ltd.guimc.lgzbot.counter.VLManager
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import ltd.guimc.lgzbot.listener.message.MessageFilter
 import ltd.guimc.lgzbot.utils.LL4JUtils
 import ltd.guimc.lgzbot.utils.MessageUtils.getPlainText
 import ltd.guimc.lgzbot.utils.OverflowUtils
-import ltd.guimc.lgzbot.word.WordUtils
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.command.*
 import net.mamoe.mirai.contact.Member
@@ -35,16 +33,6 @@ object LGZBotCommand : CompositeCommand(
     @Description("看看机器人是否在线吧")
     suspend fun CommandSender.ping() {
         sendMessage("Pong!")
-    }
-
-    @SubCommand("word")
-    @Description("词频统计")
-    suspend fun CommandSender.word(user: Member,time: String) {
-        try {
-            sendMessage("他的词频信息:\n${WordUtils.hashMapToString(WordUtils.sortAndTrim(VLManager.getCounter(user).wordFrequency,Integer.parseInt(time)))}")
-        } catch (e: Exception) {
-            sendMessage("Oops! Something went wrong! ${e.message}")
-        }
     }
 
     @SubCommand("mute")

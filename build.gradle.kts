@@ -17,7 +17,6 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:1.4.12")
     implementation("com.github.promeg:tinypinyin:2.0.3")
-    implementation("com.huaban:jieba-analysis:+")
     implementation("com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3")
     implementation("org.json:json:20231013")
     implementation("org.apache.httpcomponents:httpclient:4.5.14")
