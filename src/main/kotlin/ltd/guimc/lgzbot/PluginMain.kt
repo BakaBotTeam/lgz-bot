@@ -59,7 +59,6 @@ object PluginMain : KotlinPlugin(
         "LgzBot",
     ){
         author("BakaBotTeam")
-        dependsOn("xyz.cssxsh.mirai.plugin.mirai-hibernate-plugin", false)
     }
 ) {
     lateinit var bypassMute: Permission

@@ -27,10 +27,8 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.16.0")
 
     compileOnly("top.mrxiaom:overflow-core-api:$overflow_version")
-    compileOnly("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
     compileOnly("top.mrxiaom:overflow-core:$overflow_version")
     compileOnly("org.projectlombok:lombok:1.18.34")
-    testImplementation("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
 
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

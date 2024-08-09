@@ -22,7 +22,6 @@ import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.message.data.*
 import org.apache.commons.lang3.RandomUtils
 import top.mrxiaom.overflow.contact.Updatable
-import xyz.cssxsh.mirai.hibernate.MiraiHibernateRecorder
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 
@@ -116,7 +115,7 @@ object LGZBotCommand : CompositeCommand(
         var str = string
         if (string == "reply") {
             val quote = fromEvent.message.findIsInstance<QuoteReply>() ?: return
-            val raw = MiraiHibernateRecorder[quote.source][0].toMessageChain()
+            val raw = quote.source.originalMessage
             str = raw.getPlainText()
         }
         if (LL4JUtils.predictAllResult(str).let { it[1] > it[0] }) {
