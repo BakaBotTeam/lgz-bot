@@ -24,6 +24,7 @@ dependencies {
     implementation("io.github.mymonstercat:rapidocr-onnx-windows-x86_64:1.2.2")
     implementation("io.github.mymonstercat:rapidocr-onnx-linux-x86_64:1.2.2")
     implementation("org.xerial:sqlite-jdbc:3.46.0.0")
+    implementation("org.apache.commons:commons-lang3:3.16.0")
 
     compileOnly("top.mrxiaom:overflow-core-api:$overflow_version")
     compileOnly("xyz.cssxsh.mirai:mirai-hibernate-plugin:2.8.0")
