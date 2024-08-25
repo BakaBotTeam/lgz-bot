@@ -22,15 +22,20 @@ object LL4JUtils {
     }
 
     fun predict(string: String): Boolean =
-        model.predictDebug(tokenizer.tokenize(0, string.replace("\n", "")).values).first == 1
+        model.predictDebug(
+            tokenizer.tokenize(
+                0,
+                string.replace("\n", "").replace("live.bilibili.com", "")
+            ).values
+        ).first == 1
 
     fun predictDebug(string: String): Pair<Int, Double> =
-        model.predictDebug(tokenizer.tokenize(0, string.replace("\n", "")).values)
+        model.predictDebug(tokenizer.tokenize(0, string.replace("\n", "").replace("live.bilibili.com", "")).values)
 
     fun predictAllResult(string: String): DoubleArray =
         model.predictAllResult(
             tokenizer.tokenize(
-                0, sbc2dbcCase(string.replace("\n", ""))
+                0, sbc2dbcCase(string.replace("\n", "").replace("live.bilibili.com", ""))
                     .lowercase()
                     .removeInterference()
                     .removeNonVisible()
