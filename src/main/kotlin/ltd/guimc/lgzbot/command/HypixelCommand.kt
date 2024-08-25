@@ -12,14 +12,12 @@ package ltd.guimc.lgzbot.command
 import kotlinx.coroutines.launch
 import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.utils.CooldownUtils
-import ltd.guimc.lgzbot.utils.hypixel.HypixelApiUtils
-import ltd.guimc.lgzbot.utils.hypixel.ExpCalculator
 import ltd.guimc.lgzbot.utils.MojangAPIUtils
 import ltd.guimc.lgzbot.utils.TimeUtils
-import ltd.guimc.lgzbot.utils.timer.MSTimer
+import ltd.guimc.lgzbot.utils.hypixel.ExpCalculator
+import ltd.guimc.lgzbot.utils.hypixel.HypixelApiUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
-import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.PlainText
 import org.json.JSONObject
@@ -117,7 +115,7 @@ object HypixelCommand: SimpleCommand(
                         "首次登入: $firstLogin\n" +
                         "上次登入: $lastLogin\n" +
                         "上次登出: $lastLogout\n" +
-                        "最近常玩: ${playerInfo.getStringOrNull("mostRecentGameType")}" +
+                        "最近常玩: ${HypixelApiUtils.resolveGameType(playerInfo.getStringOrNull("mostRecentGameType"))}\n" +
                         "当前状态: $stringOnlineStatus"
                 )
             )
@@ -184,14 +182,14 @@ object HypixelCommand: SimpleCommand(
                         outputMessage.add(
                             bot!!, PlainText(
                                 "Skywars 信息:\n" +
-                                    "等级: ${
-                                        try {
-                                            (ExpCalculator.getSkyWarsLevel(swStats.getIntOrNull("experience")) * 100).roundToInt()
-                                                .toDouble() / 100.0
-                                        } catch (_: Exception) {
-                                            1.0
-                                        }
-                                    }\n" +
+                                    // "等级: ${
+                                    //     try {
+                                    //         (ExpCalculator.getSkyWarsLevel(swStats.getIntOrNull("experience")) * 100).roundToInt()
+                                    //             .toDouble() / 100.0
+                                    //     } catch (_: Exception) {
+                                    //         1.0
+                                    //     }
+                                    // }\n" +
                                     "硬币: ${swStats.getIntOrNull("coins")}\n" +
                                     "灵魂数量: ${swStats.getIntOrNull("souls")}\n" +
                                     "总游戏数: ${swStats.getIntOrNull("games_played_skywars")}\n" +
