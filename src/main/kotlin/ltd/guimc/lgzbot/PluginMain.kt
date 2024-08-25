@@ -151,7 +151,7 @@ object PluginMain : KotlinPlugin(
         webHookService.start()
         logger.info("正在初始化 LL4J")
         LL4JUtils.init()
-        thread { LL4JUtils.downloadModel() }.start()
+        thread { LL4JUtils.downloadModel() }
         logger.info("$name v$version 加载好了喵")
     }
 
