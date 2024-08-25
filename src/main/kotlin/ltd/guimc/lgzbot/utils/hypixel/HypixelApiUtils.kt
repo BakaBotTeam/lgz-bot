@@ -11,8 +11,6 @@ package ltd.guimc.lgzbot.utils.hypixel
 
 import ltd.guimc.lgzbot.files.Config
 import org.json.JSONObject
-import kotlin.math.floor
-import kotlin.math.sqrt
 
 object HypixelApiUtils {
     fun request(url: String): JSONObject {
@@ -75,7 +73,7 @@ object HypixelApiUtils {
             "REPLAY" -> "Replay"
             "SMP" -> "SMP"
             "WOOL_GAMES" -> "Wool Wars"
-            else -> "Lobby?"
+            else -> gametype
         }
     }
 }
