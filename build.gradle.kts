@@ -11,7 +11,7 @@ plugins {
 
 dependencies {
     val ktor_version = "2.3.5"
-    val overflow_version = "2.16.0-db61867-SNAPSHOT"
+    val overflow_version = "0.9.9.515-f8d867b-SNAPSHOT"
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
@@ -26,8 +26,8 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.46.0.0")
     implementation("org.apache.commons:commons-lang3:3.16.0")
 
-    compileOnly("top.mrxiaom:overflow-core-api:$overflow_version")
-    compileOnly("top.mrxiaom:overflow-core:$overflow_version")
+    compileOnly("top.mrxiaom.mirai:overflow-core-api:$overflow_version")
+    compileOnly("top.mrxiaom.mirai:overflow-core:$overflow_version")
     compileOnly("org.projectlombok:lombok:1.18.34")
 
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))

@@ -15,7 +15,6 @@ import ltd.guimc.lgzbot.PluginMain.fbValue
 import ltd.guimc.lgzbot.utils.CooldownUtils
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
-import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.PlainText
 
@@ -39,14 +38,7 @@ object FbCommand: SimpleCommand(
 
         var msg: Message = PlainText("")
 
-        val context = fbValue.random().replace("\\n","\n")
-        if (context.startsWith("$")) {
-            msg += At(user!!)
-        }
-        for (s in context.split("$")) {
-            msg += PlainText(s)
-            msg += At(user!!)
-        }
+        val context = fbValue.random().replace("\\n", "\n").replace("$", user!!.remark)
 
         sendMessage(msg)
     }
