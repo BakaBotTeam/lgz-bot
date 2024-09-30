@@ -5,7 +5,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/f4fa5faaba9a42e0bf4213a42ba92a94)](https://www.codacy.com/gh/guimc233/lgz-bot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=guimc233/lgz-bot&amp;utm_campaign=Badge_Grade)
 
 * **Thanks for everyone!!**
-* Online demo: `1324248744` (QQ)
+* 交流群: `952891372` (QQ)
 * Sponsor @ [Afdian](https://afdian.net/a/lgz-bot)
 * Due to some reason, this project only support windows/linux x86_64 now.
 
