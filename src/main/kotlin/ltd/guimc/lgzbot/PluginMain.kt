@@ -73,6 +73,7 @@ object PluginMain : KotlinPlugin(
     lateinit var adRegex: Array<Regex>
     lateinit var adPinyinRegex: Array<Regex>
     lateinit var seriousRegex: Array<Regex>
+    lateinit var spRegex: Array<Regex>
     lateinit var fbValue: Array<String>
     lateinit var webHookService: WebHookService
     lateinit var configReloadThread: Thread
@@ -91,6 +92,7 @@ object PluginMain : KotlinPlugin(
         adRegex = getDefaultRegex()
         adPinyinRegex = getDefaultPinyinRegex()
         seriousRegex = getSeriousRegex()
+        spRegex = getSeriousRegex()
         fbValue = getFbValue()
         webHookService = WebHookService(GithubWebHookReciver())
 

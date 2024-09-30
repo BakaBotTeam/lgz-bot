@@ -16,9 +16,9 @@ object SelfMessageListener : ListenerHost {
     suspend fun MessagePreSendEvent.onEvent() {
         val newMessageChain = MessageChainBuilder()
         this.message.toMessageChain().forEach { it ->
-            if (it is PlainText && RegexUtils.matchRegex(PluginMain.seriousRegex, it.content)) {
+            if (it is PlainText && RegexUtils.matchRegex(PluginMain.spRegex, it.content)) {
                 this.cancel()
-                newMessageChain.add(it.content.replaceRegex(PluginMain.seriousRegex))
+                newMessageChain.add(it.content.replaceRegex(PluginMain.spRegex))
             } else {
                 newMessageChain.add(it)
             }

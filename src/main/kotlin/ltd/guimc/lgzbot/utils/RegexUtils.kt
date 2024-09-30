@@ -58,6 +58,20 @@ object RegexUtils {
         return regexList.toTypedArray()
     }
 
+    fun getSpRegex(): Array<Regex> {
+        // Read from resources regex.txt
+        val regexFile = RegexUtils::class.java.getResourceAsStream("/self-protect.txt")
+        val regexList = mutableListOf<Regex>()
+        regexFile?.bufferedReader()?.use { reader ->
+            reader.lines().forEach {
+                // regexList.add(Regex(PinyinUtils.convertToPinyin(it)))
+                regexList.add(Regex(it))
+            }
+        }
+
+        return regexList.toTypedArray()
+    }
+
     // 匹配正则表达式列表 返回是否匹配
     fun matchRegex(regexList: Array<Regex>, message: String): Boolean {
         try {
