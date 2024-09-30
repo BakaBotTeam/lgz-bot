@@ -1,5 +1,5 @@
 # LGZ bot
-[![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Super%20ShitCode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+[![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=ShitCode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fguimc233%2Flgz-bot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fguimc233%2Flgz-bot?ref=badge_shield)
 [![Maintainability](https://api.codeclimate.com/v1/badges/05a867056904e1a9f5b1/maintainability)](https://codeclimate.com/github/guimc233/lgz-bot/maintainability)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/f4fa5faaba9a42e0bf4213a42ba92a94)](https://www.codacy.com/gh/guimc233/lgz-bot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=guimc233/lgz-bot&amp;utm_campaign=Badge_Grade)
