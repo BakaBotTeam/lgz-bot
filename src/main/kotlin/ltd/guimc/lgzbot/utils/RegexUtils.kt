@@ -83,7 +83,6 @@ object RegexUtils {
             for (regex in regexList) {
                 i++
                 if (regex.containsMatchIn(unPeekText)) {
-                    logger.info("匹配成功 在第${i}行 ${regex.find(unPeekText)?.value}")
                     return true
                 }
             }
@@ -92,17 +91,14 @@ object RegexUtils {
     }
 
     fun String.replaceRegex(regexList: Array<Regex>): String {
+        var a = this
         try {
             var i = 0
-            val unPeekText = sbc2dbcCase(this)
-                .lowercase()
-                .removeInterference()
-                .removeNonVisible()
             for (regex in regexList) {
                 i++
-                if (regex.containsMatchIn(unPeekText)) {
-                    logger.info("匹配成功 在第${i}行 ${regex.find(unPeekText)?.value}")
-                    this.replace(regex, "***")
+                if (regex.containsMatchIn(a)) {
+                    logger.info("匹配成功 在第${i}行 ${regex.find(a)?.value}")
+                    a.replace(regex, "***")
                 }
             }
         } catch (_: Throwable) {
