@@ -12,10 +12,11 @@ import ltd.guimc.lgzbot.PluginMain
 import ltd.guimc.lgzbot.files.ModuleStateConfig
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.permission.PermitteeId.Companion.permitteeId
+import net.mamoe.mirai.contact.UserOrBot
+import net.mamoe.mirai.contact.nameCardOrNick
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.event.ListenerHost
 import net.mamoe.mirai.event.events.*
-import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
@@ -41,7 +42,7 @@ object BakaListener : ListenerHost {
     suspend fun NudgeEvent.nudge() {
         if (!ModuleStateConfig.nudge) return
         if (this.target == this.bot) {
-            this.subject.sendMessage(format(NUDGE.random(), this.target.id, this.from.id))
+            this.subject.sendMessage(format(NUDGE.random(), this.target, this.from))
         }
     }
 
@@ -51,7 +52,7 @@ object BakaListener : ListenerHost {
     //     if (this.operator == null) return
     //     if (this.authorId != this.operator!!.id) return
     //     if (rand.nextDouble() >= 0.9) {
-    //         this.group.sendMessage(format(RECALL.random(), this.operator!!.id))
+    //         this.group.sendMessage(format(RECALL.random(), this.operator!!))
     //     }
     // }
 
@@ -61,11 +62,11 @@ object BakaListener : ListenerHost {
         if (this.member == this.bot) return
         if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         if (this !is MemberLeaveEvent.Kick) {
-            this.group.sendMessage(format(QUIT.random(), this.member.id))
+            this.group.sendMessage(format(QUIT.random(), this.member))
             return
         }
         if (this.operator == null) return
-        this.group.sendMessage(format(KICK.random(), this.member.id, this.operator!!.id))
+        this.group.sendMessage(format(KICK.random(), this.member, this.operator!!))
     }
 
     @EventHandler
@@ -73,7 +74,7 @@ object BakaListener : ListenerHost {
         if (!ModuleStateConfig.grouplistener) return
         if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         if (this.operator == null) return
-        this.group.sendMessage(format(MUTE.random(), this.member.id, this.operator!!.id))
+        this.group.sendMessage(format(MUTE.random(), this.member, this.operator!!))
     }
 
     @EventHandler
@@ -81,14 +82,14 @@ object BakaListener : ListenerHost {
         if (!ModuleStateConfig.grouplistener) return
         if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
         if (this.operator == null) return
-        this.group.sendMessage(format(UNMUTE.random(), this.member.id, this.operator!!.id))
+        this.group.sendMessage(format(UNMUTE.random(), this.member, this.operator!!))
     }
 
     @EventHandler
     suspend fun MemberJoinEvent.newMember() {
         if (!ModuleStateConfig.grouplistener) return
         if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
-        this.group.sendMessage(format(NEW_MEMBER.random(), this.member.id))
+        this.group.sendMessage(format(NEW_MEMBER.random(), this.member))
     }
 
     @EventHandler
@@ -102,21 +103,21 @@ object BakaListener : ListenerHost {
     suspend fun BotUnmuteEvent.unmuteBot() {
         if (!ModuleStateConfig.grouplistener) return
         if (this.group.permitteeId.hasPermission(PluginMain.quiet)) return
-        this.group.sendMessage(format(UNMUTE_TO_BOT.random(), this.operator.id))
+        this.group.sendMessage(format(UNMUTE_TO_BOT.random(), this.operator))
     }
 
-    private fun format(str: String, target: Long, source: Long): MessageChain {
+    private fun format(str: String, target: UserOrBot?, source: UserOrBot?): MessageChain {
         val messages = MessageChainBuilder()
         for (i in str.split("%")) {
             messages += when (i) {
-                "source" -> if (source != -1L) At(source) else PlainText("source")
-                "target" -> if (target != -1L) At(target) else PlainText("target")
+                "source" -> if (source != null) PlainText("${source.nameCardOrNick}(${source.id})") else PlainText("source")
+                "target" -> if (target != null) PlainText("${target.nameCardOrNick}(${target.id}") else PlainText("target")
                 else -> PlainText(i)
             }
         }
         return messages.build()
     }
 
-    private fun format(str: String): MessageChain = format(str, -1L, -1L)
-    private fun format(str: String, source: Long): MessageChain = format(str, -1L, source)
+    private fun format(str: String): MessageChain = format(str, null, null)
+    private fun format(str: String, source: UserOrBot?): MessageChain = format(str, null, source)
 }
