@@ -239,5 +239,6 @@ object PluginMain : KotlinPlugin(
 
         registerListenerHost(BakaListener)
         registerListenerHost(AutoQuit)
+        registerListenerHost(SelfMessageListener)
     }
 }
