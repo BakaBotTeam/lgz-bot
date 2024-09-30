@@ -98,7 +98,7 @@ object RegexUtils {
                 i++
                 if (regex.containsMatchIn(a)) {
                     logger.info("匹配成功 在第${i}行 ${regex.find(a)?.value}")
-                    a.replace(regex, "***")
+                    a = a.replace(regex, "***")
                 }
             }
         } catch (_: Throwable) {
