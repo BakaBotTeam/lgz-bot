@@ -31,6 +31,7 @@ import ltd.guimc.lgzbot.utils.RegexUtils
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultPinyinRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getDefaultRegex
 import ltd.guimc.lgzbot.utils.RegexUtils.getSeriousRegex
+import ltd.guimc.lgzbot.utils.RegexUtils.getSpRegex
 import ltd.guimc.lgzbot.utils.RequestUtils
 import ltd.guimc.lgzbot.webhook.GithubWebHookReciver
 import ltd.guimc.lgzbot.webhook.WebHookService
@@ -92,7 +93,7 @@ object PluginMain : KotlinPlugin(
         adRegex = getDefaultRegex()
         adPinyinRegex = getDefaultPinyinRegex()
         seriousRegex = getSeriousRegex()
-        spRegex = getSeriousRegex()
+        spRegex = getSpRegex()
         fbValue = getFbValue()
         webHookService = WebHookService(GithubWebHookReciver())
 
