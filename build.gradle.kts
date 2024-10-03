@@ -30,6 +30,8 @@ dependencies {
     implementation(platform("ai.djl:bom:0.23.0"))
     implementation("ai.djl.tensorflow:tensorflow-engine:0.23.0")
     implementation("ai.djl.tensorflow:tensorflow-model-zoo:0.23.0")
+    implementation("ai.djl.tensorflow:tensorflow-native-cpu:2.10.0:win-x86_64")
+    implementation("ai.djl.tensorflow:tensorflow-native-cpu:2.10.0:linux-x86_64")
 
     compileOnly("top.mrxiaom.mirai:overflow-core-api:$overflow_version")
     compileOnly("top.mrxiaom.mirai:overflow-core:$overflow_version")
