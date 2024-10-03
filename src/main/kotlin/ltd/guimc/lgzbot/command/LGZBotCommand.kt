@@ -129,7 +129,7 @@ object LGZBotCommand : CompositeCommand(
     @Description("让模型学习一段文本")
     suspend fun CommandSender.iI1I1i1iIi1I(type: Int, string: String) {
         LL4JUtils.learn(type, string)
-        sendMessage("Done.")
+        sendMessage("Deprecated")
     }
 
     @SubCommand("downloadModel")

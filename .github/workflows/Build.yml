@@ -23,7 +23,7 @@ jobs:
           arguments: buildPluginLegacy
           gradle-version: wrapper
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: lgz-bot
           path: build/mirai/lgz-bot-*.jar
