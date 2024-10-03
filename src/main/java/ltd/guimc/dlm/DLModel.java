@@ -1,12 +1,16 @@
 package ltd.guimc.dlm;
 
-import org.bytedeco.opencv.global.opencv_imgproc;
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Size;
-import org.deeplearning4j.nn.graph.ComputationGraph;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
+import ai.djl.MalformedModelException;
+import ai.djl.Model;
+import ai.djl.inference.Predictor;
+import ai.djl.modality.Classifications;
+import ai.djl.modality.cv.Image;
+import ai.djl.modality.cv.ImageFactory;
+import ai.djl.modality.cv.translator.ImageClassificationTranslator;
+import ai.djl.translate.TranslateException;
+import ai.djl.translate.Translator;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,14 +18,13 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public class DLModel {
-    private static ComputationGraph model;
+    private static Model model;
     private static boolean inited = false;
 
-    // 加载ONNX模型
     public static void init() {
         try {
             // 从资源文件中获取模型
-            InputStream modelStream = ImageProcessor.class.getResourceAsStream("/Nailong.onnx");
+            InputStream modelStream = DLModel.class.getResourceAsStream("/Nailong.onnx");
 
             if (modelStream == null) {
                 throw new IOException("无法找到Nailong.onnx模型文件");
@@ -34,57 +37,44 @@ public class DLModel {
             // 将模型文件从JAR中复制到临时文件
             Files.copy(modelStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            // 加载ONNX模型
-            model = ComputationGraph.load(tempFile, false);
-            model.init();
+            // 使用 DJL (Deep Java Library) 加载 ONNX 模型
+            model = Model.newInstance("Nailong");
+            model.load(tempFile.toPath());
+
+            // 初始化模型
             inited = true;
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (MalformedModelException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static boolean checkImage(Mat image) {
+    public static boolean checkImage(byte[] imageData) {
         if (!inited) {
             return false;
         }
-        // 将图像调整为32x32
-        Mat resizedImage = new Mat();
-        opencv_imgproc.resize(image, resizedImage, new Size(32, 32));
 
-        // 转换图像为INDArray格式
-        INDArray transformedImage = preprocessImage(resizedImage);
+        try {
+            // 将字节数组转换为 DJL 的 Image 对象
+            ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
+            Image djlImage = ImageFactory.getInstance().fromInputStream(bais);
 
-        // 添加批次维度（1, channels, height, width）
-        INDArray inputImage = transformedImage.reshape(1, 3, 32, 32);
+            Translator<Image, Classifications> translator = ImageClassificationTranslator.builder().build();
 
-        // 执行推理
-        INDArray output = model.outputSingle(inputImage);
+            // 使用模型进行推理
+            try (Predictor<Image, Classifications> predictor = model.newPredictor(translator)) {
+                Classifications classifications = predictor.predict(djlImage);
 
-        // 获取预测标签
-        int predictedClass = Nd4j.argMax(output, 1).getInt(0);
+                // 获取预测的结果类
+                String predictedClass = classifications.best().getClassName();
 
-        // 如果预测类为10，返回True，否则返回False
-        return predictedClass == 10;
-    }
-
-    private static INDArray preprocessImage(Mat image) {
-        // 创建INDArray以存储像素值
-        INDArray imgArray = Nd4j.create(3, 32, 32);
-
-        // 将OpenCV的Mat图像转换为NDArray
-        byte[] data = new byte[32 * 32 * 3];
-        image.data().get(data);
-
-        // 归一化并重塑图像
-        for (int y = 0; y < 32; y++) {
-            for (int x = 0; x < 32; x++) {
-                int pixelIndex = y * 32 * 3 + x * 3;
-                imgArray.putScalar(new int[]{0, y, x}, (data[pixelIndex] & 0xFF) / 255.0 - 0.5);   // 红色通道
-                imgArray.putScalar(new int[]{1, y, x}, (data[pixelIndex + 1] & 0xFF) / 255.0 - 0.5); // 绿色通道
-                imgArray.putScalar(new int[]{2, y, x}, (data[pixelIndex + 2] & 0xFF) / 255.0 - 0.5); // 蓝色通道
+                // 如果预测类为10，返回True，否则返回False
+                return "10".equals(predictedClass);
             }
+        } catch (IOException | TranslateException e) {
+            e.printStackTrace();
+            return false;
         }
-
-        return imgArray;
     }
 }
