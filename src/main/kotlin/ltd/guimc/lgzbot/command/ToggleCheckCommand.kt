@@ -86,7 +86,7 @@ object ToggleCheckCommand : CompositeCommand(
         }
     }
 
-    @SubCommand("nailong")
+    /*@SubCommand("nailong")
     @Description("开/关奶龙图片检测")
     suspend fun CommandSender.iiI11i1I1i1Iai1I1i11I1i1I1() {
         if (getGroupOrNull() == null) {
@@ -107,5 +107,5 @@ object ToggleCheckCommand : CompositeCommand(
         } else {
             sendMessage("只有管理才能使用这个指令的说...")
         }
-    }
+    }*/
 }

@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
-import ltd.guimc.dlm.DLModel
 import ltd.guimc.lgzbot.command.*
 import ltd.guimc.lgzbot.files.Config
 import ltd.guimc.lgzbot.files.GithubSubConfig
@@ -156,7 +155,7 @@ object PluginMain : KotlinPlugin(
         webHookService.start()
         logger.info("正在初始化 LL4J")
         LL4JUtils.init()
-        DLModel.init()
+        // DLModel.init()
         thread { LL4JUtils.downloadModel() }
         logger.info("$name v$version 加载好了喵")
     }
@@ -247,6 +246,6 @@ object PluginMain : KotlinPlugin(
         registerListenerHost(BakaListener)
         registerListenerHost(AutoQuit)
         registerListenerHost(SelfMessageListener)
-        registerListenerHost(NaiLongImageListener)
+        // registerListenerHost(NaiLongImageListener)
     }
 }
