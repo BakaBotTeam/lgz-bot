@@ -8,6 +8,7 @@ import ai.djl.modality.Classifications;
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.ImageFactory;
 import ai.djl.modality.cv.translator.ImageClassificationTranslator;
+import ai.djl.onnxruntime.engine.OrtEngineProvider;
 import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
 
@@ -23,6 +24,7 @@ public class DLModel {
     private static boolean inited = false;
 
     public static void init() {
+        Engine.registerEngine(new OrtEngineProvider());
         System.out.println("Available engines: " + Engine.getAllEngines());
         try {
             // 从资源文件中获取模型
