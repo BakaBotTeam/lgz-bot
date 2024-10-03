@@ -69,6 +69,7 @@ object PluginMain : KotlinPlugin(
     lateinit var disableSpamCheck: Permission
     lateinit var disableADCheck: Permission
     lateinit var disableImageCheck: Permission
+    lateinit var checkNailong: Permission
     lateinit var root: Permission
     lateinit var disableRoot: Permission
     lateinit var adRegex: Array<Regex>
@@ -173,6 +174,7 @@ object PluginMain : KotlinPlugin(
         bypassMute = register(PermissionId("lgzbot", "bypassmute"), "消息过滤器禁言豁免", root)
         blocked = register(PermissionId("lgzbot", "blocked"), "完全屏蔽", root)
         nudgeMute = register(PermissionId("lgzbot", "nudgemute"), "戳一戳禁言", root)
+        checkNailong = register(PermissionId("lgzbot", "checknailong"), "检查本群内有谁发了奶龙图片", root)
         quiet = register(PermissionId("lgzbot", "quiet"), "安静一些", root)
 
         disableRoot = register(PermissionId("lgzbot.disable", "*"), "The root permission", root)
@@ -243,5 +245,6 @@ object PluginMain : KotlinPlugin(
         registerListenerHost(BakaListener)
         registerListenerHost(AutoQuit)
         registerListenerHost(SelfMessageListener)
+        registerListenerHost(NaiLongImageListener)
     }
 }

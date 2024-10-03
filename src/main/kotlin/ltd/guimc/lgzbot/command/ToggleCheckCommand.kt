@@ -85,4 +85,27 @@ object ToggleCheckCommand : CompositeCommand(
             sendMessage("只有管理才能使用这个指令的说...")
         }
     }
+
+    @SubCommand("nailong")
+    @Description("开/关奶龙图片检测")
+    suspend fun CommandSender.iiI11i1I1i1Iai1I1i11I1i1I1() {
+        if (getGroupOrNull() == null) {
+            sendMessage("请在群聊中执行该命令")
+        }
+
+        val group = getGroupOrNull()!!
+        val member = group.getMemberOrFail(user!!.id)
+
+        if (member.permission.isOperator()) {
+            if (!group.permitteeId.hasPermission(PluginMain.checkNailong)) {
+                group.permitteeId.permit(PluginMain.checkNailong)
+                sendMessage("已开启本群的奶龙图片检测")
+            } else {
+                group.permitteeId.cancel(PluginMain.checkNailong, false)
+                sendMessage("已关闭本群的奶龙图片检测")
+            }
+        } else {
+            sendMessage("只有管理才能使用这个指令的说...")
+        }
+    }
 }

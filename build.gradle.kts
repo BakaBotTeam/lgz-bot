@@ -25,6 +25,18 @@ dependencies {
     implementation("io.github.mymonstercat:rapidocr-onnx-linux-x86_64:1.2.2")
     implementation("org.xerial:sqlite-jdbc:3.46.0.0")
     implementation("org.apache.commons:commons-lang3:3.16.0")
+    implementation("org.deeplearning4j:deeplearning4j-core:1.0.0-beta7")
+    implementation("org.apache.commons:commons-imaging:1.0-alpha1")
+
+    // 导入 ND4J，仅针对 Windows 和 Linux
+    implementation("org.nd4j:nd4j-native-platform:1.0.0-beta7") {
+        exclude(module = "nd4j-native-macosx-x86_64")
+        exclude(module = "nd4j-native-macosx-aarch64")
+        exclude(module = "nd4j-native-windows-aarch64")
+        exclude(module = "nd4j-native-linux-arm64")
+        exclude(module = "nd4j-native-linux-arm")
+        exclude(module = "nd4j-native-windows-arm")
+    }
 
     compileOnly("top.mrxiaom.mirai:overflow-core-api:$overflow_version")
     compileOnly("top.mrxiaom.mirai:overflow-core:$overflow_version")
