@@ -27,6 +27,9 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.16.0")
     implementation("org.apache.commons:commons-imaging:1.0-alpha1")
     implementation("ai.djl.onnxruntime:onnxruntime-engine:0.23.0")
+    implementation(platform("ai.djl:bom:0.23.0"))
+    implementation("ai.djl.tensorflow:tensorflow-engine:0.23.0")
+    implementation("ai.djl.tensorflow:tensorflow-model-zoo:0.23.0")
 
     compileOnly("top.mrxiaom.mirai:overflow-core-api:$overflow_version")
     compileOnly("top.mrxiaom.mirai:overflow-core:$overflow_version")
