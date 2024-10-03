@@ -42,7 +42,7 @@ public class DLModel {
             Files.copy(modelStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             // 使用 DJL (Deep Java Library) 加载 ONNX 模型
-            model = Model.newInstance("Nailong");
+            model = Model.newInstance("Onnx");
             model.load(tempFile.toPath());
 
             // 初始化模型
