@@ -2,6 +2,7 @@ package ltd.guimc.dlm;
 
 import ai.djl.MalformedModelException;
 import ai.djl.Model;
+import ai.djl.engine.Engine;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.Classifications;
 import ai.djl.modality.cv.Image;
@@ -22,6 +23,7 @@ public class DLModel {
     private static boolean inited = false;
 
     public static void init() {
+        System.out.println("Available engines: " + Engine.getAllEngines());
         try {
             // 从资源文件中获取模型
             InputStream modelStream = DLModel.class.getResourceAsStream("/Nailong.onnx");
