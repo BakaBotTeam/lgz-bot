@@ -11,7 +11,7 @@ plugins {
 
 dependencies {
     val ktor_version = "2.3.5"
-    val overflow_version = "0.9.9.515-f8d867b-SNAPSHOT"
+    val overflow_version = "1.0.0"
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
