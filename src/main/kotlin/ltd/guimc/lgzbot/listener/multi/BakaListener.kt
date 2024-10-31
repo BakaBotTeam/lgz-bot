@@ -111,7 +111,7 @@ object BakaListener : ListenerHost {
         for (i in str.split("%")) {
             messages += when (i) {
                 "source" -> if (source != null) PlainText("${source.nameCardOrNick}(${source.id})") else PlainText("source")
-                "target" -> if (target != null) PlainText("${target.nameCardOrNick}(${target.id}") else PlainText("target")
+                "target" -> if (target != null) PlainText("${target.nameCardOrNick}(${target.id})") else PlainText("target")
                 else -> PlainText(i)
             }
         }

@@ -6,7 +6,6 @@
 
 * **Thanks for everyone!!**
 * 交流群: `952891372` (QQ)
-* Sponsor @ [Afdian](https://afdian.net/a/lgz-bot)
 * Due to some reason, this project only support windows/linux x86_64 now.
 
 ## About LGZ bot
